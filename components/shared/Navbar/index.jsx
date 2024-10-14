@@ -15,7 +15,7 @@ import {
   TabPanel,
   TabPanels
 } from '@headlessui/react'
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import Cart from '../Cart'
 import Image from 'next/image'
