@@ -1,7 +1,7 @@
-# Usa una imagen base de Node.js
+# imagen de Node.js
 FROM node:18
 
-# Establece el directorio de trabajo
+# directorio de trabajo
 WORKDIR /app
 
 # Copia solo el package.json y package-lock.json (si lo tienes)
