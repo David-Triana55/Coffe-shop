@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        textNavbar: '#4A3728',
         background: 'var(--background)',
         foreground: 'var(--foreground)'
       }

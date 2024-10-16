@@ -84,7 +84,7 @@ export default function NavBar () {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className='bg-white'>
+    <div className='bg-[red]'>
       {/* Mobile menu */}
       <Dialog open={open} onClose={setOpen} className='relative z-40 lg:hidden'>
         <DialogBackdrop
@@ -115,7 +115,7 @@ export default function NavBar () {
                   {navigation.categories.map((category) => (
                     <Tab
                       key={category.name}
-                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-indigo-600 data-[selected]:text-indigo-600'
+                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar'
                     >
                       {category.name}
                     </Tab>
@@ -136,7 +136,7 @@ export default function NavBar () {
                     </div>
                     {category?.sections?.map((section) => (
                       <div key={section.name}>
-                        <p id={`${category.id}-${section.id}-heading-mobile`} className='font-medium text-gray-900'>
+                        <p id={`${category.id}-${section.id}-heading-mobile`} className='font-medium text-textNavbar'>
                           {section.name}
                         </p>
                         <ul
@@ -162,7 +162,7 @@ export default function NavBar () {
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               {navigation.pages.map((page) => (
                 <div key={page.name} className='flow-root'>
-                  <Link onClick={() => setOpen(false)} href={page.href} className='-m-2 block p-2 font-medium text-gray-900'>
+                  <Link onClick={() => setOpen(false)} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'>
                     {page.name}
                   </Link>
                 </div>
@@ -171,12 +171,12 @@ export default function NavBar () {
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               <div className='flow-root'>
-                <Link href='/Sign-in' className='-m-2 block p-2 font-medium text-gray-900'>
+                <Link href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'>
                   Sign in
                 </Link>
               </div>
               <div className='flow-root'>
-                <Link href='/Sign-up' className='-m-2 block p-2 font-medium text-gray-900'>
+                <Link href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'>
                   Create account
                 </Link>
               </div>
@@ -194,7 +194,7 @@ export default function NavBar () {
               <button
                 type='button'
                 onClick={() => setOpen(true)}
-                className='relative rounded-md bg-white p-2 text-gray-400 lg:hidden'
+                className='relative rounded-md bg-white p-2 text-textNavbar lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
                 <span className='sr-only'>Open menu</span>
@@ -219,7 +219,7 @@ export default function NavBar () {
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className='flex'>
                       <div className='relative flex'>
-                        <PopoverButton className='relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 data-[open]:border-indigo-600 data-[open]:text-indigo-600'>
+                        <PopoverButton className='relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-medium text-textNavbar transition-colors duration-200 ease-out hover:text-gray-800 data-[open]:border-indigo-600 data-[open]:text-indigo-600'>
                           {category.name}
                         </PopoverButton>
                       </div>
@@ -251,7 +251,7 @@ export default function NavBar () {
                               <div className='row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm'>
                                 {category?.sections?.map((section) => (
                                   <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className='font-medium text-gray-900'>
+                                    <p id={`${section.name}-heading`} className='font-medium text-textNavbar'>
                                       {section.name}
                                     </p>
                                     <ul
@@ -282,7 +282,7 @@ export default function NavBar () {
                       onClick={() => setOpen(false)}
                       key={page.name}
                       href={page.href}
-                      className='flex items-center text-sm font-medium text-gray-700 hover:text-gray-800'
+                      className='flex items-center text-sm font-medium text-textNavbar hover:text-gray-800'
                     >
                       {page.name}
                     </Link>
