@@ -7,7 +7,7 @@ export default async function Tipos ({ params }) {
   console.log(url)
   return (
     <>
-      <h1 className='text-2xl font-bold text-center text-balance'>
+      <h1 className='text-2xl font-bold text-center text-balance mb-2'>
         {url}
       </h1>
       <Suspense fallback={<div>cargando....</div>}>

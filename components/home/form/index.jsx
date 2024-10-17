@@ -171,7 +171,7 @@ export default function Form ({ type }) {
                   </div>
                 </div>
 
-                <div>
+                <div className='container__group'>
                   <div className='flex items-center justify-between'>
                     <label
                       htmlFor='password'

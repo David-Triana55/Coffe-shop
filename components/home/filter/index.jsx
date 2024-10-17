@@ -21,14 +21,14 @@ export default function Filter ({ products }) {
 
   return (
     <>
-      <div className='w-10/12 flex justify-between items-center gap-4 mt-4 text-black font-bold'>
+      <div className='w-10/12 flex flex-wrap-reverse justify-between items-center gap-4 mt-4 text-black font-bold'>
         <select onChange={handleChange}>
           <option value=''>Seleccionar filtro</option>
           <option value='Ordenar por precio'>Ordenar por precio</option>
           <option value='Ordenar por alfabeto'>Ordenar por alfabeto</option>
         </select>
 
-        <h2 className='text-2xl font-light'>Cantidad de Productos: {filteredProducts.length}</h2>
+        <p className='text-base font-light'>Cantidad de Productos: {filteredProducts?.length}</p>
       </div>
 
       <div className='grid sm:grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 p-8'>

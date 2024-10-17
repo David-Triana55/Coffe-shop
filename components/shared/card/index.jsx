@@ -1,6 +1,7 @@
 'use client' // Esto asegura que el componente es un Client Component
 import { useRouter } from 'next/navigation'
 import './style.css'
+import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 
 export default function CardProducts ({ products }) {
   const router = useRouter()
@@ -17,7 +18,7 @@ export default function CardProducts ({ products }) {
   return (
     <div className='card_product'>
       <div className='card_product__content'>
-        <span className='card_product__cart'>x</span>
+        <span className='card_product__cart'><ShoppingCartIcon /></span>
         <h1 className='card_product__title'>{products.nombre_producto}</h1>
         <div className='card_product__image'>
           <img

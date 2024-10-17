@@ -239,10 +239,8 @@ export default function NavBar () {
                                   <div key={item.name} className='group relative text-base sm:text-sm '>
                                     <div className='aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 '>
                                       <img
-                                        alt={item.imageAlt}
+                                        className='object-cover object-center' alt={item.imageAlt}
                                         src={item.imageSrc}
-
-                                        className='object-cover object-center'
                                       />
                                     </div>
 
@@ -294,11 +292,11 @@ export default function NavBar () {
 
               <div className='ml-auto flex items-center'>
                 <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-                  <Link href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                  <Link onClick={() => setOpen(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
                     Sign in
                   </Link>
                   <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
-                  <Link href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                  <Link onClick={() => setOpen(false)} href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
                     Create account
                   </Link>
                 </div>
