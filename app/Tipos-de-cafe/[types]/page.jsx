@@ -1,8 +1,18 @@
-export default function Tipos ({ params }) {
-  console.log(params)
+import LayoutCards from '@/components/shared/LayoutCards'
+import { Suspense } from 'react'
+
+export default async function Tipos ({ params }) {
+  const url = params.types.split('-').join(' ')
+
+  console.log(url)
   return (
-    <h1>
-      Café en Grano {params.types}
-    </h1>
+    <>
+      <h1 className='text-2xl font-bold text-center text-balance mb-2'>
+        {url}
+      </h1>
+      <Suspense fallback={<div>cargando....</div>}>
+        <LayoutCards url={url} />
+      </Suspense>
+    </>
   )
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { Fragment, useState } from 'react'
@@ -42,8 +43,7 @@ const navigation = {
           id: 'Tipos de Café',
           name: 'Tipos de Café',
           items: [
-            { name: 'Café en Grano', href: '/Tipos-de-cafe/Cafe-en-Grano' },
-            { name: 'Café Molido', href: '/Tipos-de-cafe/Cafe-Molido' },
+            { name: 'Café Molido', href: '/Tipos-de-cafe/Cafe-molido' },
             { name: 'Cápsulas de Café', href: '/Tipos-de-cafe/Capsulas-de-Cafe' },
             { name: 'Mezclas Especiales', href: '/Tipos-de-cafe/Mezclas-Especiales' }
           ]
@@ -115,7 +115,7 @@ export default function NavBar () {
                   {navigation.categories.map((category) => (
                     <Tab
                       key={category.name}
-                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-indigo-600 data-[selected]:text-indigo-600'
+                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar'
                     >
                       {category.name}
                     </Tab>
@@ -136,7 +136,7 @@ export default function NavBar () {
                     </div>
                     {category?.sections?.map((section) => (
                       <div key={section.name}>
-                        <p id={`${category.id}-${section.id}-heading-mobile`} className='font-medium text-gray-900'>
+                        <p id={`${category.id}-${section.id}-heading-mobile`} className='font-medium text-textNavbar'>
                           {section.name}
                         </p>
                         <ul
@@ -162,7 +162,7 @@ export default function NavBar () {
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               {navigation.pages.map((page) => (
                 <div key={page.name} className='flow-root'>
-                  <Link onClick={() => setOpen(false)} href={page.href} className='-m-2 block p-2 font-medium text-gray-900'>
+                  <Link onClick={() => setOpen(false)} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'>
                     {page.name}
                   </Link>
                 </div>
@@ -171,12 +171,12 @@ export default function NavBar () {
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               <div className='flow-root'>
-                <Link href='/Sign-in' className='-m-2 block p-2 font-medium text-gray-900'>
+                <Link href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'>
                   Sign in
                 </Link>
               </div>
               <div className='flow-root'>
-                <Link href='/Sign-up' className='-m-2 block p-2 font-medium text-gray-900'>
+                <Link href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'>
                   Create account
                 </Link>
               </div>
@@ -186,15 +186,15 @@ export default function NavBar () {
         </div>
       </Dialog>
 
-      <header className='relative bg-white z-10'>
+      <header className='relative bg-[#4A3728] z-10'>
 
         <nav aria-label='Top' className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-          <div className='border-b border-gray-200'>
+          <div className='border-b border-black'>
             <div className='flex h-16 items-center'>
               <button
                 type='button'
                 onClick={() => setOpen(true)}
-                className='relative rounded-md bg-white p-2 text-gray-400 lg:hidden'
+                className=' relative rounded-md border-none bg-transparent p-2 text-[#D2B48C] lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
                 <span className='sr-only'>Open menu</span>
@@ -219,14 +219,14 @@ export default function NavBar () {
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className='flex'>
                       <div className='relative flex'>
-                        <PopoverButton className='relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 data-[open]:border-indigo-600 data-[open]:text-indigo-600'>
+                        <PopoverButton className='relative z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'>
                           {category.name}
                         </PopoverButton>
                       </div>
 
                       <PopoverPanel
                         transition
-                        className='absolute inset-x-0 top-full text-sm text-gray-500 transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in'
+                        className='absolute inset-x-0 top-full text-sm text-[#D2B48C] transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in'
                       >
                         {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
                         <div aria-hidden='true' className='absolute inset-0 top-1/2 bg-white shadow' />
@@ -236,12 +236,11 @@ export default function NavBar () {
                             <div className='grid grid-cols-2 gap-x-8 gap-y-10 py-16'>
                               <div className='col-start-2 grid grid-cols-2 gap-x-8'>
                                 {category?.featured?.map((item) => (
-                                  <div key={item.name} className='group relative text-base sm:text-sm'>
+                                  <div key={item.name} className='group relative text-base sm:text-sm '>
                                     <div className='aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 '>
                                       <img
-                                        alt={item.imageAlt}
+                                        className='object-cover object-center' alt={item.imageAlt}
                                         src={item.imageSrc}
-                                        className='object-cover object-center'
                                       />
                                     </div>
 
@@ -251,17 +250,17 @@ export default function NavBar () {
                               <div className='row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm'>
                                 {category?.sections?.map((section) => (
                                   <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className='font-medium text-gray-900'>
+                                    <p id={`${section.name}-heading`} className='font-medium text-textNavbar'>
                                       {section.name}
                                     </p>
                                     <ul
                                       role='list'
                                       aria-labelledby={`${section.name}-heading`}
-                                      className='mt-6 space-y-6 sm:mt-4 sm:space-y-4'
+                                      className='mt-6 space-y-6 sm:mt-4 sm:space-y-4 text-[#c09255]'
                                     >
                                       {section.items.map((item) => (
                                         <li key={item.name} className='flex'>
-                                          <Link href={item.href} className='hover:text-gray-800' onClick={() => setOpen(false)}>
+                                          <Link href={item.href} className='hover:text-yellow-950'>
                                             {item.name}
                                           </Link>
                                         </li>
@@ -278,11 +277,12 @@ export default function NavBar () {
                   ))}
 
                   {navigation.pages.map((page) => (
+
                     <Link
-                      onClick={() => setOpen(false)}
                       key={page.name}
+                      onClick={() => setOpen(false)}
                       href={page.href}
-                      className='flex items-center text-sm font-medium text-gray-700 hover:text-gray-800'
+                      className='flex items-center text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
                       {page.name}
                     </Link>
@@ -292,11 +292,11 @@ export default function NavBar () {
 
               <div className='ml-auto flex items-center'>
                 <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-                  <Link href='/Sign-in' className='text-sm font-medium text-gray-700 hover:text-gray-800'>
+                  <Link onClick={() => setOpen(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
                     Sign in
                   </Link>
                   <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
-                  <Link href='/Sign-up' className='text-sm font-medium text-gray-700 hover:text-gray-800'>
+                  <Link onClick={() => setOpen(false)} href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
                     Create account
                   </Link>
                 </div>

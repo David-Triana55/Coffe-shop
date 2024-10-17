@@ -15,12 +15,13 @@ export default function RootLayout ({ children }) {
       </head>
 
       <body
-        className={`${lusitana.className}  antialiased`}
+        className={`${lusitana.className} relative h-full antialiased`}
       >
         <NavBar />
         <Checkout />
 
         {children}
+
       </body>
     </html>
   )
