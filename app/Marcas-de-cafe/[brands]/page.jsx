@@ -1,4 +1,4 @@
-export default function Marcas ({ params }) {
+export default function PageMarcas ({ params }) {
   console.log(params)
   return (
     <h1>

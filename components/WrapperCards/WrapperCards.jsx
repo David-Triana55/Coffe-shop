@@ -1,4 +1,4 @@
-import Filter from '@/components/home/filter'
+import Filter from '@/components/Filter/Filter'
 import { getProductByCategory } from '@/lib/data'
 
 export default async function LayoutCards ({ url }) {
@@ -6,9 +6,9 @@ export default async function LayoutCards ({ url }) {
   const products = await getProductByCategory(url)
 
   return (
-    <>
+    <div className='flex flex-col items-center'>
       <Filter products={products} />
 
-    </>
+    </div>
   )
 }

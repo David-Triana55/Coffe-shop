@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import './styles.css'
+import './Form.css'
 export default function Form ({ type }) {
   return (
     <>

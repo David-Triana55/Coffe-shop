@@ -1,4 +1,4 @@
-export default function MarcasDeCafe () {
+export default function PageMarcasDeCafe () {
   return (
     <h1>
       Marcas de Café

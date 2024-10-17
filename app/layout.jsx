@@ -1,7 +1,7 @@
 import './globals.css'
-import { lusitana } from '../components/fonts'
-import NavBar from '@/components/shared/Navbar'
-import Checkout from '@/components/shared/Checkout'
+import { afacad } from '../components/fonts'
+import NavBar from '@/components/Navbar/Navbar'
+import Checkout from '@/components/Checkout/Checkout'
 
 export default function RootLayout ({ children }) {
   return (
@@ -15,7 +15,7 @@ export default function RootLayout ({ children }) {
       </head>
 
       <body
-        className={`${lusitana.className} relative h-full antialiased`}
+        className={`${afacad.className} relative h-full antialiased`}
       >
         <NavBar />
         <Checkout />

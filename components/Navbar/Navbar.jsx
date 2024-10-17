@@ -18,7 +18,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import Cart from '../Cart'
+import Cart from '../Cart/Cart'
 import Image from 'next/image'
 
 const navigation = {
@@ -101,7 +101,7 @@ export default function NavBar () {
               <button
                 type='button'
                 onClick={() => setOpen(false)}
-                className='relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400'
+                className='relative -m-2 inline-flex border-none border-transparent items-center justify-center rounded-md p-2 text-gray-400'
               >
                 <span className='absolute -inset-0.5' />
                 <XMarkIcon aria-hidden='true' className='h-6 w-6' />
@@ -186,7 +186,7 @@ export default function NavBar () {
         </div>
       </Dialog>
 
-      <header className='relative bg-[#4A3728] z-10'>
+      <header className='fixed top-0 w-full bg-[#4A3728] z-10'>
 
         <nav aria-label='Top' className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
           <div className='border-b border-black'>
@@ -194,7 +194,7 @@ export default function NavBar () {
               <button
                 type='button'
                 onClick={() => setOpen(true)}
-                className=' relative rounded-md border-none bg-transparent p-2 text-[#D2B48C] lg:hidden'
+                className=' relative rounded-md border-none  bg-transparent p-2 text-[#D2B48C] lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
                 <span className='sr-only'>Open menu</span>
