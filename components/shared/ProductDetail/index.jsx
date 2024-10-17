@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import { useEffect, useState } from 'react'
 
@@ -27,7 +28,7 @@ export default function ProductDetailWithId ({ params }) {
     <div>
       <h1>Product Detail</h1>
       <h1 className='text-black'>{product?.id_producto}</h1>
-      <p className='text-black'>{product?.nombre_producto }</p>
+      <p className='text-black'>{product?.nombre_producto}</p>
       <p className='text-black'>{product?.descripcion}</p>
       {product?.imagen && (
         <img src={product.imagen} alt={product.nombre_producto} />

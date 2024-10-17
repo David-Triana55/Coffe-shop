@@ -2,7 +2,6 @@ import './globals.css'
 import { lusitana } from '../components/fonts'
 import NavBar from '@/components/shared/Navbar'
 import Checkout from '@/components/shared/Checkout'
-import Footer from '@/components/shared/Footer'
 
 export default function RootLayout ({ children }) {
   return (

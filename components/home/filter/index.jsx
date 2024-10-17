@@ -10,9 +10,9 @@ export default function Filter ({ products }) {
     const value = e.target.value
     setFiltroValue(value) // Actualiza el estado del filtro
 
-    if (value === 'Ordenar por precio') {
+    if (filtroValue === 'Ordenar por precio') {
       setFilteredProducts(filteredProducts.sort((a, b) => a.valor_producto_iva - b.valor_producto_iva))
-    } else if (value === 'Ordenar por alfabeto') {
+    } else if (filtroValue === 'Ordenar por alfabeto') {
       setFilteredProducts(filteredProducts.sort((a, b) => a.nombre_producto.localeCompare(b.nombre_producto)))
     } else {
       setFilteredProducts(products)
