@@ -10,7 +10,8 @@ module.exports = {
       colors: {
         textNavbar: '#4A3728',
         background: 'var(--background)',
-        foreground: 'var(--foreground)'
+        foreground: 'var(--foreground)',
+        verde: '#2F4F4F'
       }
     }
   },

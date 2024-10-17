@@ -2,6 +2,7 @@ import './globals.css'
 import { lusitana } from '../components/fonts'
 import NavBar from '@/components/shared/Navbar'
 import Checkout from '@/components/shared/Checkout'
+import Footer from '@/components/shared/Footer'
 
 export default function RootLayout ({ children }) {
   return (
@@ -15,12 +16,13 @@ export default function RootLayout ({ children }) {
       </head>
 
       <body
-        className={`${lusitana.className}  antialiased`}
+        className={`${lusitana.className} relative h-full antialiased`}
       >
         <NavBar />
         <Checkout />
 
         {children}
+
       </body>
     </html>
   )

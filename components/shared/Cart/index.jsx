@@ -10,9 +10,9 @@ export default function Cart () {
       <button type='button' className='group -m-2 flex items-center p-2' onClick={toggleCheckoutWindow}>
         <ShoppingBagIcon
           aria-hidden='true'
-          className='h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
+          className='h-6 w-6 flex-shrink-0 text-[#D2B48C] group-hover:text-gray-300'
         />
-        <span className='ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800'>{cart}</span>
+        <span className='ml-2 text-sm font-medium text-white group-hover:text-gray-300'>{cart}</span>
 
       </button>
     </div>

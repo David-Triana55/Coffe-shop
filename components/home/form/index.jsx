@@ -3,16 +3,16 @@ import './styles.css'
 export default function Form () {
   return (
     <>
-      <div className=' form-content flex-1 py-12  '>
-        <div className='w-96 p-7 shadow-md rounded-lg bg-white'>
+      <div className=' sm:bg-white form-content flex-1 py-12  '>
+        <div className='w-96 p-7 shadow-md rounded-lg'>
 
           <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
             <Image
               width={500}
               height={500}
               alt='Your Company'
-              src='/logo.svg'
-              className='mx-auto h-28 w-auto'
+              src='/logo_dark.svg'
+              className='mx-auto h-28 w-28'
             />
             <h2 className=' text-center text-2xl font-bold leading-9 tracking-tight text-black'>
               Sign in to your account
@@ -63,7 +63,7 @@ export default function Form () {
               <div>
                 <button
                   type='submit'
-                  className='flex w-full justify-center rounded-md bg-orange-200 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                  className='flex w-full justify-center rounded-md bg-verde px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
                 >
                   Sign in
                 </button>
