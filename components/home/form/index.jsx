@@ -146,7 +146,7 @@ export default function Form ({ type }) {
                 className='mx-auto h-32 w-32'
               />
               <h2 className=' text-center text-2xl font-bold leading-9 tracking-tight text-black'>
-                {type === 'login' ? 'Iniciar sesión' : 'Registrarse'}
+                'Iniciar sesión'
               </h2>
             </div>
 
@@ -157,7 +157,7 @@ export default function Form ({ type }) {
                     htmlFor='email'
                     className='block text-sm font-medium leading-6 text-gray-900'
                   >
-                    Email address
+                    Correo electrónico
                   </label>
                   <div className='mt-2'>
                     <input
@@ -177,7 +177,7 @@ export default function Form ({ type }) {
                       htmlFor='password'
                       className='block text-sm font-medium leading-6 text-gray-900'
                     >
-                      Password
+                      Contraseña
                     </label>
                   </div>
                   <div className='mt-2'>
@@ -197,7 +197,7 @@ export default function Form ({ type }) {
                     type='submit'
                     className='flex w-full justify-center rounded-md bg-verde px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
                   >
-                    Sign in
+                    Entrar
                   </button>
                 </div>
               </form>
