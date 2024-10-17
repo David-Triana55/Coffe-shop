@@ -3,19 +3,20 @@
   height: calc(100vh - 58px);
   top: 60px;
   background: white;
-  position: absolute;
+  position: fixed;
   right: 0;
   bottom: 0;
   padding: 12px;
   border-radius: 0 0 0 12px;
   flex-direction: column;
+  z-index: 3;
 
 }
 
 .product__detail-products { 
-  min-height: calc(100vh - 58px - 100px);
+  min-height: calc(100vh - 58px - 120px);
 
-  max-height: calc(100vh - 58px - 100px);
+  max-height: calc(100vh - 58px - 120px);
   overflow-y: scroll;
 }
 

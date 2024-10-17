@@ -1,4 +1,4 @@
-export default function Nosotros () {
+export default function PageNosotros () {
   return (
     <h1>
       Nosotros

@@ -1,7 +1,7 @@
 'use client'
 import useStore from '@/store'
-import OrderCard from '../OrderCard'
-import './styles.css'
+import OrderCard from '../OrderCard/OrderCard'
+import './Checkout.css'
 
 export default function Checkout () {
   const { checkoutWindow } = useStore((state) => state)

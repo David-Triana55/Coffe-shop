@@ -1,6 +1,6 @@
-import LayoutCards from '@/components/shared/LayoutCards'
+import LayoutCards from '@/components/WrapperCards/WrapperCards'
 
-export default async function Home () {
+export default async function PagePrincipal () {
   return (
     <div className=''>
       <main className=''>

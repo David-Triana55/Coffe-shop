@@ -1,5 +1,5 @@
-import Footer from '@/components/shared/Footer'
-import './style.css'
+import Footer from '@/components/Footer/Footer'
+import './layout.css'
 
 export default function LayoutTiposDeCafe ({ children }) {
   return (

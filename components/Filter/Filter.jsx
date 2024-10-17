@@ -1,5 +1,5 @@
 'use client'
-import CardProducts from '@/components/shared/card'
+import CardProducts from '@/components/Card/Card'
 import React, { Suspense, useState } from 'react'
 
 export default function Filter ({ products }) {
@@ -28,7 +28,7 @@ export default function Filter ({ products }) {
           <option value='Ordenar por alfabeto'>Ordenar por alfabeto</option>
         </select>
 
-        <p className='text-base font-light'>Cantidad de Productos: {filteredProducts?.length}</p>
+        <p className='text-base font-light md:text-xl'>Cantidad de Productos: {filteredProducts?.length}</p>
       </div>
 
       <div className='grid sm:grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 p-8'>

@@ -2,7 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-export default function ProductDetailWithId ({ params }) {
+export default function ProductDetail ({ params }) {
   const [product, setProduct] = useState(null)
 
   useEffect(() => {
@@ -25,14 +25,12 @@ export default function ProductDetailWithId ({ params }) {
   if (!product) return <div>Loading...</div>
 
   return (
-    <div>
-      <h1>Product Detail</h1>
-      <h1 className='text-black'>{product?.id_producto}</h1>
+    <div className='product_detail__content'>
+      <img src={product.imagen} alt={product.nombre_producto} />
+      <h1>Categoria de producto: {product?.nombre_categoria}</h1>
       <p className='text-black'>{product?.nombre_producto}</p>
+      <p>Precio: {product?.precio}</p>
       <p className='text-black'>{product?.descripcion}</p>
-      {product?.imagen && (
-        <img src={product.imagen} alt={product.nombre_producto} />
-      )}
     </div>
   )
 }

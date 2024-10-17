@@ -1,4 +1,4 @@
-export default function Accessorios ({ params }) {
+export default function PageAccessorios ({ params }) {
   return (
     <h1>
       Accessoires de Café {params.items}

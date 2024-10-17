@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 'use client' // Esto asegura que el componente es un Client Component
 import { useRouter } from 'next/navigation'
-import './style.css'
+import './Card.css'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 
-export default function CardProducts ({ products }) {
+export default function Card ({ products }) {
   const router = useRouter()
   const precio = Math.floor(products.valor_producto_iva)
   const precioFormateado = new Intl.NumberFormat('es-CO', {

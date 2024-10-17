@@ -1,4 +1,4 @@
-export default function Vision () {
+export default function PageVision () {
   return (
     <h1>
       Vision
