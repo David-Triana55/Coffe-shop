@@ -1,7 +1,10 @@
-export default function SignUp () {
+import Form from '@/components/home/form'
+
+export default function SignUP () {
   return (
-    <h1>
-      Sign Up
-    </h1>
+    <section className='flex flex-col items-center justify-center overflow-y-hidden bg-background'>
+      <Form type='signUp' />
+    </section>
+
   )
 }

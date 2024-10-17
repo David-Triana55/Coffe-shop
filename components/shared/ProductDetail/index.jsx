@@ -26,11 +26,11 @@ export default function ProductDetailWithId ({ params }) {
   return (
     <div>
       <h1>Product Detail</h1>
-      <h1 className='text-black'>{product?.id_producto || 'ID no disponible'}</h1>
-      <p className='text-black'>{product?.nombre_producto || 'Nombre no disponible'}</p>
-      <p className='text-black'>{product?.descripcion || 'Descripción no disponible'}</p>
+      <h1 className='text-black'>{product?.id_producto}</h1>
+      <p className='text-black'>{product?.nombre_producto }</p>
+      <p className='text-black'>{product?.descripcion}</p>
       {product?.imagen && (
-        <img src={product.imagen} alt={product.nombre_producto || 'Imagen de producto'} />
+        <img src={product.imagen} alt={product.nombre_producto} />
       )}
     </div>
   )

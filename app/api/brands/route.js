@@ -5,3 +5,9 @@ export async function GET (req, res) {
   const categorias = await getCategories()
   return Response.json(categorias)
 }
+
+
+
+
+
+
