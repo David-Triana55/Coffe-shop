@@ -22,8 +22,8 @@ export default function Form ({ type }) {
             <div className='mt-6 sm:mx-auto sm:w-full sm:max-w-sm'>
               <form action='#' method='POST' className='space-y-6'>
                 {/* fields of name and last name */}
-                <div className='flex flex-row gap-1'>
-                  <div>
+                <div className='w-full justify-center flex flex-row gap-1'>
+                  <div className='w-1/2'>
                     <label
                       htmlFor='nombre'
                       className='block text-sm font-medium leading-6 text-gray-900'
@@ -42,10 +42,10 @@ export default function Form ({ type }) {
                     </div>
                   </div>
 
-                  <div>
+                  <div className='w-1/2'>
                     <label
                       htmlFor='apellido'
-                      className='block text-sm font-medium leading-6 text-gray-900'
+                      className='block  text-sm font-medium leading-6 text-gray-900'
                     >
                       apellido
                     </label>

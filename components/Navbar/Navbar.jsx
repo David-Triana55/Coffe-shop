@@ -82,12 +82,18 @@ const navigation = {
 
 export default function NavBar () {
   const [open, setOpen] = useState(false)
-
+  const [isOpen, setIsOpen] = useState(false)
+  console.log('modal desktop', isOpen)
+  const closePopover = () => {
+    setIsOpen(!isOpen)
+    setOpen(!open)
+  }
   return (
     <div className='bg-white'>
       {/* Mobile menu */}
       <Dialog open={open} onClose={setOpen} className='relative z-40 lg:hidden'>
         <DialogBackdrop
+          onClick={() => setOpen(false)}
           transition
           className='fixed inset-0 bg-black bg-opacity-25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0'
         />
@@ -162,7 +168,7 @@ export default function NavBar () {
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               {navigation.pages.map((page) => (
                 <div key={page.name} className='flow-root'>
-                  <Link onClick={() => setOpen(false)} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'>
+                  <Link onClick={() => setOpen(!open)} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'>
                     {page.name}
                   </Link>
                 </div>
@@ -171,12 +177,14 @@ export default function NavBar () {
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               <div className='flow-root'>
-                <Link href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'>
+                <Link onClick={() => setOpen(!open)} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'>
                   Sign in
                 </Link>
               </div>
               <div className='flow-root'>
-                <Link href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'>
+                <Link
+                  onClick={() => setOpen(!open)} href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'
+                >
                   Create account
                 </Link>
               </div>
@@ -193,7 +201,7 @@ export default function NavBar () {
             <div className='flex h-16 items-center'>
               <button
                 type='button'
-                onClick={() => setOpen(true)}
+                onClick={() => setOpen(!open)}
                 className=' relative rounded-md border-none  bg-transparent p-2 text-[#D2B48C] lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
@@ -219,18 +227,18 @@ export default function NavBar () {
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className='flex'>
                       <div className='relative flex'>
-                        <PopoverButton className='relative z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'>
+                        <PopoverButton
+                          onClick={() => setIsOpen(true)}
+                          className='relative border-none z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'
+                        >
                           {category.name}
                         </PopoverButton>
                       </div>
 
                       <PopoverPanel
                         transition
-                        className='absolute inset-x-0 top-full text-sm text-[#D2B48C] transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in'
+                        className={` ${isOpen ? 'block' : 'hidden'} absolute inset-x-0 top-full text-sm text-[#D2B48C] transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in `}
                       >
-                        {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                        <div aria-hidden='true' className='absolute inset-0 top-1/2 bg-white shadow' />
-
                         <div className='relative bg-white'>
                           <div className='mx-auto max-w-7xl px-8'>
                             <div className='grid grid-cols-2 gap-x-8 gap-y-10 py-16'>
@@ -243,7 +251,6 @@ export default function NavBar () {
                                         src={item.imageSrc}
                                       />
                                     </div>
-
                                   </div>
                                 ))}
                               </div>
@@ -260,7 +267,11 @@ export default function NavBar () {
                                     >
                                       {section.items.map((item) => (
                                         <li key={item.name} className='flex'>
-                                          <Link href={item.href} className='hover:text-yellow-950'>
+                                          <Link
+                                            href={item.href}
+                                            className='hover:text-yellow-950 data-[closed]'
+                                            onClick={() => closePopover()}
+                                          >
                                             {item.name}
                                           </Link>
                                         </li>
@@ -271,18 +282,19 @@ export default function NavBar () {
                               </div>
                             </div>
                           </div>
+
                         </div>
                       </PopoverPanel>
                     </Popover>
                   ))}
 
                   {navigation.pages.map((page) => (
-
                     <Link
                       key={page.name}
-                      onClick={() => setOpen(false)}
                       href={page.href}
                       className='flex items-center text-sm font-medium text-[#D2B48C] hover:text-gray-300'
+                      onClick={() => closePopover()}
+
                     >
                       {page.name}
                     </Link>
@@ -292,11 +304,14 @@ export default function NavBar () {
 
               <div className='ml-auto flex items-center'>
                 <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-                  <Link onClick={() => setOpen(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                  <Link onClick={() => closePopover(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
                     Sign in
                   </Link>
                   <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
-                  <Link onClick={() => setOpen(false)} href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                  <Link
+                    onClick={() => setOpen(!open)}
+                    href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
+                  >
                     Create account
                   </Link>
                 </div>
