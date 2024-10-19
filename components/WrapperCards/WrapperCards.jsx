@@ -37,7 +37,7 @@ export default function WrapperCards ({ products }) {
   return (
     <div className='wrapper_cards'>
       <div className='w-full px-4 flex flex-wrap-reverse justify-between items-center gap-4 mt-4 text-black font-bold mb-9'>
-        <select className='w-2/4 lg:w-1/3 rounded-md' onChange={handleChangeOptions}>
+        <select className='w-2/4 lg:w-1/4 rounded-md' onChange={handleChangeOptions}>
           <option value=''>Seleccionar filtro</option>
           <option value='Ordenar por precio alto a bajo'>Ordenar por precio: alto a bajo</option>
           <option value='Ordenar por precio bajo a alto'>Ordenar por precio: bajo a alto</option>
