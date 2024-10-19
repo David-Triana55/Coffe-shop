@@ -6,9 +6,9 @@ import './Checkout.css'
 export default function Checkout () {
   const { checkoutWindow } = useStore((state) => state)
   return (
-    <aside className={` ${checkoutWindow ? 'flex' : 'hidden'} product__detail `}>
+    <aside className={` ${checkoutWindow ? 'flex' : 'hidden'} checkout__products `}>
       <h3 className=' text-black block '>Checkout</h3>
-      <div className='product__detail-products'>
+      <div className='checkout__products-content'>
         <h4 className='text-gray-500'>Productos</h4>
         <OrderCard />
         <OrderCard />
