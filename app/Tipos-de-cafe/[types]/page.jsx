@@ -1,18 +1,13 @@
 import WrapperCards from '@/components/WrapperCards/WrapperCards'
 import { getProductByCategory } from '@/lib/data'
+import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 
 export default async function PageTiposDeCafe ({ params }) {
   const url = await params.types.split('-').join(' ')
   const products = await getProductByCategory(url)
 
-  const typesCoffeeName = {
-    'Cafe molido': 'Café Molido',
-    'Capsulas de Cafe': 'Capsulas de Café',
-    'Mezlas Especiales': 'Mezlas Especiales'
-  }
-
-  const typesCoffee = typesCoffeeName[url]
+  const typesCoffee = formatCategory(url)
 
   console.log(url)
   return (
