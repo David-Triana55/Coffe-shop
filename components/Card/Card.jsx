@@ -4,16 +4,27 @@ import { useRouter } from 'next/navigation'
 import './Card.css'
 import { CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import { formatPrice } from '@/utils/formatter'
+import useStore from '@/store'
 
 export default function Card ({ products }) {
   const [isCart, setIsCart] = useState(false)
 
   const router = useRouter()
-  const precio = Math.floor(products.valor_producto_iva)
-  const precioFormateado = new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP'
-  }).format(precio)
+  const precio = formatPrice(products.valor_producto_iva)
+
+  const { addToCart, increase, decrease, checkoutData } = useStore(state => state)
+
+  const handleIconCard = (product) => {
+    addToCart(product)
+    setIsCart(!isCart)
+
+    if (isCart === true) {
+      decrease()
+    } else {
+      increase()
+    }
+  }
 
   const handleProductClick = (id) => {
     router.push(`/ProductDetail/${id}`)
@@ -21,8 +32,15 @@ export default function Card ({ products }) {
 
   return (
     <div className='card_product__content'>
-      <span onClick={() => setIsCart(!isCart)} className='card_product__cart'>
-        {!isCart ? <PlusCircleIcon /> : <CheckCircleIcon className='text-green-500' />}
+      <span
+        className='card_product__cart' onClick={() => handleIconCard(products)}
+      >
+        {
+          checkoutData.some(item => item.id_producto === products.id_producto)
+            ? <CheckCircleIcon className='text-green-500' />
+            : <PlusCircleIcon />
+        }
+
       </span>
       <div className='card_product__image'>
         <img
@@ -32,7 +50,7 @@ export default function Card ({ products }) {
         />
       </div>
       <h1 className='card_product__title'>{products.nombre_producto}</h1>
-      <p className='card_product__price'>{precioFormateado}</p>
+      <p className='card_product__price'>{precio}</p>
     </div>
   )
 }
