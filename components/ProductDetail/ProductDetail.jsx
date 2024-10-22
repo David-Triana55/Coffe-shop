@@ -6,22 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import './ProductDetail.css'
 import { formatCategory, formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
+import { Minus, Plus } from 'lucide-react'
 export default function ProductDetail ({ params }) {
   const [product, setProduct] = useState(null)
   const [count, setCount] = useState(1)
-  const { increase, addToCart } = useStore((state) => state)
+  const { addToCart, checkoutData } = useStore((state) => state)
   const [productInCart, setProductInCart] = useState(null)
 
   const price = formatPrice(product?.valor_producto_iva)
 
   const category = formatCategory(product?.nombre_categoria)
 
-  const handleChangeQuantity = (e) => {
-    setCount(e.target.value)
-  }
-
   const handleAddToCart = (product) => {
-    if (productInCart?.id_producto === product?.id_producto) {
+    if (productInCart?.id_producto === product?.id_producto || checkoutData.some(item => item.id_producto === product.id_producto)) {
       setCount(prevCount => {
         const newCount = prevCount + 1
         addToCart(product, newCount)
@@ -30,7 +27,6 @@ export default function ProductDetail ({ params }) {
       return
     }
 
-    increase()
     addToCart(product, count) //
     setProductInCart(product)
   }
@@ -52,27 +48,36 @@ export default function ProductDetail ({ params }) {
   if (!product) return <div>Loading...</div>
 
   return (
-    <>
+    <div className='grid grid-cols-1 lg:grid-cols-2 w-full lg:pt-4'>
       <div className='product_detail__content'>
         <img src={product.imagen} alt={product.nombre_producto} />
-        <p className='product_detail__category'>{category}</p>
-        <h1 className='product_detail__title'>{product?.nombre_producto}</h1>
-        <p className='product_detail__price'>{price}</p>
+
       </div>
 
       <div className='product_detail__cart'>
-        <input
-          className='product_detail__quantity'
-          type='number'
-          onChange={handleChangeQuantity}
-          value={count}
-          min='1'
-          max='10'
-        />
-        <button className='product_detail__button' onClick={() => handleAddToCart(product)}>Agregar al carrito</button>
+        <p className='product_detail__category'>{category}</p>
+        <h1 className='product_detail__title'>{product?.nombre_producto}</h1>
+        <p className='product_detail__price'>{price}</p>
+        <div className='flex gap-2 lg:mt-4'>
+          <button
+            onClick={() => setCount(Math.max(1, count - 1))}
+          >
+            <Minus className='h-4 w-4' />
+          </button>
+          <span className='mx-4 text-xl'>{count}</span>
+          <button
+            onClick={() => setCount(count + 1)}
+          >
+            <Plus className='h-4 w-4' />
+          </button>
+
+          <button className='product_detail__button' onClick={() => handleAddToCart(product)}>
+            Agregar al carrito
+          </button>
+        </div>
       </div>
 
-      <Tabs defaultValue='descripcion' className='mt-8'>
+      <Tabs defaultValue='descripcion' className='mt-8 lg:col-span-2 lg:mt-10'>
         <TabsList className='grid w-full grid-cols-3'>
           <TabsTrigger value='descripcion'>Descripcion</TabsTrigger>
           <TabsTrigger value='details'>Detalles</TabsTrigger>
@@ -97,6 +102,6 @@ export default function ProductDetail ({ params }) {
         </TabsContent>
 
       </Tabs>
-    </>
+    </div>
   )
 }

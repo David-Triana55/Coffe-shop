@@ -1,18 +1,19 @@
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import useStore from '@/store'
 export default function Cart () {
-  const { cart } = useStore((state) => state)
-
-  const { toggleCheckoutWindow } = useStore((state) => state)
+  const { toogleCheckoutWindow, checkoutData } = useStore((state) => state)
+  const handleToggleCheckoutWindow = () => {
+    toogleCheckoutWindow()
+  }
 
   return (
     <div className='ml-4 flow-root lg:ml-6'>
-      <button type='button' className='group -m-2 flex items-center p-2' onClick={toggleCheckoutWindow}>
+      <button type='button' className='group -m-2 flex items-center p-2' onClick={handleToggleCheckoutWindow}>
         <ShoppingBagIcon
           aria-hidden='true'
           className='h-6 w-6 flex-shrink-0 text-[#D2B48C] group-hover:text-gray-300'
         />
-        <span className='ml-2 text-sm font-medium text-white group-hover:text-gray-300'>{cart}</span>
+        <span className='ml-2 text-sm font-medium text-white group-hover:text-gray-300'>{checkoutData.length}</span>
 
       </button>
     </div>

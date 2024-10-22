@@ -1,7 +1,7 @@
 .checkout__products {
-  width: 360px;
+  width: 30%;
   height: calc(100dvh - 58px);
-  top: 60px;
+  top: 65px;
   background: white;
   position: fixed;
   right: 0;
@@ -9,8 +9,14 @@
   padding: 12px;
   border-radius: 0 0 0 12px;
   flex-direction: column;
-  z-index: 3;
+  z-index: 15;
+  transform: translateX(100%); 
+  transition: transform 1s ease;
+}
 
+.show {
+  transition: transform 1s ease; 
+  transform: translateX(0); 
 }
 
 .checkout__products-content { 
@@ -19,6 +25,19 @@
   max-height: calc(100dvh - 58px - 120px);
   overflow-y: scroll;
 }
+
+.checkout__products-active {
+  opacity: 1;
+  background-color: rgba(0,0,0,0.4);
+  position: fixed;
+  top: 65px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transition: opacity  0.5s ease-in-out;
+  z-index: 9;
+}
+
 
 @media (max-width: 640px) {
   .checkout__products {

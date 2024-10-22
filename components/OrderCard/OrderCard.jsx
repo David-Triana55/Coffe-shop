@@ -2,9 +2,10 @@
 import useStore from '@/store'
 import { formatPrice } from '@/utils/formatter'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 export default function OrderCard ({ product }) {
-  const { removeToCart } = useStore((state) => state)
+  const { removeToCart, toogleCheckoutWindowValue } = useStore((state) => state)
   console.log(product)
 
   const handleRemove = (id) => {
@@ -15,7 +16,9 @@ export default function OrderCard ({ product }) {
   const price = formatPrice(product.valor_producto_iva)
   return (
     <article className=' grid grid-cols-[1fr,2fr,30px]  w-full  justify-between items-center mt-2'>
-      <img className='w-16 h-16 object-contain' src={product.imagen} alt={product.descripcion} />
+      <Link onClick={() => toogleCheckoutWindowValue(false)} href={`/ProductDetail/${product.id_producto}`}>
+        <img className='w-20 h-20 object-contain mx-auto' src={product.imagen} alt={product.descripcion} />
+      </Link>
       <div className='flex flex-col w-full items-start'>
         <p className=' text-black'>{product.nombre_producto}</p>
         <span className='text-gray-600'>
