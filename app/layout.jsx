@@ -22,7 +22,6 @@ export default function RootLayout ({ children }) {
         <Checkout />
 
         {children}
-        <Footer />
       </body>
     </html>
   )
