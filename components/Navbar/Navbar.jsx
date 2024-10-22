@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { Fragment, useState } from 'react'
@@ -359,7 +358,7 @@ export default function NavBar () {
                     >
                       Sign out
                     </button>
-                  </div>}
+                    </div>}
 
                 <Cart />
               </div>

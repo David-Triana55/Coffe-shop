@@ -2,7 +2,6 @@ import './globals.css'
 import { afacad } from '../components/fonts'
 import NavBar from '@/components/Navbar/Navbar'
 import Checkout from '@/components/Checkout/Checkout'
-import Footer from '@/components/Footer/Footer'
 
 export default function RootLayout ({ children }) {
   return (

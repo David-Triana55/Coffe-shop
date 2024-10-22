@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Coffee, Leaf, Award, Globe } from 'lucide-react'
+import { Leaf, Award, Globe } from 'lucide-react'
 
 export default function PageNosotros () {
   return (
