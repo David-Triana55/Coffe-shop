@@ -1,6 +1,76 @@
+'use client'
 import Image from 'next/image'
 import './Form.css'
+import useStore from '@/store'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 export default function Form ({ type }) {
+  const router = useRouter()
+  const [error, setError] = useState(null)
+  const { setLogin } = useStore(state => state)
+  // funcion para enviar el formulario de login
+  const handleSbmitLogin = async (e) => {
+    e.preventDefault()
+    try {
+      const form = new FormData(e.target)
+      const email = form.get('email')
+      const password = form.get('password')
+
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al entrar')
+      }
+
+      const data = await response.json()
+      console.log(data)
+      setLogin(data.token, true)
+      router.push('/')
+    } catch (error) {
+      setError(true)
+      console.error(error)
+    } finally {
+      e.target.reset()
+    }
+  }
+
+  // funcion para enviar el formulario de registro
+
+  const handleSbmitSignUp = async (e) => {
+    e.preventDefault()
+    try {
+      const form = new FormData(e.target)
+      const name = form.get('name')
+      const lastName = form.get('lastName')
+      const number = form.get('number')
+      const email = form.get('email')
+      const password = form.get('password')
+
+      const response = await fetch('/api/signUp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, lastName, number, password, email })
+      })
+      if (!response.ok) {
+        throw new Error('Error al crear el usuario')
+      }
+
+      router.push('/Sign-in')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      e.target.reset()
+    }
+  }
+
   return (
     <>
       {type === 'signUp' && (
@@ -20,43 +90,43 @@ export default function Form ({ type }) {
             </div>
 
             <div className='mt-6 sm:mx-auto sm:w-full sm:max-w-sm'>
-              <form action='#' method='POST' className='space-y-6'>
+              <form onSubmit={handleSbmitSignUp} className='space-y-6'>
                 {/* fields of name and last name */}
                 <div className='w-full justify-center flex flex-row gap-1'>
                   <div className='w-1/2'>
                     <label
-                      htmlFor='nombre'
+                      htmlFor='name'
                       className='block text-sm font-medium leading-6 text-gray-900'
                     >
                       nombre
                     </label>
                     <div className='mt-2'>
                       <input
-                        id='nombre'
-                        name='nombre'
-                        type='nombre'
+                        id='name'
+                        name='name'
+                        type='name'
                         required
                         autoComplete='nombre'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6'
+                        className='block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6'
                       />
                     </div>
                   </div>
 
                   <div className='w-1/2'>
                     <label
-                      htmlFor='apellido'
+                      htmlFor='lastName'
                       className='block  text-sm font-medium leading-6 text-gray-900'
                     >
                       apellido
                     </label>
                     <div className='mt-2'>
                       <input
-                        id='apellido'
-                        name='apellido'
-                        type='apellido'
+                        id='lastName'
+                        name='lastName'
+                        type='lastName'
                         required
                         autoComplete='apellido'
-                        className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6'
+                        className='block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6'
                       />
                     </div>
                   </div>
@@ -146,12 +216,12 @@ export default function Form ({ type }) {
                 className='mx-auto h-32 w-32'
               />
               <h2 className=' text-center text-2xl font-bold leading-9 tracking-tight text-black'>
-                'Iniciar sesión'
+                Iniciar sesión
               </h2>
             </div>
 
             <div className='mt-6 sm:mx-auto sm:w-full sm:max-w-sm'>
-              <form action='/api/login' method='POST' className='space-y-6'>
+              <form onSubmit={handleSbmitLogin} className='space-y-6'>
                 <div>
                   <label
                     htmlFor='email'
@@ -201,6 +271,7 @@ export default function Form ({ type }) {
                   </button>
                 </div>
               </form>
+              {error && <p className='text-red-500 mt-3'>Credenciales incorrectas</p>}
             </div>
           </div>
         </div>

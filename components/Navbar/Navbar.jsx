@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { Fragment, useState } from 'react'
@@ -82,11 +81,12 @@ const navigation = {
 }
 
 export default function NavBar () {
-  const { toogleCheckoutWindowValue } = useStore(state => state)
-
+  const { toogleCheckoutWindowValue, login, setLogin } = useStore(state => state)
+  const { isLogged } = login
   const [open, setOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
+  console.log(isLogged)
   const closePopover = () => {
     setIsOpen(!isOpen)
     setOpen(!open)
@@ -187,24 +187,35 @@ export default function NavBar () {
               ))}
             </div>
 
-            <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
-              <div className='flow-root'>
-                <Link
-                  onClick={() => {
-                    setOpen(!open)
-                  }} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'
-                >
-                  Sign in
-                </Link>
+            {!isLogged
+              ? <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
+                <div className='flow-root'>
+                  <Link
+                    onClick={() => {
+                      setOpen(!open)
+                    }} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'
+                  >
+                    Sign in
+                  </Link>
+                </div>
+                <div className='flow-root'>
+                  <Link
+                    onClick={() => setOpen(!open)} href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'
+                  >
+                    Create account
+                  </Link>
+                </div>
               </div>
-              <div className='flow-root'>
-                <Link
-                  onClick={() => setOpen(!open)} href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'
-                >
-                  Create account
-                </Link>
-              </div>
-            </div>
+              : <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
+
+                <div className='flow-root'>
+                  <Link
+                    onClick={() => setOpen(!open)} href='/profile' className='-m-2 block p-2 font-medium text-textNavbar'
+                  >
+                    Profile
+                  </Link>
+                </div>
+              </div>}
 
           </DialogPanel>
         </div>
@@ -321,20 +332,34 @@ export default function NavBar () {
               </PopoverGroup>
 
               <div className='ml-auto flex items-center'>
-                <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-                  <Link onClick={() => closePopover(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
-                    Sign in
-                  </Link>
-                  <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
-                  <Link
-                    onClick={() => setOpen(!open)}
-                    href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
-                  >
-                    Create account
-                  </Link>
-                </div>
+                {!isLogged
+                  ? <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
+                    <Link onClick={() => closePopover(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                      Sign in
+                    </Link>
+                    <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
+                    <Link
+                      onClick={() => setOpen(!open)}
+                      href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
+                    >
+                      Create account
+                    </Link>
+                  </div>
+                  : <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
+                    <Link onClick={() => closePopover(false)} href='/Profile' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
+                      Profile
+                    </Link>
+                    <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
+                    <button
+                      onClick={() => {
+                        closePopover(false)
+                        setLogin(null, false)
+                      }} className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
+                    >
+                      Sign out
+                    </button>
+                    </div>}
 
-                {/* Cart */}
                 <Cart />
               </div>
             </div>
