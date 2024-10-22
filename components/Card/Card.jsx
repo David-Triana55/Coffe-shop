@@ -13,16 +13,18 @@ export default function Card ({ products }) {
   const router = useRouter()
   const precio = formatPrice(products.valor_producto_iva)
 
-  const { addToCart, increase, decrease, checkoutData } = useStore(state => state)
+  const { addToCart, removeToCart, checkoutData } = useStore(state => state)
+
+  console.log(checkoutData)
+
+  const isInCart = checkoutData.some(item => item.id_producto === products.id_producto)
 
   const handleIconCard = (product) => {
-    addToCart(product)
     setIsCart(!isCart)
-
-    if (isCart === true) {
-      decrease()
+    if (isInCart) {
+      removeToCart(product.id_producto)
     } else {
-      increase()
+      addToCart(product)
     }
   }
 
@@ -33,10 +35,11 @@ export default function Card ({ products }) {
   return (
     <div className='card_product__content'>
       <span
-        className='card_product__cart' onClick={() => handleIconCard(products)}
+        className='card_product__cart'
+        onClick={() => handleIconCard(products)}
       >
         {
-          checkoutData.some(item => item.id_producto === products.id_producto)
+          isInCart
             ? <CheckCircleIcon className='text-green-500' />
             : <PlusCircleIcon />
         }

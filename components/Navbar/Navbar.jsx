@@ -20,6 +20,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import Cart from '../Cart/Cart'
 import Image from 'next/image'
+import useStore from '@/store'
 
 const navigation = {
   categories: [
@@ -81,12 +82,15 @@ const navigation = {
 }
 
 export default function NavBar () {
+  const { toogleCheckoutWindowValue } = useStore(state => state)
+
   const [open, setOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
-  console.log('modal desktop', isOpen)
+
   const closePopover = () => {
     setIsOpen(!isOpen)
     setOpen(!open)
+    toogleCheckoutWindowValue(false)
   }
   return (
     <div className='bg-white'>
@@ -152,7 +156,11 @@ export default function NavBar () {
                         >
                           {section.items.map((item) => (
                             <li key={item.name} className='flow-root'>
-                              <Link onClick={() => setOpen(false)} href={item.href} className='-m-2 block p-2 text-gray-500'>
+                              <Link
+                                onClick={() => {
+                                  setOpen(false)
+                                }} href={item.href} className='-m-2 block p-2 text-gray-500'
+                              >
                                 {item.name}
                               </Link>
                             </li>
@@ -168,7 +176,11 @@ export default function NavBar () {
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               {navigation.pages.map((page) => (
                 <div key={page.name} className='flow-root'>
-                  <Link onClick={() => setOpen(!open)} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'>
+                  <Link
+                    onClick={() => {
+                      setOpen(!open)
+                    }} href={page.href} className='-m-2 block p-2 font-medium text-textNavbar'
+                  >
                     {page.name}
                   </Link>
                 </div>
@@ -177,7 +189,11 @@ export default function NavBar () {
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
               <div className='flow-root'>
-                <Link onClick={() => setOpen(!open)} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'>
+                <Link
+                  onClick={() => {
+                    setOpen(!open)
+                  }} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'
+                >
                   Sign in
                 </Link>
               </div>
@@ -270,7 +286,9 @@ export default function NavBar () {
                                           <Link
                                             href={item.href}
                                             className='hover:text-yellow-950 data-[closed]'
-                                            onClick={() => closePopover()}
+                                            onClick={() => {
+                                              closePopover()
+                                            }}
                                           >
                                             {item.name}
                                           </Link>

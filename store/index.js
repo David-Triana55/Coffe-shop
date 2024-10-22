@@ -3,7 +3,6 @@ import { create } from 'zustand'
 
 // Definir la tienda (store)
 const useStore = create((set, get) => ({
-  cart: 0,
   checkoutWindow: false,
   checkoutData: [],
   totalBill: 0,
@@ -11,12 +10,11 @@ const useStore = create((set, get) => ({
   clientInfo: {},
 
   // Método para abrir y cerrar el modal del checkout
-
-  toggleCheckoutWindow: () => set((state) => ({ checkoutWindow: !state.checkoutWindow })),
+  toogleCheckoutWindowValue: (value) => set((state) => ({ checkoutWindow: value })),
+  toogleCheckoutWindow: () => set((state) => ({ checkoutWindow: !state.checkoutWindow })),
 
   // Métodos para el manejo del carrito de compras
-  increase: () => set((state) => ({ cart: state.cart + 1 })),
-  decrease: () => set((state) => ({ cart: state.cart - 1 })),
+
   addToCart: (product, count = 1) => {
     set((state) => {
       const alreadyInCart = state.checkoutData.find((item) => item.id_producto === product.id_producto)
@@ -30,21 +28,20 @@ const useStore = create((set, get) => ({
         }
       } else {
         return {
-
           checkoutData: [...state.checkoutData, { ...product, count }]
-
         }
       }
     })
-    get().calculateTotalBill()
+    const { calculateTotalBill } = get()
+    calculateTotalBill()
   },
   removeToCart: (id) => {
     set((state) => ({
       checkoutData: state.checkoutData.filter((product) => product.id_producto !== id)
     }))
 
-    const { decrease } = get()
-    decrease()
+    const { calculateTotalBill } = get()
+    calculateTotalBill()
   },
 
   setClientInfo: (info) => set({ clientInfo: info }),

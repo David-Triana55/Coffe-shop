@@ -15,7 +15,7 @@ export default function RootLayout ({ children }) {
       </head>
 
       <body
-        className={`${afacad.className} relative h-full antialiased`}
+        className={` ${afacad.className} relative h-full antialiased`}
       >
         <NavBar />
         <Checkout />
