@@ -7,19 +7,19 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}'
   ],
   theme: {
-  	extend: {
-  		colors: {
-  			textNavbar: '#4A3728',
-  			background: 'var(--background)',
-  			foreground: 'var(--foreground)',
-  			green: '#2F4F4F'
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+    extend: {
+      colors: {
+        textNavbar: '#4A3728',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        buttonColor: '#2F4F4F'
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
+      }
+    }
   },
   plugins: [
     require('@tailwindcss/aspect-ratio'),
