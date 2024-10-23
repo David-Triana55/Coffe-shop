@@ -8,7 +8,7 @@ export function formatPrice (price) {
 const typesCoffeeName = {
   'Cafe molido': 'Café Molido',
   'Capsulas de Cafe': 'Capsulas de Café',
-  'Mezlas Especiales': 'Mezlas Especiales'
+  'Mezclas Especiales': 'Mezclas Especiales'
 }
 
 export function formatCategory (category) {

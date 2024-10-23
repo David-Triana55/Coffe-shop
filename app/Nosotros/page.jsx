@@ -3,12 +3,13 @@ import { Leaf, Award, Globe } from 'lucide-react'
 
 export default function PageNosotros () {
   return (
-    <div className='mt-16 p-6'>
+    <div className='mt-14  px-3 min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
+    <section className='text-center py-12'>
       <h1 className='text-4xl font-bold mb-6 text-center'>Nuestra historia</h1>
       <p className='text-lg mb-12 max-w-3xl mx-auto text-center'>
         Coffee Shop nació de la idea de crear un espacio donde la simplicidad y el buen café se encuentren. Todo empezó cuando Ana y Lucas, grandes amigos y amantes del café, decidieron abrir un pequeño lugar que reflejara su pasión por los sabores auténticos. Inspirados en los cafés tradicionales y en los pequeños productores locales, se propusieron ofrecer una experiencia única: un café de calidad, hecho con cuidado y dedicado a aquellos que buscan disfrutar cada sorbo.
       </p>
-
+    </section>
       <div className='grid md:grid-cols-2 gap-8 mb-12'>
         <img src='https://th.bing.com/th/id/R.c77de196074e48d2cf4aa25515334f22?rik=1x5chQ%2f5MYk8sg&riu=http%3a%2f%2fmexico.infoagro.com%2fwp-content%2fuploads%2f2016%2f06%2fCafe2.jpg&ehk=T79kdnOMFlo8zvHIoHg1bgkLH0XNV0mil31wp9B2goY%3d&risl=&pid=ImgRaw&r=0' alt='plantación de café' className='rounded-lg shadow-lg' />
         <article className='flex flex-col justify-center'>

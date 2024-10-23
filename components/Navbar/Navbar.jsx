@@ -215,6 +215,17 @@ export default function NavBar () {
                     Profile
                   </Link>
                 </div>
+
+                <div className='flow-root'>
+                  <button
+                    onClick={() => {
+                      setOpen(!open)
+                      setLogin(null, false)
+                    }}
+                  >
+                      Sign out
+                    </button>
+                </div>
               </div>}
 
           </DialogPanel>

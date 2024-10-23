@@ -11,7 +11,7 @@ export default function Card ({ products }) {
   const [isCart, setIsCart] = useState(false)
 
   const router = useRouter()
-  const precio = formatPrice(products.valor_producto_iva)
+  const precio = formatPrice(products?.valor_producto_iva)
 
   const { addToCart, removeToCart, checkoutData } = useStore(state => state)
 
@@ -47,12 +47,12 @@ export default function Card ({ products }) {
       </span>
       <div className='card_product__image'>
         <img
-          alt={products.nombre_producto}
-          src={products.imagen}
+          alt={products?.nombre_producto}
+          src={products?.imagen}
           onClick={() => handleProductClick(products.id_producto)}
         />
       </div>
-      <h1 className='card_product__title'>{products.nombre_producto}</h1>
+      <h1 className='card_product__title'>{products?.nombre_producto}</h1>
       <p className='card_product__price'>{precio}</p>
     </div>
   )
