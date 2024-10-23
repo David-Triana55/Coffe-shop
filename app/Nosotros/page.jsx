@@ -3,7 +3,7 @@ import { Leaf, Award, Globe } from 'lucide-react'
 
 export default function PageNosotros () {
   return (
-    <div className='mt-14  px-3 min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
+    <div className='mt-14 lg:pb-4 px-3 min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
     <section className='text-center py-12'>
       <h1 className='text-4xl font-bold mb-6 text-center'>Nuestra historia</h1>
       <p className='text-lg mb-12 max-w-3xl mx-auto text-center'>
