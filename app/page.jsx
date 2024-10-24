@@ -1,4 +1,5 @@
 import { getAccesoriesPrincipal, getBrands } from '@/lib/data'
+import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
   const brands = await getBrands()
@@ -8,7 +9,8 @@ export default async function PagePrincipal () {
     <main className='mt-16  min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
       <section className='relative w-full h-full opacity-70 lg:opacity-80'>
 
-        <img className='lg:w-full lg:h-[550px] lg:object-cover lg:object-right lg:rounded-br-3xl lg:rounded-bl-3xl' src='https://cursosbaristacafe.com.mx/wp-content/uploads/2020/01/latte-coffee-cup-scaled.jpg' alt='' />
+        <Image className=' lg:block lg:w-full lg:h-[550px] lg:object-cover lg:object-right lg:rounded-br-3xl lg:rounded-bl-3xl' src='/latte-coffee-cup-scaled.jpg' alt='imagen principal' width={1210} height={550} />
+
         <h1 className='text-4xl absolute top-2 font-bold text-center text-balance text-textNavbar lg:top-16 lg:left-8 lg:text-7xl '>Coffe shop</h1>
         <h2 className='mt-4  text-xl font-bold text-center text-balance text-black lg:absolute top-36 lg:-left-10  lg:text-2xl lg:text-gray-700 lg:w-[600px]'>
           Café de calidad, hecho con cuidado y dedicado para aquellos que buscan disfrutar cada sorbo.

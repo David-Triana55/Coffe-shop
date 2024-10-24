@@ -15,8 +15,6 @@ export default function Card ({ products }) {
 
   const { addToCart, removeToCart, checkoutData } = useStore(state => state)
 
-  console.log(checkoutData)
-
   const isInCart = checkoutData.some(item => item.id_producto === products.id_producto)
 
   const handleIconCard = (product) => {

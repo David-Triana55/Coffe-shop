@@ -6,10 +6,8 @@ import Link from 'next/link'
 
 export default function OrderCard ({ product }) {
   const { removeToCart, toogleCheckoutWindowValue } = useStore((state) => state)
-  console.log(product)
 
   const handleRemove = (id) => {
-    console.log('remove')
     removeToCart(id)
   }
 

@@ -9,7 +9,6 @@ export default async function PageTiposDeCafe ({ params }) {
 
   const typesCoffee = formatCategory(url)
 
-  console.log(url)
   return (
     <div className='mt-14 w-full'>
       <h1 className='text-2xl font-bold text-center text-balance bg-white '>

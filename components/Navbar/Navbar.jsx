@@ -81,12 +81,11 @@ const navigation = {
 }
 
 export default function NavBar () {
-  const { toogleCheckoutWindowValue, login, setLogin } = useStore(state => state)
+  const { toogleCheckoutWindowValue, login, setLogin, removeClientInfo } = useStore(state => state)
   const { isLogged } = login
   const [open, setOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  console.log(isLogged)
   const closePopover = () => {
     setIsOpen(!isOpen)
     setOpen(!open)
@@ -210,7 +209,7 @@ export default function NavBar () {
 
                 <div className='flow-root'>
                   <Link
-                    onClick={() => setOpen(!open)} href='/profile' className='-m-2 block p-2 font-medium text-textNavbar'
+                    onClick={() => setOpen(!open)} href='/Profile' className='-m-2 block p-2 font-medium text-textNavbar'
                   >
                     Profile
                   </Link>
@@ -221,6 +220,7 @@ export default function NavBar () {
                     onClick={() => {
                       setOpen(!open)
                       setLogin(null, false)
+                      removeClientInfo()
                     }}
                   >
                       Sign out
@@ -365,6 +365,7 @@ export default function NavBar () {
                       onClick={() => {
                         closePopover(false)
                         setLogin(null, false)
+                        removeClientInfo()
                       }} className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
                       Sign out

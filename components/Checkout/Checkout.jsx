@@ -5,11 +5,10 @@ import './Checkout.css'
 import Link from 'next/link'
 
 export default function Checkout () {
-  const { toggleCheckoutWindow, checkoutWindow, checkoutData, totalBill, billProduct, bill } = useStore((state) => state)
+  const { toggleCheckoutWindow, checkoutWindow, checkoutData, totalBill, billProduct } = useStore((state) => state)
 
   const handleClickToPay = () => {
     toggleCheckoutWindow()
-    console.log(bill)
   }
   return (
     <>
