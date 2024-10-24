@@ -16,7 +16,7 @@ export default async function PagePrincipal () {
         <div className='flex mt-2 flex-col items-center justify-center'>
 
           <Link href='/Tipos-de-cafe/Cafe-molido'>
-            <button className='bg-green text-white px-2 py-2 rounded-md w-32'>
+            <button className='bg-buttonColor text-white px-2 py-2 rounded-md w-32'>
               Comprar ahora
             </button>
           </Link>
