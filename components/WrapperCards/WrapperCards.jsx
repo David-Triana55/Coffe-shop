@@ -62,7 +62,7 @@ export default function WrapperCards ({ products }) {
         ))
       }
       </div>
-      {filteredProducts?.length === 0 && <h1>No hay productos</h1>}
+      {filteredProducts?.length === 0 && <h1>No hay productos {search ? `para ${search}` : ''}</h1>}
 
     </div>
   )
