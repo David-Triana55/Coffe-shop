@@ -6,17 +6,17 @@ export default async function PagePrincipal () {
   return (
 
     <main className='mt-16  min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
-      <section className='relative w-full h-full opacity-70'>
+      <section className='relative w-full h-full opacity-70 lg:opacity-80'>
 
-        <img src='https://www.baristo.com.br/wp-content/uploads/2017/09/21.jpg' alt='' />
-        <h1 className='text-5xl absolute top-2 font-bold text-center text-balance text-black'>Coffe shop</h1>
-        <h2 className='mt-4  text-xl font-bold text-center text-balance text-black'>
+        <img className='lg:w-full lg:h-[550px] lg:object-cover lg:object-right lg:rounded-br-3xl lg:rounded-bl-3xl' src='https://cursosbaristacafe.com.mx/wp-content/uploads/2020/01/latte-coffee-cup-scaled.jpg' alt='' />
+        <h1 className='text-4xl absolute top-2 font-bold text-center text-balance text-textNavbar lg:top-16 lg:left-8 lg:text-7xl '>Coffe shop</h1>
+        <h2 className='mt-4  text-xl font-bold text-center text-balance text-black lg:absolute top-36 lg:-left-10  lg:text-2xl lg:text-gray-700 lg:w-[600px]'>
           Café de calidad, hecho con cuidado y dedicado para aquellos que buscan disfrutar cada sorbo.
         </h2>
-        <div className='flex mt-2 flex-col items-center justify-center'>
+        <div className='flex mt-5 flex-col items-center justify-center lg:items-start lg:mt-2 lg:left-10 lg:absolute lg:top-60   lg:text-white lg:w-[600px] lg:text-xl'>
 
           <Link href='/Tipos-de-cafe/Cafe-molido'>
-            <button className='bg-buttonColor text-white px-2 py-2 rounded-md w-32'>
+            <button className='bg-buttonColor text-white px-2 py-2 rounded-md w-32 lg:w-36'>
               Comprar ahora
             </button>
           </Link>
@@ -24,15 +24,14 @@ export default async function PagePrincipal () {
         </div>
       </section>
 
-      <section className='mt-16'>
+      <section className='mt-10'>
         <h2 className='text-3xl font-bold mb-8 text-center'>Marcas de café</h2>
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto overscroll-x-contain flex gap-x-5 overflow-y-hidden lg:justify-center'>
           {brands.map((brand) => (
             <Link href={`/Marcas-de-cafe/${brand.nombre_marca}`} key={brand.id_marca}>
               <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-4 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full rounded-lg bg-white shadow-md'>
-                  <p className='text-terciary font-bold text-xl dark:text-white'>{brand.nombre_marca}</p>
-                  <img className='w-full h-full object-contain' src='https://www.baristo.com.br/wp-content/uploads/2017/09/21.jpg' alt='' />
+                  <img className='w-full h-full object-contain' src={brand.logo} alt='' />
                 </div>
               </div>
             </Link>
@@ -46,10 +45,10 @@ export default async function PagePrincipal () {
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto overscroll-x-contain flex gap-x-5 overflow-y-hidden lg:justify-center'>
           {accesoriesCoffe?.map((coffe) => (
             <Link href={`/Accesorios-de-cafe/${coffe.nombre_categoria}`} key={coffe.id_categoria}>
-              <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-4 hover:shadow-xl'>
-                <div className='w-full flex flex-col justify-around items-center h-full rounded-lg bg-white shadow-md'>
-                  <p className='text-terciary font-bold text-xl dark:text-white'>{coffe.nombre_categoria}</p>
-                  <img className='w-full h-full object-contain' src='https://www.baristo.com.br/wp-content/uploads/2017/09/21.jpg' alt='' />
+              <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-5 hover:shadow-xl'>
+                <div className='w-full flex flex-col justify-around items-center h-full relative rounded-lg bg-white shadow-md'>
+                  <p className='text-terciary text-center font-bold text-xl absolute -top-6 dark:text-white'>{coffe.nombre_categoria}</p>
+                  <img className='w-full h-full object-cover rounded-lg' src={coffe.imagenes} alt='' />
                 </div>
               </div>
             </Link>
