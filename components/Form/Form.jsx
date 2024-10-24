@@ -7,7 +7,7 @@ import { useState } from 'react'
 export default function Form ({ type }) {
   const router = useRouter()
   const [error, setError] = useState(null)
-  const { setLogin } = useStore(state => state)
+  const { setLogin, setClientInfo } = useStore(state => state)
   // funcion para enviar el formulario de login
   const handleSbmitLogin = async (e) => {
     e.preventDefault()
@@ -29,8 +29,21 @@ export default function Form ({ type }) {
       }
 
       const data = await response.json()
-      console.log(data)
       setLogin(data.token, true)
+
+      const res = await fetch('/api/getInfo', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${data.token}`
+        }
+      })
+
+      if (!res.ok) throw new Error('fallllllla')
+
+      const dataInfo = await res.json()
+      setClientInfo(dataInfo)
+
       router.push('/')
     } catch (error) {
       setError(true)

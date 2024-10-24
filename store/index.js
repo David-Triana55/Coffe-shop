@@ -49,6 +49,8 @@ const useStore = create(persist(
       calculateTotalBill()
     },
 
+    removeClientInfo: () => set({ clientInfo: {} }),
+
     setClientInfo: (info) => set({ clientInfo: info }),
 
     // Métodos para calcular el total de la cuenta
