@@ -1,7 +1,22 @@
-export default function PageAccessorios ({ params }) {
+import WrapperCards from '@/components/WrapperCards/WrapperCards'
+import { getProductByCategory } from '@/lib/data'
+import { formatCategory } from '@/utils/formatter'
+import { Suspense } from 'react'
+
+export default async function PageAccesories ({ params }) {
+  const url = await params.items.split('-').join(' ')
+  const products = await getProductByCategory(url)
+  console.log(url)
+  const typesCoffee = formatCategory(url)
+
   return (
-    <h1 className='mt-16'>
-      Accessoires de Café {params.items}
-    </h1>
+    <div className='mt-16 py-12 w-full'>
+      <h1 className='text-2xl font-bold text-center text-balance bg-white '>
+        {typesCoffee}
+      </h1>
+      <Suspense fallback={<div>cargando....</div>}>
+        <WrapperCards products={products} />
+      </Suspense>
+    </div>
   )
 }

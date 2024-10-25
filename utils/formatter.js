@@ -8,7 +8,17 @@ export function formatPrice (price) {
 const typesCoffeeName = {
   'Cafe molido': 'Café Molido',
   'Capsulas de Cafe': 'Capsulas de Café',
-  'Mezclas Especiales': 'Mezclas Especiales'
+  'Mezclas Especiales': 'Mezclas Especiales',
+  Molinillos: 'Molinillos',
+  Cafeteras: 'Cafeteras ',
+  'Tazas y termos': 'Tazas y termos',
+  Filtros: 'Filtros',
+  Oma: 'Oma',
+  'Juan Valdez': 'Juan Valdez',
+  Nescafe: 'Nescafé',
+  Colcafe: 'Colcafé',
+  'Cafe Devocion': 'Café Devoción'
+
 }
 
 export function formatCategory (category) {

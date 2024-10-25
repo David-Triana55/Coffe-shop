@@ -17,16 +17,13 @@ import useStore from '@/store'
 import { useRouter } from 'next/navigation'
 
 export default function Profile () {
+  const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
   const [activeTab, setActiveTab] = useState('information')
   const [save, setSave] = useState(null)
-  const { clientInfo, login, setClientInfo } = useStore((state) => state)
+  const [dataClient, setDataClient] = useState({ ...clientInfo.data })
   const router = useRouter()
-  const [dataClient, setDataClient] = useState(clientInfo)
-
-  if (login.isLogged === false) {
-    router.push('/Sign-in')
-  }
-
+  console.log(clientInfo)
+  console.log(dataClient)
   const handleSubmitInfo = async (e) => {
     try {
       e.preventDefault()
@@ -94,6 +91,10 @@ export default function Profile () {
               </Button>
 
               <Button
+                onClick={() => {
+                  setLogin(null, false)
+                  router.push('/')
+                }}
                 variant='ghost'
                 className='justify-start text-red-600 hover:text-red-700 hover:bg-red-100'
               >
@@ -125,7 +126,7 @@ export default function Profile () {
                     <Label htmlFor='name'>Nombre</Label>
                     <Input
                       id='name'
-                      placeholder={clientInfo?.nombre_cliente}
+                      placeholder={clientInfo.data?.nombre_cliente}
                       value={dataClient?.nombre_cliente}
                       onChange={(e) => setDataClient({ ...dataClient, nombre_cliente: e.target.value })}
                     />
@@ -135,7 +136,7 @@ export default function Profile () {
                     <Label htmlFor='lastName'>Apellido</Label>
                     <Input
                       id='lastName'
-                      placeholder={clientInfo?.apellido}
+                      placeholder={clientInfo.data?.apellido}
                       value={dataClient?.apellido}
                       onChange={(e) => setDataClient({ ...dataClient, apellido: e.target.value })}
                     />
@@ -146,7 +147,7 @@ export default function Profile () {
                     <Input
                       id='email'
                       type='email'
-                      placeholder={clientInfo?.email}
+                      placeholder={clientInfo.data?.email}
                       value={dataClient?.email}
                       onChange={(e) => setDataClient({ ...dataClient, email: e.target.value })}
                     />
@@ -157,7 +158,7 @@ export default function Profile () {
                     <Input
                       id='number'
                       type='number'
-                      placeholder={clientInfo?.telefono}
+                      placeholder={clientInfo.data?.telefono}
                       value={dataClient?.telefono}
                       onChange={(e) => setDataClient({ ...dataClient, telefono: e.target.value })}
                     />
