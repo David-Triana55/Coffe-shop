@@ -7,7 +7,6 @@ export async function GET (req) {
 
   console.log('Product ID:', id)
 
-  // Simulación de obtener un producto desde una base de datos
   const response = await getProductById(id)
 
   return NextResponse.json(response)
