@@ -56,7 +56,7 @@ const navigation = {
             { name: 'Molinillos', href: '/Accesorios-de-cafe/Molinillos' },
             { name: 'Cafeteras ', href: '/Accesorios-de-cafe/Cafeteras' },
             { name: 'Tazas y termos', href: '/Accesorios-de-cafe/Tazas-y-termos' },
-            { name: 'Filtros y herramientas para preparación', href: '/Accesorios-de-cafe/Filtros-y-herramientas-para-preparacion' }
+            { name: 'Filtros', href: '/Accesorios-de-cafe/Filtros' }
           ]
         },
         {
@@ -234,7 +234,7 @@ export default function NavBar () {
 
       <header className='fixed top-0 w-full bg-[#4A3728] z-10'>
 
-        <nav aria-label='Top' className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+        <nav aria-label='Top' className='mx-auto  max-w-7xl px-4 sm:px-6 lg:px-8'>
           <div className='border-b border-black'>
             <div className='flex h-16 items-center'>
               <button
