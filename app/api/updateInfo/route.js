@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { updateInfo } from '@/lib/data'
 import jwt from 'jsonwebtoken'
 
