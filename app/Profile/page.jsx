@@ -14,12 +14,58 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 
 import useStore from '@/store'
+import { useRouter } from 'next/navigation'
 
 export default function Profile () {
   const [activeTab, setActiveTab] = useState('information')
-  const { clientInfo } = useStore((state) => state)
+  const [save, setSave] = useState(null)
+  const { clientInfo, login, setClientInfo } = useStore((state) => state)
+  const router = useRouter()
+  const [dataClient, setDataClient] = useState(clientInfo)
 
-  const { data } = clientInfo
+  if (login.isLogged === false) {
+    router.push('/Sign-in')
+  }
+
+  const handleSubmitInfo = async (e) => {
+    try {
+      e.preventDefault()
+
+      const objClient = {
+        id: clientInfo.id_cliente,
+        nombre_cliente: dataClient.nombre_cliente ?? clientInfo.nombre_cliente,
+        apellido: dataClient.apellido ?? clientInfo.apellido,
+        email: dataClient.email ?? clientInfo.email,
+        telefono: dataClient.telefono ?? clientInfo.telefono
+      }
+
+      console.log(objClient, 'objClient')
+
+      const response = await fetch('/api/updateInfo', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${login.token}`
+        },
+        body: JSON.stringify(objClient)
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la información')
+      }
+      setClientInfo(objClient)
+
+      setSave(true)
+      setTimeout(() => {
+        setSave(false)
+      }, 2000)
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      e.target.reset()
+    }
+  }
 
   return (
     <main className='container mt-16 mx-auto p-4 flex flex-col md:flex-row gap-8'>
@@ -74,18 +120,36 @@ export default function Profile () {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                <form onSubmit={() => console.log('ssss')}>
+                <form onSubmit={handleSubmitInfo}>
                   <div className='space-y-2'>
                     <Label htmlFor='name'>Nombre</Label>
-                    <Input id='name' placeholder={data?.nombre_cliente} />
+                    <Input
+                      id='name'
+                      placeholder={clientInfo?.nombre_cliente}
+                      value={dataClient?.nombre_cliente}
+                      onChange={(e) => setDataClient({ ...dataClient, nombre_cliente: e.target.value })}
+                    />
+
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='lastName'>Apellido</Label>
-                    <Input id='lastName' placeholder={data?.apellido} />
+                    <Input
+                      id='lastName'
+                      placeholder={clientInfo?.apellido}
+                      value={dataClient?.apellido}
+                      onChange={(e) => setDataClient({ ...dataClient, apellido: e.target.value })}
+                    />
+
                   </div>
                   <div className='space-y-2'>
                     <Label htmlFor='email'>Correo Electrónico</Label>
-                    <Input id='email' type='email' placeholder={data?.email} />
+                    <Input
+                      id='email'
+                      type='email'
+                      placeholder={clientInfo?.email}
+                      value={dataClient?.email}
+                      onChange={(e) => setDataClient({ ...dataClient, email: e.target.value })}
+                    />
                   </div>
 
                   <div className='space-y-2'>
@@ -93,15 +157,18 @@ export default function Profile () {
                     <Input
                       id='number'
                       type='number'
-                      placeholder={data?.telefono}
+                      placeholder={clientInfo?.telefono}
+                      value={dataClient?.telefono}
+                      onChange={(e) => setDataClient({ ...dataClient, telefono: e.target.value })}
                     />
                   </div>
                   <button
                     type='submit'
-                    className='mt-3 flex w-2/12 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
+                    className='mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
                   >
                     Guardar Cambios
                   </button>
+                  {save && <p className='text-green-500 mt-3'>Cambios guardados</p>}
                 </form>
               </CardContent>
             </Card>
