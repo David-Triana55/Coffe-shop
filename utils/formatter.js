@@ -11,7 +11,7 @@ const typesCoffeeName = {
   'Mezclas Especiales': 'Mezclas Especiales',
   Molinillos: 'Molinillos',
   Cafeteras: 'Cafeteras ',
-  'Tazas y termos': 'Tazas y termos',
+  'Tazas%20y%20termos': 'Tazas y termos',
   Filtros: 'Filtros',
   Oma: 'Oma',
   'Juan Valdez': 'Juan Valdez',
