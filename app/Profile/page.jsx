@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-multi-spaces */
 'use client'
 import {
   Card,
@@ -19,6 +20,7 @@ import { useRouter } from 'next/navigation'
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
   const [activeTab, setActiveTab] = useState('information')
+  const [noEdit, setNoEdit] = useState(true)
   const [save, setSave] = useState(null)
   const [dataClient, setDataClient] = useState({ ...clientInfo.data })
   const router = useRouter()
@@ -56,6 +58,7 @@ export default function Profile () {
       setTimeout(() => {
         setSave(false)
       }, 2000)
+      setNoEdit(true)
       console.log(response)
     } catch (error) {
       console.error(error)
@@ -125,6 +128,7 @@ export default function Profile () {
                   <div className='space-y-2'>
                     <Label htmlFor='name'>Nombre</Label>
                     <Input
+                      disabled={noEdit}
                       id='name'
                       placeholder={clientInfo.data?.nombre_cliente}
                       value={dataClient?.nombre_cliente}
@@ -135,6 +139,7 @@ export default function Profile () {
                   <div className='space-y-2'>
                     <Label htmlFor='lastName'>Apellido</Label>
                     <Input
+                      disabled={noEdit}
                       id='lastName'
                       placeholder={clientInfo.data?.apellido}
                       value={dataClient?.apellido}
@@ -145,6 +150,7 @@ export default function Profile () {
                   <div className='space-y-2'>
                     <Label htmlFor='email'>Correo Electrónico</Label>
                     <Input
+                      disabled={noEdit}
                       id='email'
                       type='email'
                       placeholder={clientInfo.data?.email}
@@ -156,6 +162,7 @@ export default function Profile () {
                   <div className='space-y-2'>
                     <Label htmlFor='number'>Telefono</Label>
                     <Input
+                      disabled={noEdit}
                       id='number'
                       type='number'
                       placeholder={clientInfo.data?.telefono}
@@ -163,12 +170,19 @@ export default function Profile () {
                       onChange={(e) => setDataClient({ ...dataClient, telefono: e.target.value })}
                     />
                   </div>
-                  <button
+                  {noEdit && <button
+                    onClick={() => setNoEdit(!noEdit)}
+                    className='mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
+                             >
+                    Editar Perfil
+                  </button>}
+
+                 {noEdit === false && <button
                     type='submit'
                     className='mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
-                  >
+                                      >
                     Guardar Cambios
-                  </button>
+                  </button>}
                   {save && <p className='text-green-500 mt-3'>Cambios guardados</p>}
                 </form>
               </CardContent>

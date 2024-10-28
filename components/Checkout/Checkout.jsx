@@ -7,9 +7,6 @@ import Link from 'next/link'
 export default function Checkout () {
   const { toggleCheckoutWindow, checkoutWindow, checkoutData, totalBill, billProduct } = useStore((state) => state)
 
-  const handleClickToPay = () => {
-    toggleCheckoutWindow()
-  }
   return (
     <>
       <aside className={` ${checkoutWindow ? 'flex show' : ''} checkout__products `}>
@@ -24,8 +21,8 @@ export default function Checkout () {
         <div className='flex justify-between items-center gap-4 mt-4 text-black font-bold'>
           <h4>Total: {totalBill}</h4>
           <button onClick={billProduct} type='button' className='bg-stone-500 text-white px-2 py-2 rounded-md w-32'>
-            <Link onClick={handleClickToPay} href='/Pay'>
-              Checkout
+            <Link onClick={() => toggleCheckoutWindow()} href='/Pay'>
+              Finalizar Compra
             </Link>
           </button>
         </div>

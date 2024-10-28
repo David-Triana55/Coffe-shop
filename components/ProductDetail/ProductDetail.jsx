@@ -6,8 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import './ProductDetail.css'
 import { formatCategory, formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
-import { Minus, Plus } from 'lucide-react'
+import { ChevronLeft, Minus, Plus } from 'lucide-react'
+import Loading from '../Loading/Loading'
+import { useRouter } from 'next/navigation'
 export default function ProductDetail ({ params }) {
+  const router = useRouter()
   const [product, setProduct] = useState(null)
   const [count, setCount] = useState(1)
   const { addToCart, checkoutData } = useStore((state) => state)
@@ -45,11 +48,12 @@ export default function ProductDetail ({ params }) {
     fetchProduct()
   }, [params.id])
 
-  if (!product) return <div>Loading...</div>
+  if (!product) return <Loading />
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 w-full lg:pt-4'>
-      <div className='product_detail__content'>
+      <div className='product_detail__content relative'>
+        <ChevronLeft className='absolute left-4 top-4 w-6 h-6 text-black hover:text-primary-500' onClick={() => router.back()} />
         <img src={product.imagen} alt={product.nombre_producto} />
 
       </div>
