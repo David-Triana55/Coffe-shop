@@ -8,13 +8,14 @@ import { formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
 
 export default function Card ({ products }) {
-  const [isCart, setIsCart] = useState(false)
-
-  const router = useRouter()
-  const precio = formatPrice(products?.valor_producto_iva)
-
+  // consumir el estado global
   const { addToCart, removeToCart, checkoutData } = useStore(state => state)
-
+  const [isCart, setIsCart] = useState(false)
+  // router para controlar la navegacion
+  const router = useRouter()
+  // formatear la moneda de los productos
+  const precio = formatPrice(products?.valor_producto_iva)
+  // verificar si el producto ya se encuentra agregado en el objeto de checkoutdata
   const isInCart = checkoutData.some(item => item.id_producto === products.id_producto)
 
   const handleIconCard = (product) => {

@@ -1,28 +1,25 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client'
 import CardProducts from '@/components/Card/Card'
 import React, { Suspense, useState } from 'react'
 import './WrapperCards.css'
+import NotProducts from '../NotProducts/NotProducts'
+import Loading from '../Loading/Loading'
+import { useFilter } from '@/hooks/useFilter'
 
 export default function WrapperCards ({ products }) {
   // eslint-disable-next-line no-unused-vars
   const [remainProducts, setRemainProducts] = useState(products)
   const [filteredProducts, setFilteredProducts] = useState(products)
-  const [filtroValue, setFiltroValue] = useState('') // Estado para el valor del filtro
+  const [filtroValue, setFiltroValue] = useState('')
   const [search, setSearch] = useState('')
 
   const handleChangeOptions = (e) => {
     const value = e.target.value
-    setFiltroValue(value) // Actualiza el estado del filtro
+    setFiltroValue(value)
 
-    if (filtroValue === 'Ordenar por precio alto a bajo') {
-      setFilteredProducts(filteredProducts.sort((a, b) => a.valor_producto_iva - b.valor_producto_iva))
-    } else if (filtroValue === 'Ordenar por precio bajo a alto') {
-      setFilteredProducts(filteredProducts.sort((a, b) => b.valor_producto_iva - a.valor_producto_iva))
-    } else if (filtroValue === 'Ordenar por alfabeto') {
-      setFilteredProducts(filteredProducts.sort((a, b) => a.nombre_producto.localeCompare(b.nombre_producto)))
-    } else {
-      setFilteredProducts(products)
-    }
+    // hook que encapsula la logica del filtrado de los productos
+    useFilter(setFilteredProducts, filteredProducts, filtroValue)
   }
 
   const handleChangeSearch = (e) => {
@@ -54,15 +51,14 @@ export default function WrapperCards ({ products }) {
         {
         filteredProducts?.map((product) => (
           <div className=' last:mb-6 ' key={product.id_producto}>
-            <Suspense fallback={<p>Cargando...</p>}>
+            <Suspense fallback={<Loading />}>
               <CardProducts products={product} />
-
             </Suspense>
           </div>
         ))
       }
       </div>
-      {filteredProducts?.length === 0 && <h1>No hay productos {search ? `para ${search}` : ''}</h1>}
+      {filteredProducts?.length === 0 && <NotProducts product={search} />}
 
     </div>
   )

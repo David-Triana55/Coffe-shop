@@ -1,3 +1,4 @@
+import Loading from '@/components/Loading/Loading'
 import WrapperCards from '@/components/WrapperCards/WrapperCards'
 import { getProductByCategory } from '@/lib/data'
 import { formatCategory } from '@/utils/formatter'
@@ -14,7 +15,7 @@ export default async function PageTiposDeCafe ({ params }) {
       <h1 className='text-2xl font-bold text-center text-balance bg-white '>
         {typesCoffee}
       </h1>
-      <Suspense fallback={<div>cargando....</div>}>
+      <Suspense fallback={<Loading />}>
         <WrapperCards products={products} />
       </Suspense>
     </div>

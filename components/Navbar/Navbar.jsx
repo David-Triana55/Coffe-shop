@@ -91,6 +91,13 @@ export default function NavBar () {
     setOpen(!open)
     toogleCheckoutWindowValue(false)
   }
+
+  const handleLogut = () => {
+    setOpen(!open)
+    setLogin(null, false)
+    removeClientInfo()
+  }
+
   return (
     <div className='bg-white'>
       {/* Mobile menu */}
@@ -216,15 +223,9 @@ export default function NavBar () {
                 </div>
 
                 <div className='flow-root'>
-                  <button
-                    onClick={() => {
-                      setOpen(!open)
-                      setLogin(null, false)
-                      removeClientInfo()
-                    }}
-                  >
+                  <button onClick={handleLogut}>
                       Sign out
-                    </button>
+                  </button>
                 </div>
               </div>}
 
