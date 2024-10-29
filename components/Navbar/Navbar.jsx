@@ -207,14 +207,14 @@ export default function NavBar () {
                       setOpen(!open)
                     }} href='/Sign-in' className='-m-2 block p-2 font-medium text-textNavbar'
                   >
-                    Sign in
+                    Iniciar sesión
                   </Link>
                 </div>
                 <div className='flow-root'>
                   <Link
                     onClick={() => setOpen(!open)} href='/Sign-up' className='-m-2 block p-2 font-medium text-textNavbar'
                   >
-                    Create account
+                    Crear cuenta
                   </Link>
                 </div>
               </div>
@@ -224,13 +224,13 @@ export default function NavBar () {
                   <Link
                     onClick={() => setOpen(!open)} href='/Profile' className='-m-2 block p-2 font-medium text-textNavbar'
                   >
-                    Profile
+                    Perfil
                   </Link>
                 </div>
 
                 <div className='flow-root'>
                   <button onClick={handleLogut}>
-                      Sign out
+                      Cerrar sesión
                   </button>
                 </div>
               </div>}
@@ -356,19 +356,19 @@ export default function NavBar () {
                 {!isLogged
                   ? <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
                     <Link onClick={() => closePopover(false)} href='/Sign-in' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
-                      Sign in
+                      Iniciar sesión
                     </Link>
                     <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
                     <Link
                       onClick={() => setOpen(!open)}
                       href='/Sign-up' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
-                      Create account
+                      Crear cuenta
                     </Link>
                   </div>
                   : <div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
                     <Link onClick={() => closePopover(false)} href='/Profile' className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'>
-                      Profile
+                      Perfil
                     </Link>
                     <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
                     <button
@@ -378,7 +378,7 @@ export default function NavBar () {
                         router.push('/')
                       }} className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
-                      Sign out
+                      Cerrar sesión
                     </button>
                     </div>}
 
