@@ -11,7 +11,6 @@ export default async function pageBill ({ params }) {
   const detailBill = await detailBillById(id)
   const billProduct = await getProductsByBill(id)
 
-
   let data
   let subTotal
   if (billProduct.length === 0) {
@@ -61,7 +60,7 @@ export default async function pageBill ({ params }) {
               <TableBody>
                 {billProduct.map((item) => (
                   <TableRow key={item.id_producto}>
-                    <TableCell >
+                    <TableCell>
                       <Link href={`/ProductDetail/${item.id_producto}`}>
                         {item.nombre_producto}
                       </Link>
@@ -69,7 +68,7 @@ export default async function pageBill ({ params }) {
                     <TableCell className='text-right'>
                       <Link href={`/ProductDetail/${item.id_producto}`}>
                         {item.cantidad}
-                      </Link>  
+                      </Link>
                     </TableCell>
                     <TableCell className='text-right'>
                       <Link href={`/ProductDetail/${item.id_producto}`}>
