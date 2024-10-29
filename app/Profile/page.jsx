@@ -23,8 +23,8 @@ export default function Profile () {
   const [activeTab, setActiveTab] = useState('information')
   const [noEdit, setNoEdit] = useState(true)
   const [save, setSave] = useState(null)
-  const [dataClient, setDataClient] = useState({ ...clientInfo.data })
   const router = useRouter()
+  const [dataClient, setDataClient] = useState({})
   const [history, setHistory] = useState([])
 
   useEffect(() => {
@@ -43,16 +43,36 @@ export default function Profile () {
     getHistory()
   }, [login.token])
 
+  useEffect(() => {
+    const getClientInfo = async () => {
+      const res = await fetch('/api/getInfo', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${login.token}`
+        }
+      })
+
+      const data = await res.json()
+      setDataClient({ ...data, edit: { ...data.data } })
+      setClientInfo(data)
+    }
+    getClientInfo()
+  }, [login.token, save])
+
+  console.log(dataClient, 'dataClient')
+  console.log(history, 'history')
+
   const handleSubmitInfo = async (e) => {
     try {
       e.preventDefault()
 
       const objClient = {
         data: {
-          nombre_cliente: dataClient.nombre_cliente ?? clientInfo.nombre_cliente,
-          apellido: dataClient.apellido ?? clientInfo.apellido,
-          email: dataClient.email ?? clientInfo.email,
-          telefono: dataClient.telefono ?? clientInfo.telefono
+          nombre_cliente: dataClient.edit.nombre_cliente === '' ? clientInfo.data.nombre_cliente : dataClient.edit.nombre_cliente,
+          apellido: dataClient.edit.apellido === '' ? clientInfo.data.apellido : dataClient.edit.apellido,
+          email: dataClient.edit.email === '' ? clientInfo.data.email : dataClient.edit.email,
+          telefono: dataClient.edit.telefono === '' ? clientInfo.data.telefono : dataClient.edit.telefono
         }
       }
 
@@ -146,8 +166,8 @@ export default function Profile () {
                       disabled={noEdit}
                       id='name'
                       placeholder={clientInfo.data?.nombre_cliente}
-                      value={dataClient?.nombre_cliente}
-                      onChange={(e) => setDataClient({ ...dataClient, nombre_cliente: e.target.value })}
+                      value={dataClient?.edit?.nombre_cliente}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, nombre_cliente: e.target.value } })}
                     />
 
                   </div>
@@ -157,8 +177,8 @@ export default function Profile () {
                       disabled={noEdit}
                       id='lastName'
                       placeholder={clientInfo.data?.apellido}
-                      value={dataClient?.apellido}
-                      onChange={(e) => setDataClient({ ...dataClient, apellido: e.target.value })}
+                      value={dataClient?.edit?.apellido}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, apellido: e.target.value } })}
                     />
 
                   </div>
@@ -169,8 +189,8 @@ export default function Profile () {
                       id='email'
                       type='email'
                       placeholder={clientInfo.data?.email}
-                      value={dataClient?.email}
-                      onChange={(e) => setDataClient({ ...dataClient, email: e.target.value })}
+                      value={dataClient?.edit?.email}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, email: e.target.value } })}
                     />
                   </div>
 
@@ -181,8 +201,8 @@ export default function Profile () {
                       id='number'
                       type='number'
                       placeholder={clientInfo.data?.telefono}
-                      value={dataClient?.telefono}
-                      onChange={(e) => setDataClient({ ...dataClient, telefono: e.target.value })}
+                      value={dataClient?.edit?.telefono}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, telefono: e.target.value } })}
                     />
                   </div>
                   {noEdit && <button

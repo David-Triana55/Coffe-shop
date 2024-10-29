@@ -7,7 +7,9 @@ const secretKey = 'supersecretkey'
 export async function PUT (req) {
   const authHeader = req.headers.get('authorization')
 
-  const { nombre_cliente, apellido, email, telefono } = await req.json()
+  const { data } = await req.json()
+
+  const { nombre_cliente, apellido, email, telefono } = data
 
   const objClient = {
     nombre_cliente,
