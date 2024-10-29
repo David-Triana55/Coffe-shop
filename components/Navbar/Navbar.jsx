@@ -20,6 +20,7 @@ import Link from 'next/link'
 import Cart from '../Cart/Cart'
 import Image from 'next/image'
 import useStore from '@/store'
+import { useRouter } from 'next/navigation'
 
 const navigation = {
   categories: [
@@ -81,10 +82,11 @@ const navigation = {
 }
 
 export default function NavBar () {
-  const { toogleCheckoutWindowValue, login, setLogin, removeClientInfo } = useStore(state => state)
+  const { toogleCheckoutWindowValue, login, logOut } = useStore(state => state)
   const { isLogged } = login
   const [open, setOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   const closePopover = () => {
     setIsOpen(!isOpen)
@@ -94,8 +96,8 @@ export default function NavBar () {
 
   const handleLogut = () => {
     setOpen(!open)
-    setLogin(null, false)
-    removeClientInfo()
+    logOut()
+    router.push('/')
   }
 
   return (
@@ -365,8 +367,8 @@ export default function NavBar () {
                     <button
                       onClick={() => {
                         closePopover(false)
-                        setLogin(null, false)
-                        removeClientInfo()
+                        logOut()
+                        router.push('/')
                       }} className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
                       Sign out

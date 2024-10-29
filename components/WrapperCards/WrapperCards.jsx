@@ -53,6 +53,7 @@ export default function WrapperCards ({ products }) {
           <div className=' last:mb-6 ' key={product.id_producto}>
             <Suspense fallback={<Loading />}>
               <CardProducts products={product} />
+
             </Suspense>
           </div>
         ))

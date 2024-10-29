@@ -30,7 +30,7 @@ export default async function PagePrincipal () {
         <h2 className='text-3xl font-bold mb-8 text-center'>Marcas de café</h2>
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto overscroll-x-contain flex gap-x-5 overflow-y-hidden lg:justify-center'>
           {brands.map((brand) => (
-            <Link href={`/Marcas-de-cafe/${brand.nombre_marca}`} key={brand.id_marca}>
+            <Link href={`/Marcas-de-cafe/${brand.nombre_marca.split(' ').join('-')}`} key={brand.id_marca}>
               <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-4 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full rounded-lg bg-white shadow-md'>
                   <img className='w-full h-full object-contain' src={brand.logo} alt='' />
@@ -46,7 +46,7 @@ export default async function PagePrincipal () {
 
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto overscroll-x-contain flex gap-x-5 overflow-y-hidden lg:justify-center'>
           {accesoriesCoffe?.map((coffe) => (
-            <Link href={`/Accesorios-de-cafe/${coffe.nombre_categoria}`} key={coffe.id_categoria}>
+            <Link href={`/Accesorios-de-cafe/${coffe?.nombre_categoria.split(' ').join('-')}`} key={coffe.id_categoria}>
               <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-5 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full relative rounded-lg bg-white shadow-md'>
                   <p className='text-terciary text-center font-bold text-xl absolute -top-6 dark:text-white'>{coffe.nombre_categoria}</p>

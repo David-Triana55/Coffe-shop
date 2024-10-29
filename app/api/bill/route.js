@@ -1,0 +1,76 @@
+import { detailBill, insertBill } from '@/lib/data'
+import jwt from 'jsonwebtoken' // Asegúrate de tener esta dependencia instalada
+const secretKey = 'supersecretkey'
+
+export async function POST (req) {
+  const authHeader = await req.headers.get('authorization')
+  const res = await req.json()
+  console.log(req)
+  console.log(res)
+  const { productos } = res
+  let token = ''
+
+  if (authHeader && authHeader.toLowerCase().startsWith('bearer')) {
+    token = authHeader.split(' ')[1]
+  }
+
+  if (!token) {
+    return new Response(
+      JSON.stringify({
+        message: 'Token invalid'
+      }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+
+  let decodedToken
+  try {
+    decodedToken = jwt.verify(token, secretKey)
+  } catch (err) {
+    return new Response(
+      JSON.stringify({
+        message: 'Token invalid'
+      }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+
+  if (!decodedToken.id) {
+    return new Response(
+      JSON.stringify({
+        message: 'Token invalid'
+      }),
+      {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+  }
+  const currentDate = new Date().toISOString().split('T')[0]
+
+  const bill = await insertBill(decodedToken.id, currentDate)
+  console.log(bill)
+
+  for (const item of productos) {
+    await detailBill(bill[0].id_factura, item.id_producto, item.cantidad, item.precio_unitario)
+  }
+
+  console.log(bill)
+
+  return new Response(
+    JSON.stringify({
+      message: 'Bill created successfully',
+      data: bill
+    }),
+    {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' }
+    }
+  )
+}
