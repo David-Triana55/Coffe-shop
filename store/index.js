@@ -12,12 +12,12 @@ const useStore = create(persist(
       isLogged: false
     },
     totalBill: 0,
-    bill: [],
     clientInfo: {},
 
     // Método para abrir y cerrar el modal del checkout
-    toogleCheckoutWindowValue: (value) => set({ checkoutWindow: value }),
+
     toogleCheckoutWindow: () => set((state) => ({ checkoutWindow: !state.checkoutWindow })),
+    toogleCheckoutWindowValue: (value) => set({ checkoutWindow: value }),
 
     // Métodos para el manejo del carrito de compras
     addToCart: (product, count = 1) => {
@@ -53,6 +53,8 @@ const useStore = create(persist(
 
     setClientInfo: (info) => set({ clientInfo: info }),
 
+    cleanCart: () => set({ checkoutData: [] }),
+
     // Métodos para calcular el total de la cuenta
     calculateTotalBill: () => {
       const { checkoutData } = get()
@@ -61,23 +63,6 @@ const useStore = create(persist(
       set({ totalBill })
     },
 
-    // Métodos para realizar la facturación
-    billProduct: () => {
-      const { checkoutData, clientInfo } = get()
-
-      const checkout = {
-        cliente: clientInfo,
-        productos: checkoutData.map(item => ({
-          id_producto: item.id_producto,
-          cantidad: item.count,
-          precio_unitario: item.valor_producto_iva
-        }))
-      }
-
-      set((state) => ({
-        bill: [...state.bill, checkout]
-      }))
-    },
     setLogin: (token, isLogged) => {
       set((state) => ({
         login: {
@@ -85,7 +70,9 @@ const useStore = create(persist(
           isLogged
         }
       }))
-    }
+    },
+
+    logOut: () => set({ login: { token: null, isLogged: false }, checkoutData: [], totalBill: 0, clientInfo: {} })
   }),
   {
     name: 'isLogged', // Nombre de la clave en localStorage

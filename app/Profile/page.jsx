@@ -9,13 +9,14 @@ import {
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FileText, LogOut, User } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-
 import useStore from '@/store'
 import { useRouter } from 'next/navigation'
+import Bills from '@/components/Bills/Bills'
+import { formatPrice } from '@/utils/formatter'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
@@ -24,21 +25,36 @@ export default function Profile () {
   const [save, setSave] = useState(null)
   const [dataClient, setDataClient] = useState({ ...clientInfo.data })
   const router = useRouter()
-  console.log(clientInfo)
-  console.log(dataClient)
+  const [history, setHistory] = useState([])
+
+  useEffect(() => {
+    const getHistory = async () => {
+      const res = await fetch('/api/historyBill', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${login.token}`
+        }
+      })
+
+      const { data } = await res.json()
+      setHistory(data)
+    }
+    getHistory()
+  }, [login.token])
+
   const handleSubmitInfo = async (e) => {
     try {
       e.preventDefault()
 
       const objClient = {
-        id: clientInfo.id_cliente,
-        nombre_cliente: dataClient.nombre_cliente ?? clientInfo.nombre_cliente,
-        apellido: dataClient.apellido ?? clientInfo.apellido,
-        email: dataClient.email ?? clientInfo.email,
-        telefono: dataClient.telefono ?? clientInfo.telefono
+        data: {
+          nombre_cliente: dataClient.nombre_cliente ?? clientInfo.nombre_cliente,
+          apellido: dataClient.apellido ?? clientInfo.apellido,
+          email: dataClient.email ?? clientInfo.email,
+          telefono: dataClient.telefono ?? clientInfo.telefono
+        }
       }
-
-      console.log(objClient, 'objClient')
 
       const response = await fetch('/api/updateInfo', {
         method: 'PUT',
@@ -59,7 +75,6 @@ export default function Profile () {
         setSave(false)
       }, 2000)
       setNoEdit(true)
-      console.log(response)
     } catch (error) {
       console.error(error)
     } finally {
@@ -198,52 +213,10 @@ export default function Profile () {
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {[
-                    {
-                      id: 'INV-001',
-                      date: '2024-03-15',
-                      amount: '$1,250.00',
-                      status: 'Pagada'
-                    },
-                    {
-                      id: 'INV-002',
-                      date: '2024-02-28',
-                      amount: '$980.50',
-                      status: 'Pendiente'
-                    },
-                    {
-                      id: 'INV-003',
-                      date: '2024-01-31',
-                      amount: '$1,500.00',
-                      status: 'Pagada'
-                    }
-                  ].map((invoice) => (
-                    <div
-                      key={invoice.id}
-                      className='flex justify-between items-center border-b pb-2'
-                    >
-                      <div>
-                        <p className='font-semibold'>{invoice.id}</p>
-                        <p className='text-sm text-gray-600'>{invoice.date}</p>
-                      </div>
-                      <div className='text-right'>
-                        <p>{invoice.amount}</p>
-                        <p
-                          className={`text-sm ${
-                            invoice.status === 'Pagada'
-                              ? 'text-green-600'
-                              : 'text-yellow-600'
-                          }`}
-                        >
-                          {invoice.status}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                {history?.map((item) => (
+                  <Bills key={item.id_factura} id_factura={item.id_factura} fecha={item.fecha} total={formatPrice(item.total)} />
+                ))}
                 </div>
-                <Button className='mt-4 bg-[#33691E] hover:bg-[#1B5E20] text-white'>
-                  Ver Todas las Facturas
-                </Button>
               </CardContent>
             </Card>
           </TabsContent>
