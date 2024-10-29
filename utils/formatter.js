@@ -7,7 +7,7 @@ export function formatPrice (price) {
 
 const typesCoffeeName = {
   'Cafe molido': 'Café Molido',
-  'Capsulas de Cafe': 'Capsulas de Café',
+  'Capsulas de cafe': 'Cápsulas de Café',
   'Mezclas Especiales': 'Mezclas Especiales',
   Molinillos: 'Molinillos',
   Cafeteras: 'Cafeteras ',
