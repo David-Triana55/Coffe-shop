@@ -10,9 +10,8 @@ export default function Checkout () {
 
   const handleBill = async () => {
     toogleCheckoutWindow()
-    if (totalBill === 0) return
     if (login.isLogged === false) {
-      alert('tienes que iniciar sesion ')
+      router.push('/Sign-in')
       return
     }
     try {
@@ -49,7 +48,7 @@ export default function Checkout () {
   return (
     <>
       <aside className={` ${checkoutWindow ? 'flex show' : ''} checkout__products `}>
-        <h3 className=' text-black block '>Checkout</h3>
+        <h3 className=' text-black block '>Carrito de compra</h3>
         <div className='checkout__products-content'>
           <h4 className='text-gray-500'>Productos</h4>
           {checkoutData?.map((product) => (
@@ -60,14 +59,12 @@ export default function Checkout () {
         <div className='flex justify-between items-center gap-4 mt-4 text-black font-bold'>
           <h4>Total: {totalBill}</h4>
           <button
-            onClick={() => {
-              handleBill()
-            }}
+            onClick={handleBill}
+            disabled={checkoutData.length === 0}
             type='button'
-            className='bg-stone-500 text-white px-2 py-2 rounded-md w-32'
+            className='bg-stone-500 text-white px-2 py-2 rounded-md w-32 disabled:cursor-not-allowed disabled:opacity-50'
           >
-
-              Finalizar Compra
+              {checkoutData.length === 0 ? 'Carrito vacio' : 'Finalizar'}
           </button>
         </div>
       </aside>

@@ -45,7 +45,7 @@ const navigation = {
           name: 'Tipos de Café',
           items: [
             { name: 'Café Molido', href: '/Tipos-de-cafe/Cafe-molido' },
-            { name: 'Cápsulas de Café', href: '/Tipos-de-cafe/Capsulas-de-Cafe' },
+            { name: 'Cápsulas de Café', href: '/Tipos-de-cafe/Capsulas-de-cafe' },
             { name: 'Mezclas Especiales', href: '/Tipos-de-cafe/Mezclas-Especiales' }
           ]
         },
@@ -105,7 +105,9 @@ export default function NavBar () {
       {/* Mobile menu */}
       <Dialog open={open} onClose={setOpen} className='relative z-40 lg:hidden'>
         <DialogBackdrop
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false)
+          }}
           transition
           className='fixed inset-0 bg-black bg-opacity-25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0'
         />
@@ -118,7 +120,9 @@ export default function NavBar () {
             <div className='flex px-4 pb-2 pt-5'>
               <button
                 type='button'
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false)
+                }}
                 className='relative -m-2 inline-flex border-none border-transparent items-center justify-center rounded-md p-2 text-gray-400'
               >
                 <span className='absolute -inset-0.5' />
@@ -269,7 +273,10 @@ export default function NavBar () {
                     <Popover key={category.name} className='flex'>
                       <div className='relative flex'>
                         <PopoverButton
-                          onClick={() => setIsOpen(true)}
+                          onClick={() => {
+                            setIsOpen(true)
+                            toogleCheckoutWindowValue(false)
+                          }}
                           className='relative border-none z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'
                         >
                           {category.name}
