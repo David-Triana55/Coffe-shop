@@ -3,10 +3,13 @@ import useStore from '@/store'
 import OrderCard from '../OrderCard/OrderCard'
 import './Checkout.css'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import Loading from '../Loading/Loading'
 
 export default function Checkout () {
   const { toogleCheckoutWindow, checkoutWindow, checkoutData, clientInfo, totalBill, login } = useStore((state) => state)
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const handleBill = async () => {
     toogleCheckoutWindow()
@@ -24,6 +27,8 @@ export default function Checkout () {
         }))
       }
 
+      setLoading(true)
+
       const response = await fetch('/api/bill', {
         method: 'POST',
         headers: {
@@ -37,6 +42,7 @@ export default function Checkout () {
         throw new Error('Error al enviar el bill')
       }
 
+      setLoading(false)
       const { data } = await response.json()
       console.log(data, 'data')
       router.push(`/Pay/${data[0].id_factura}`)
@@ -46,8 +52,11 @@ export default function Checkout () {
   }
 
   return (
+
     <>
-      <aside className={` ${checkoutWindow ? 'flex show' : ''} checkout__products `}>
+    {loading && <Loading />}
+
+      {!loading && <aside className={` ${checkoutWindow ? 'flex show' : ''} checkout__products `}>
         <h3 className=' text-black block '>Carrito de compra</h3>
         <div className='checkout__products-content'>
           <h4 className='text-gray-500'>Productos</h4>
@@ -67,7 +76,7 @@ export default function Checkout () {
               {checkoutData.length === 0 ? 'Carrito vacio' : 'Finalizar'}
           </button>
         </div>
-      </aside>
+      </aside>}
 
       <div className={` ${checkoutWindow ? 'checkout__products-active ' : ''} `} />
 

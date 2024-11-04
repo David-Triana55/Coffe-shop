@@ -27,6 +27,7 @@ export default function ProductDetail ({ params }) {
         addToCart(product, newCount)
         return newCount
       })
+
       return
     }
 
@@ -53,7 +54,7 @@ export default function ProductDetail ({ params }) {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 w-full lg:pt-4'>
       <div className='product_detail__content relative'>
-        <ChevronLeft className='absolute left-4 top-4 w-6 h-6 text-black hover:text-primary-500' onClick={() => router.back()} />
+        <ChevronLeft className=' cursor-pointer absolute left-4 top-4 w-6 h-6 text-black hover:text-primary-500' onClick={() => router.back()} />
         <img src={product.imagen} alt={product.nombre_producto} />
 
       </div>
