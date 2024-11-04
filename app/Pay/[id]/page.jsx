@@ -23,8 +23,6 @@ export default async function pagePay ({ params }) {
     subTotal = data.reduce((a, b) => a + b, 0)
   }
 
-  console.log(detailBill, 'detailBill')
-
   return (
     <main className='container mt-16 mx-auto p-4'>
       <Card className='w-full max-w-4xl mx-auto'>

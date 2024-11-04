@@ -7,8 +7,7 @@ import { Suspense } from 'react'
 export default async function PageAccesories ({ params }) {
   const url = await params.items.split('-').join(' ')
   const products = await getProductByCategory(url)
-  console.log(url)
-  console.log(products, 'products')
+
   const typesCoffee = formatCategory(url)
 
   return (

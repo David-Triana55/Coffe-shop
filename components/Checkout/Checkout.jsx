@@ -44,7 +44,6 @@ export default function Checkout () {
 
       setLoading(false)
       const { data } = await response.json()
-      console.log(data, 'data')
       router.push(`/Pay/${data[0].id_factura}`)
     } catch (error) {
       console.error(error)

@@ -5,8 +5,7 @@ const secretKey = 'supersecretkey'
 export async function POST (req) {
   const authHeader = await req.headers.get('authorization')
   const res = await req.json()
-  console.log(req)
-  console.log(res)
+
   const { productos } = res
   let token = ''
 
@@ -55,13 +54,10 @@ export async function POST (req) {
   const currentDate = new Date().toISOString().split('T')[0]
 
   const bill = await insertBill(decodedToken.id, currentDate)
-  console.log(bill)
 
   for (const item of productos) {
     await detailBill(bill[0].id_factura, item.id_producto, item.cantidad, item.precio_unitario)
   }
-
-  console.log(bill)
 
   return new Response(
     JSON.stringify({

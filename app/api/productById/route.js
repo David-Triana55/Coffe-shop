@@ -5,8 +5,6 @@ export async function GET (req) {
   const { searchParams } = new URL(req.url)
   const id = searchParams.get('id')
 
-  console.log('Product ID:', id)
-
   const response = await getProductById(id)
 
   return NextResponse.json(response)
