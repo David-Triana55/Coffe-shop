@@ -8,10 +8,6 @@ export default function Counter () {
   const [count, setCount] = useState(10)
   const { cleanCart } = useStore(state => state)
   const router = useRouter()
-  const redirect = () => {
-    cleanCart()
-    router.push('/')
-  }
 
   useEffect(() => {
     // Iniciar el contador regresivo
@@ -25,10 +21,16 @@ export default function Counter () {
       })
     }, 1000) // Disminuye el contador cada segundo (1000 ms)
 
-    return () => clearInterval(timer)
+    return () => clearInterval(timer) // Limpiar el intervalo al desmontar
   }, [])
 
-  if (count === 0) redirect()
+  // Redirigir cuando el contador llega a 0
+  useEffect(() => {
+    if (count === 0) {
+      cleanCart() // Limpiar el carrito
+      router.push('/') // Redirigir a la página principal
+    }
+  }, [count, cleanCart, router]) // Dependencias del efecto
 
   return (
     <div className='z-50 flex items-center mx-auto justify-center max-w-4xl h-16 bg-white rounded-full border-2 border-black'>

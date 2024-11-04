@@ -24,7 +24,15 @@ export default function Profile () {
   const [noEdit, setNoEdit] = useState(true)
   const [save, setSave] = useState(null)
   const router = useRouter()
-  const [dataClient, setDataClient] = useState({})
+  const [dataClient, setDataClient] = useState({
+    edit: {
+      nombre_cliente: '',
+      apellido: '',
+      email: '',
+      telefono: ''
+    }
+  })
+
   const [history, setHistory] = useState([])
 
   useEffect(() => {
@@ -166,7 +174,7 @@ export default function Profile () {
                       disabled={noEdit}
                       id='name'
                       placeholder={clientInfo.data?.nombre_cliente}
-                      value={dataClient?.edit?.nombre_cliente}
+                      value={dataClient?.edit?.nombre_cliente || ''}
                       onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, nombre_cliente: e.target.value } })}
                     />
 
@@ -230,12 +238,25 @@ export default function Profile () {
                 <CardDescription>
                   Revisa tus facturas recientes y su estado.
                 </CardDescription>
+                <CardDescription className='text-right text-md pt-3'>
+                  {history?.length > 0 ? history?.length + ' Facturas recientes' : 'No tienes facturas recientes'}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                {history?.map((item) => (
-                  <Bills key={item.id_factura} id_factura={item.id_factura} fecha={item.fecha} total={formatPrice(item.total)} />
-                ))}
+
+                {history
+                  ?.sort((a, b) => b.id_factura - a.id_factura)
+                  .map((item) => (
+                    <Bills
+                      key={item.id_factura}
+                      id_factura={item.id_factura}
+                      fecha={item.fecha}
+                      total={formatPrice(item.total)}
+                      client={item.cliente?.nombre_cliente}
+                    />
+                  ))}
+
                 </div>
               </CardContent>
             </Card>

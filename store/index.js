@@ -53,7 +53,7 @@ const useStore = create(persist(
 
     setClientInfo: (info) => set({ clientInfo: info }),
 
-    cleanCart: () => set({ checkoutData: [] }),
+    cleanCart: () => set({ checkoutData: [], totalBill: 0 }),
 
     // Métodos para calcular el total de la cuenta
     calculateTotalBill: () => {

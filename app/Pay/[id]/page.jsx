@@ -60,17 +60,31 @@ export default async function pagePay ({ params }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {billProduct.map((item) => (
-                <Link key={item.id_producto} href={`/ProductDetail/${item.id_producto}`}>
-                <TableRow>
-                  <TableCell>{item.nombre_producto}</TableCell>
-                  <TableCell className='text-right'>{item.cantidad}</TableCell>
-                  <TableCell className='text-right'>{formatPrice(item.precio)}</TableCell>
-                  <TableCell className='text-right'>{formatPrice(item.precio_unitario * item.cantidad)}</TableCell>
-                </TableRow>
-                </Link>
-              ))}
-            </TableBody>
+                {billProduct.map((item) => (
+                  <TableRow key={item.id_producto}>
+                    <TableCell>
+                      <Link href={`/ProductDetail/${item.id_producto}`}>
+                        {item.nombre_producto}
+                      </Link>
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <Link href={`/ProductDetail/${item.id_producto}`}>
+                        {item.cantidad}
+                      </Link>
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <Link href={`/ProductDetail/${item.id_producto}`}>
+                        {formatPrice(item.precio)}
+                      </Link>
+                    </TableCell>
+                    <TableCell className='text-right'>
+                      <Link href={`/ProductDetail/${item.id_producto}`}>
+                        {formatPrice(item.precio_unitario * item.cantidad)}
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
           </Table>
           <div className='mt-6 flex justify-end'>
             <div className='w-full max-w-xs'>
@@ -91,7 +105,6 @@ export default async function pagePay ({ params }) {
         </CardContent>
       </Card>
       <Counter />
-
     </main>
   )
 }

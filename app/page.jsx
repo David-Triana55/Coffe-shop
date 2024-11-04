@@ -12,7 +12,7 @@ export default async function PagePrincipal () {
 
         <Image className=' lg:block lg:w-full lg:h-[550px] lg:object-cover lg:object-right lg:rounded-br-3xl lg:rounded-bl-3xl' src='/latte-coffee-cup-scaled.jpg' alt='imagen principal' width={1210} height={550} />
 
-        <h1 className='text-4xl absolute top-2 font-bold text-center text-balance text-textNavbar lg:top-16 lg:left-8 lg:text-7xl '>Coffe shop</h1>
+        <h1 className='text-4xl absolute top-4 left-2 font-bold text-center text-balance text-textNavbar lg:top-16 lg:left-8 lg:text-7xl '>Coffe shop</h1>
         <h2 className='mt-4  text-xl font-bold text-center text-balance text-black lg:absolute top-36 lg:-left-10  lg:text-2xl lg:text-gray-700 lg:w-[600px]'>
           Café de calidad, hecho con cuidado y dedicado para aquellos que buscan disfrutar cada sorbo.
         </h2>
