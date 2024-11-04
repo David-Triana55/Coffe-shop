@@ -64,8 +64,6 @@ export async function PUT (req) {
     )
   }
 
-  console.log(decodedToken.id, 'id sacado del token')
-
   const clientInfo = await updateInfo(decodedToken.id, nombre_cliente, apellido, email, telefono)
   console.log(clientInfo)
 

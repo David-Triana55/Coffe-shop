@@ -10,27 +10,25 @@ export default function Counter () {
   const router = useRouter()
 
   useEffect(() => {
-    // Iniciar el contador regresivo
     const timer = setInterval(() => {
       setCount(prevCount => {
         if (prevCount <= 1) {
-          clearInterval(timer) // Detener el temporizador al llegar a 0
+          clearInterval(timer)
           return 0
         }
         return prevCount - 1
       })
-    }, 1000) // Disminuye el contador cada segundo (1000 ms)
+    }, 1000)
 
-    return () => clearInterval(timer) // Limpiar el intervalo al desmontar
+    return () => clearInterval(timer)
   }, [])
 
-  // Redirigir cuando el contador llega a 0
   useEffect(() => {
     if (count === 0) {
-      cleanCart() // Limpiar el carrito
-      router.push('/') // Redirigir a la página principal
+      cleanCart()
+      router.push('/Profile')
     }
-  }, [count, cleanCart, router]) // Dependencias del efecto
+  }, [count, cleanCart, router])
 
   return (
     <div className='z-50 flex items-center mx-auto justify-center max-w-4xl h-16 bg-white rounded-full border-2 border-black'>

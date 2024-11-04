@@ -68,9 +68,6 @@ export default function Profile () {
     getClientInfo()
   }, [login.token, save])
 
-  console.log(dataClient, 'dataClient')
-  console.log(history, 'history')
-
   const handleSubmitInfo = async (e) => {
     try {
       e.preventDefault()

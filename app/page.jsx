@@ -4,7 +4,6 @@ import Link from 'next/link'
 export default async function PagePrincipal () {
   const brands = await getBrands()
   const accesoriesCoffe = await getAccesoriesPrincipal()
-  console.log(accesoriesCoffe, 'accesoriesCoffe')
   return (
 
     <main className='mt-16  min-h-screen bg-[#D7CCC8] text-[#3E2723]'>

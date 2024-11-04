@@ -35,7 +35,6 @@ export async function POST (req) {
     }
 
     const token = jwt.sign(userForToker, secretKey, { expiresIn: '1h' })
-    console.log(token)
 
     // Devolver la respuesta con el token
     return new Response(

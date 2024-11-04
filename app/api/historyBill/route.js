@@ -4,7 +4,6 @@ const secretKey = 'supersecretkey'
 
 export async function GET (req) {
   const authHeader = req.headers.get('Authorization')
-  console.log(authHeader)
 
   let token = ''
 
