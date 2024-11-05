@@ -246,7 +246,10 @@ export default function NavBar () {
             <div className='flex h-16 items-center'>
               <button
                 type='button'
-                onClick={() => setOpen(!open)}
+                onClick={() => {
+                  setOpen(!open)
+                  toogleCheckoutWindowValue(false)
+                }}
                 className=' relative rounded-md border-none  bg-transparent p-2 text-[#D2B48C] lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
