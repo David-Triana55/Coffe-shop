@@ -123,7 +123,7 @@ export default function NavBar () {
                 onClick={() => {
                   setOpen(false)
                 }}
-                className='relative -m-2 inline-flex border-none border-transparent items-center justify-center rounded-md p-2 text-gray-400'
+                className='button-mobile__close relative -m-2 inline-flex border-none border-transparent items-center justify-center rounded-md p-2 text-gray-400'
               >
                 <span className='absolute -inset-0.5' />
                 <XMarkIcon aria-hidden='true' className='h-6 w-6' />
@@ -250,7 +250,7 @@ export default function NavBar () {
                   setOpen(!open)
                   toogleCheckoutWindowValue(false)
                 }}
-                className=' relative rounded-md border-none  bg-transparent p-2 text-[#D2B48C] lg:hidden'
+                className='button-mobile relative rounded-md border-none  bg-transparent p-2 text-[#D2B48C] lg:hidden'
               >
                 <span className='absolute -inset-0.5' />
                 <span className='sr-only'>Open menu</span>

@@ -39,7 +39,7 @@ export default function Card ({ products }) {
       >
         {
           isInCart
-            ? <CheckCircleIcon className='text-green-500' />
+            ? <CheckCircleIcon className='icon-cart-check text-green-500' />
             : <PlusCircleIcon />
         }
 
