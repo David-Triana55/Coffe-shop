@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function SignForm ({ handleSbmitSignUp }) {
+export default function SignForm ({ handleSbmitSignUp, error }) {
   return (
     <div className=' form-content flex-1   '>
     <div className='shadow-none w-96 p-7 md:shadow-xl rounded-lg'>
@@ -127,6 +127,7 @@ export default function SignForm ({ handleSbmitSignUp }) {
               Registrarse
             </button>
           </div>
+          {error && <p className='text-red-500 mt-3'>{error.message}</p>}
         </form>
       </div>
     </div>

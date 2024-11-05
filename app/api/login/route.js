@@ -24,7 +24,7 @@ export async function POST (req) {
     const passwordCorrect = await bcrypt.compare(password, user[0].password)
 
     if (!user || !passwordCorrect) {
-      return new Response(JSON.stringify({ message: 'Invalid email or password' }), {
+      return new Response(JSON.stringify({ message: 'Credenciales incorrectas' }), {
         status: 401
       })
     }

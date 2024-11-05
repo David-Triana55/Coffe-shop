@@ -10,7 +10,8 @@ export default function Form ({ type }) {
   const { setLogin, setClientInfo } = useStore(state => state)
 
   const router = useRouter()
-  const [error, setError] = useState(null)
+  const [errorSignUp, setErrorSignUp] = useState(null)
+  const [errorLogin, setErrorLogin] = useState(null)
   // funcion para enviar el formulario de login
   const handleSbmitLogin = async (e) => {
     e.preventDefault()
@@ -28,7 +29,7 @@ export default function Form ({ type }) {
       })
 
       if (!response.ok) {
-        throw new Error('Error al entrar')
+        throw new Error('Credenciales incorrectas')
       }
 
       const data = await response.json()
@@ -49,7 +50,7 @@ export default function Form ({ type }) {
 
       router.push('/')
     } catch (error) {
-      setError(true)
+      setErrorLogin(error)
       console.error(error)
     } finally {
       e.target.reset()
@@ -75,12 +76,16 @@ export default function Form ({ type }) {
         },
         body: JSON.stringify({ name, lastName, number, password, email })
       })
+
+      console.log(response)
+
       if (!response.ok) {
-        throw new Error('Error al crear el usuario')
+        throw new Error('Usuario ya existente')
       }
 
       router.push('/Sign-in')
     } catch (error) {
+      setErrorSignUp(error)
       console.error(error)
     } finally {
       e.target.reset()
@@ -89,8 +94,8 @@ export default function Form ({ type }) {
 
   return (
     <>
-      {type === 'signUp' && <SignForm handleSbmitSignUp={handleSbmitSignUp} />}
-      {type === 'login' && <LoginForm handleSbmitLogin={handleSbmitLogin} error={error} />}
+      {type === 'signUp' && <SignForm handleSbmitSignUp={handleSbmitSignUp} error={errorSignUp} />}
+      {type === 'login' && <LoginForm handleSbmitLogin={handleSbmitLogin} error={errorLogin} />}
     </>
   )
 }
