@@ -68,7 +68,7 @@ export default function LoginForm ({ handleSbmitLogin, error }) {
             </button>
           </div>
         </form>
-        {error && <p className='text-red-500 mt-3'>Credenciales incorrectas</p>}
+        {error && <p className='text-red-500 mt-3'>{error.message}</p>}
       </div>
     </div>
   </div>
