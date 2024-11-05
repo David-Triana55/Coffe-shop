@@ -17,12 +17,15 @@ import useStore from '@/store'
 import { useRouter } from 'next/navigation'
 import Bills from '@/components/Bills/Bills'
 import { formatPrice } from '@/utils/formatter'
+import Loading from '@/components/Loading/Loading'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
-  const [activeTab, setActiveTab] = useState('information')
+  const [activeTab, setActiveTab] = useState('invoices')
   const [noEdit, setNoEdit] = useState(true)
   const [save, setSave] = useState(null)
+  const [loadingInfo, setLoadingInfo] = useState(false)
+  const [loadingBills, setLoadingBills] = useState(false)
   const router = useRouter()
   const [dataClient, setDataClient] = useState({
     edit: {
@@ -36,6 +39,7 @@ export default function Profile () {
   const [history, setHistory] = useState([])
 
   useEffect(() => {
+    setLoadingBills(true)
     const getHistory = async () => {
       const res = await fetch('/api/historyBill', {
         method: 'GET',
@@ -47,11 +51,13 @@ export default function Profile () {
 
       const { data } = await res.json()
       setHistory(data)
+      setLoadingBills(false)
     }
     getHistory()
   }, [login.token])
 
   useEffect(() => {
+    setLoadingInfo(true)
     const getClientInfo = async () => {
       const res = await fetch('/api/getInfo', {
         method: 'GET',
@@ -64,6 +70,7 @@ export default function Profile () {
       const data = await res.json()
       setDataClient({ ...data, edit: { ...data.data } })
       setClientInfo(data)
+      setLoadingInfo(false)
     }
     getClientInfo()
   }, [login.token, save])
@@ -152,8 +159,8 @@ export default function Profile () {
       <section className='md:w-3/4'>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='information'>Información</TabsTrigger>
             <TabsTrigger value='invoices'>Facturas</TabsTrigger>
+            <TabsTrigger value='information'>Información</TabsTrigger>
           </TabsList>
           <TabsContent value='information'>
             <Card>
@@ -164,7 +171,10 @@ export default function Profile () {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                <form onSubmit={handleSubmitInfo}>
+
+                {loadingInfo
+                  ? <Loading position='start' />
+                  : <form onSubmit={handleSubmitInfo}>
                   <div className='space-y-2'>
                     <Label htmlFor='name'>Nombre</Label>
                     <Input
@@ -224,7 +234,7 @@ export default function Profile () {
                     Guardar Cambios
                   </button>}
                   {save && <p className='text-green-500 mt-3'>Cambios guardados</p>}
-                </form>
+                </form>}
               </CardContent>
             </Card>
           </TabsContent>
@@ -242,9 +252,11 @@ export default function Profile () {
               <CardContent>
                 <div className='space-y-4'>
 
-                {history
-                  ?.sort((a, b) => b.id_factura - a.id_factura)
-                  .map((item) => (
+                {loadingBills
+                  ? <Loading position='start' />
+                  : history
+                    ?.sort((a, b) => b.id_factura - a.id_factura)
+                    .map((item) => (
                     <Bills
                       key={item.id_factura}
                       id_factura={item.id_factura}
@@ -252,7 +264,7 @@ export default function Profile () {
                       total={formatPrice(item.total)}
                       client={item.cliente?.nombre_cliente}
                     />
-                  ))}
+                    ))}
 
                 </div>
               </CardContent>

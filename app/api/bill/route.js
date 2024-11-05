@@ -7,6 +7,8 @@ export async function POST (req) {
   const res = await req.json()
 
   const { productos } = res
+  console.log(productos)
+  console.log(authHeader)
   let token = ''
 
   if (authHeader && authHeader.toLowerCase().startsWith('bearer')) {

@@ -27,7 +27,7 @@ export default function OrderCard ({ product }) {
           </span>
         </span>
       </div>
-      <div onClick={() => handleRemove(product.id_producto)} className='flex justify-end'>
+      <div onClick={() => handleRemove(product.id_producto)} className='flex justify-end cursor-pointer'>
         <TrashIcon className='h-8 w-8 text-black' />
       </div>
 

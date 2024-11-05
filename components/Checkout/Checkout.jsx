@@ -4,10 +4,9 @@ import OrderCard from '../OrderCard/OrderCard'
 import './Checkout.css'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import Loading from '../Loading/Loading'
 
 export default function Checkout () {
-  const { toogleCheckoutWindow, checkoutWindow, checkoutData, clientInfo, totalBill, login } = useStore((state) => state)
+  const { toogleCheckoutWindow, cleanCart, checkoutWindow, checkoutData, clientInfo, totalBill, login } = useStore((state) => state)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
@@ -44,8 +43,10 @@ export default function Checkout () {
 
       setLoading(false)
       const { data } = await response.json()
+      cleanCart()
       router.push(`/Pay/${data[0].id_factura}`)
     } catch (error) {
+      setLoading(false)
       console.error(error)
     }
   }
@@ -53,7 +54,9 @@ export default function Checkout () {
   return (
 
     <>
-    {loading && <Loading />}
+    {loading && <div className='fixed top-16 left-0 right-0 flex justify-center items-center h-screen bg-white z-30'>
+      <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900' />
+    </div>}
 
       {!loading && <aside className={` ${checkoutWindow ? 'flex show' : ''} checkout__products `}>
         <h3 className=' text-black block '>Carrito de compra</h3>
