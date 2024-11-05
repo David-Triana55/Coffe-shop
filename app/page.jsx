@@ -18,7 +18,7 @@ export default async function PagePrincipal () {
         <div className='flex mt-5 flex-col items-center justify-center lg:items-start lg:mt-2 lg:left-10 lg:absolute lg:top-60   lg:text-white lg:w-[600px] lg:text-xl'>
 
           <Link href='/Tipos-de-cafe/Cafe-molido'>
-            <button className='bg-buttonColor text-white px-2 py-2 rounded-md w-32 lg:w-36'>
+            <button className='bg-buttonColor text-white px-3 py-3 rounded-md w-34 lg:w-40'>
               Comprar ahora
             </button>
           </Link>

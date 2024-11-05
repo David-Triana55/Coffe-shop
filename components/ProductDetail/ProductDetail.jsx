@@ -82,23 +82,15 @@ export default function ProductDetail ({ params }) {
         </div>
       </div>
 
-      <Tabs defaultValue='descripcion' className='mt-8 lg:col-span-2 lg:mt-10'>
-        <TabsList className='grid w-full grid-cols-3'>
+      <Tabs defaultValue='descripcion' className='mt-8  lg:col-span-2 lg:mt-10'>
+        <TabsList className='grid items-center w-full grid-cols-2'>
           <TabsTrigger value='descripcion'>Descripcion</TabsTrigger>
-          <TabsTrigger value='details'>Detalles</TabsTrigger>
           <TabsTrigger value='origin'>Origen</TabsTrigger>
         </TabsList>
-        <TabsContent value='details' className='bg-white p-4 rounded-lg mt-2'>
-          <h3 className='text-xl font-bold mb-2'>Detalles del Producto</h3>
-          <ul className='list-disc list-inside'>
-            <li>Peso: 300g</li>
-            <li>Nivel de tostado: alto</li>
-            <li>Notas de sabor: delicioso</li>
-          </ul>
-        </TabsContent>
+
         <TabsContent value='origin' className='bg-white p-4 rounded-lg mt-2'>
           <h3 className='text-xl font-bold mb-2'>Origen</h3>
-          <p>Este café proviene de las alturas de los Andes colombianos, donde el clima y el suelo crean condiciones perfectas para el cultivo de granos de café de alta calidad.</p>
+          <p>{product.origen ?? 'Este café proviene de las alturas de los Andes colombianos, donde el clima y el suelo crean condiciones perfectas para el cultivo de granos de café de alta calidad'}</p>
         </TabsContent>
 
         <TabsContent value='descripcion' className='bg-white p-4 rounded-lg mt-2'>
