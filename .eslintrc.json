@@ -5,5 +5,8 @@
     "react/jsx-indent-props": "off",
     "react/jsx-closing-tag-location": "off",
     "react/jsx-indent": "off"
+  },
+  "env": {
+    "cypress/globals": true
   }
 }

@@ -159,8 +159,8 @@ export default function Profile () {
       <section className='md:w-3/4'>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='invoices'>Facturas</TabsTrigger>
-            <TabsTrigger value='information'>Información</TabsTrigger>
+            <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>
+            <TabsTrigger className='tab-button-information' value='information'>Información</TabsTrigger>
           </TabsList>
           <TabsContent value='information'>
             <Card>
@@ -222,7 +222,7 @@ export default function Profile () {
                   </div>
                   {noEdit && <button
                     onClick={() => setNoEdit(!noEdit)}
-                    className='mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
+                    className='edit-button-information mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
                              >
                     Editar Perfil
                   </button>}
