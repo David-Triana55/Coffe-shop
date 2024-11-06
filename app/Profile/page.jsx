@@ -125,7 +125,7 @@ export default function Profile () {
             <nav className='flex flex-col space-y-2'>
               <Button
                 variant='ghost'
-                className='justify-start'
+                className='justify-start buton-information'
                 onClick={() => setActiveTab('information')}
               >
                 <User className='mr-2 h-4 w-4' />
