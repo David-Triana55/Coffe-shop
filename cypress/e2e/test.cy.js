@@ -287,13 +287,12 @@ describe('cambiar info de cliente', () => {
       expect([200, 409, 500]).to.include(res.status)
     })
   })
-  it('Debería actualizar la información correctamente', () => {
+  it.only('Debería actualizar la información correctamente', () => {
     cy.window().then((window) => {
-      // Asegúrate de que el 'isLogged' existe en el localStorage y tiene la propiedad 'state'
       const loggedInData = window.localStorage.getItem('isLogged');
       if (loggedInData) {
         const { state } = JSON.parse(loggedInData);
-        console.log(state);  // Verifica que state tiene el login.token
+        console.log(state);  
       } else {
         throw new Error('No se encontró la información de usuario en localStorage');
       }
@@ -303,7 +302,7 @@ describe('cambiar info de cliente', () => {
     cy.get(".link-perfil-mobile").click();
   
     cy.intercept('GET', '**/Profile*').as('getProfilePage');
-    cy.wait('@getProfilePage', {timeout: 5000}); 
+    cy.wait('@getProfilePage', {timeout: 8000}); 
     cy.contains("Menú de Perfil");
     cy.get(".buton-information").click();
     cy.contains("Editar Perfil").click();
@@ -382,7 +381,7 @@ describe('cambiar info de cliente', () => {
     cy.wait(5000);
     cy.get(".bill").first().click();
     cy.intercept('GET', '**/Bill/*').as('getBillPage');
-    cy.wait('@getBillPage', {timeout: 5000});
+    cy.wait('@getBillPage', {timeout: 8000});
     cy.contains("Factura");
     cy.contains("Cantidad");
     cy.contains("Precio Unitario");

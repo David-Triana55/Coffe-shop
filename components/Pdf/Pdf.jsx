@@ -1,8 +1,7 @@
-// components/DownloadPDFButton.jsx
-'use client' // Habilita este componente como cliente
+'use client' 
 
-import { jsPDF } from 'jspdf' // Importar jsPDF
-import 'jspdf-autotable' // Importar la extensión para tablas
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable' 
 import { Button } from '../ui/button'
 import { Download } from 'lucide-react'
 
@@ -42,7 +41,7 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
         formatPrice(item.precio),
         formatPrice(item.precio_unitario)
       ]),
-      startY: 60, // Iniciar la tabla después del contenido anterior
+      startY: 60, 
       styles: {
         fontSize: 12,
         cellPadding: 5,
@@ -51,8 +50,8 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
         valign: 'middle'
       },
       headStyles: {
-        fillColor: '#007BFF', // Color de fondo para la cabecera
-        textColor: '#FFFFFF', // Color del texto en la cabecera
+        fillColor: '#4A3728', 
+        textColor: '#FFFFFF', 
         fontSize: 14,
         halign: 'center'
       },
@@ -64,9 +63,8 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
     const total = subTotal + tax
 
     // Espacio antes de los totales
-    const startY = doc.autoTable.previous.finalY + 10 // Posicionar el comienzo después de la tabla
+    const startY = doc.autoTable.previous.finalY + 10 
 
-    // Estilo para los totales
     doc.setFontSize(12)
     doc.setFont('Helvetica', 'bold')
     doc.text('Totales:', 10, startY)
@@ -83,7 +81,6 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
     doc.setFont('Helvetica', 'normal')
     doc.text('Gracias por su compra!', 10, startY + 50)
 
-    // Descargar el PDF
     doc.save('factura.pdf')
   }
 
