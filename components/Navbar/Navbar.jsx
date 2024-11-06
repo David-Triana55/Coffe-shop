@@ -171,7 +171,7 @@ export default function NavBar () {
                               <Link
                                 onClick={() => {
                                   setOpen(false)
-                                }} href={item.href} className='-m-2 block p-2 text-gray-500'
+                                }} href={item.href} className='link-navbar-mobile -m-2 block p-2 text-gray-500'
                               >
                                 {item.name}
                               </Link>
@@ -222,7 +222,7 @@ export default function NavBar () {
 
                 <div className='flow-root'>
                   <Link
-                    onClick={() => setOpen(!open)} href='/Profile' className='-m-2 block p-2 font-medium text-textNavbar'
+                    onClick={() => setOpen(!open)} href='/Profile' className='link-perfil-mobile -m-2 block p-2 font-medium text-textNavbar'
                   >
                     Perfil
                   </Link>
@@ -280,7 +280,7 @@ export default function NavBar () {
                             setIsOpen(true)
                             toogleCheckoutWindowValue(false)
                           }}
-                          className='relative border-none z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'
+                          className='button-desktop relative border-none z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'
                         >
                           {category.name}
                         </PopoverButton>
@@ -320,7 +320,7 @@ export default function NavBar () {
                                         <li key={item.name} className='flex'>
                                           <Link
                                             href={item.href}
-                                            className='hover:text-yellow-950 data-[closed]'
+                                            className='link-navbar-desktop hover:text-yellow-950 data-[closed]'
                                             onClick={() => {
                                               closePopover()
                                             }}
