@@ -21,6 +21,6 @@ const typesCoffeeName = {
 
 }
 
-export function formatCategory (category) {
+export async function formatCategory (category) {
   return typesCoffeeName[category]
 }
