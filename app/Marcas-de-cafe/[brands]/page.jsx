@@ -8,6 +8,7 @@ export default async function PageMarcas ({ params }) {
   const brand = await params.brands.split('-').join(' ')
   const products = await getProductByBrand(brand)
   const typesCoffee = formatCategory(brand)
+  console.log(products)
 
   return (
     <div className='mt-16 py-12 w-full'>

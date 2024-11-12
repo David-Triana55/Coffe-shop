@@ -9,6 +9,7 @@ export default async function PageAccesories ({ params }) {
   const products = await getProductByCategory(url)
 
   const typesCoffee = await formatCategory(url)
+  console.log(products)
 
   return (
     <div className='mt-16 py-12 w-full'>
