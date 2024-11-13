@@ -287,7 +287,7 @@ describe('cambiar info de cliente', () => {
       expect([200, 409, 500]).to.include(res.status)
     })
   })
-  it.only('Debería actualizar la información correctamente', () => {
+  it('Debería actualizar la información correctamente', () => {
     cy.window().then((window) => {
       const loggedInData = window.localStorage.getItem('isLogged');
       if (loggedInData) {
