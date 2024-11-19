@@ -23,8 +23,3 @@ Este proyecto se puede levantar de dos maneras: utilizando `npm` o `Docker`.
    ```bash
    docker-compose up
    ```
-
-3. El proyecto estará disponible en el puerto configurado en el archivo `docker-compose.yml`.
-```
-
-Este markdown proporciona instrucciones claras para iniciar el proyecto tanto con npm como con Docker.
