@@ -113,7 +113,7 @@ describe("cuando se hace click en el producto", () => {
 
   it("se muestra el detalle del producto", () => {
     cy.get(".card_product__content > .card_product__image > img").first().click();
-    cy.wait(5000);
+    cy.wait(9000);
     cy.contains('Descripcion');
     cy.contains('Origen');
   })
@@ -287,7 +287,7 @@ describe('cambiar info de cliente', () => {
       expect([200, 409, 500]).to.include(res.status)
     })
   })
-  it.only('Debería actualizar la información correctamente', () => {
+  it('Debería actualizar la información correctamente', () => {
     cy.window().then((window) => {
       const loggedInData = window.localStorage.getItem('isLogged');
       if (loggedInData) {
@@ -399,7 +399,7 @@ describe("cuando se inicia sesión con credenciales incorrectas", () => {
     cy.get('#email').type('prueba@gprueba.com');
     cy.get('#password').type('12345');
     cy.get('button[type="submit"]').click();
-    cy.wait(5000);
+    cy.wait(8000);
     cy.contains('Credenciales incorrectas', { timeout: 10000 }).should('be.visible');
   });
 
