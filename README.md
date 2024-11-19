@@ -1,6 +1,5 @@
 Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar el proyecto usando `npm run dev` y `docker-compose up`:
 
-```markdown
 # Instrucciones para levantar el proyecto
 
 Este proyecto se puede levantar de dos maneras: utilizando `npm` o `Docker`.
