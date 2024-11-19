@@ -4,6 +4,10 @@ Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar 
 
 Este proyecto se puede levantar de dos maneras: utilizando `npm` o `Docker`.
 
+```bash
+    git clone https://github.com/David-Triana55/Coffe-shop.git
+```
+
 ## Opción 1: Usando npm
 
 1. Asegúrate de tener Node.js instalado en tu máquina.
