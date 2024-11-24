@@ -5,8 +5,8 @@
 Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada en la compra de cafés especiales y sostenibles. Permite a los usuarios explorar productos, gestionar su carrito, y realizar simulaciones de compra mientras mantiene control sobre inventarios y datos de facturación.
 
 ## Integrantes del Equipo
-- Juan Pérez  
-- David Gómez  
+- Juan Velez  
+- David Triana
 
 ## Tecnologías Utilizadas
 ### Frontend
@@ -27,16 +27,11 @@ Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada 
 ## Instrucciones de Ejecución
 ### Prerrequisitos
 1. Instalar Node.js y npm.
-2. Configurar una base de datos PostgreSQL y anotar los detalles de conexión.
-3. Clonar este repositorio:
+2. Clonar este repositorio:
    ```bash
-   git clone https://github.com/usuario/ecommerce-cafes.git
+   git clone https://github.com/David-Triana55/Coffe-shop.git
    
 Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar el proyecto usando `npm run dev` y `docker-compose up`:
-
-# Instrucciones para levantar el proyecto
-
-Este proyecto se puede levantar de dos maneras: utilizando `npm` o `Docker`.
 
 ```bash
     git clone https://github.com/David-Triana55/Coffe-shop.git
