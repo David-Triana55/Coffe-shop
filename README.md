@@ -34,13 +34,17 @@ Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar 
 ## Opción 1: Usando npm
 
 1. Asegúrate de tener Node.js instalado en tu máquina.
-2. Ejecuta el siguiente comando para iniciar el proyecto en modo desarrollo:
+2. Instala las dependencias
+    ```bash
+   npm install
+   ```
+4. Ejecuta el siguiente comando para iniciar el proyecto en modo desarrollo:
 
    ```bash
    npm run dev
    ```
 
-3. El servidor de desarrollo se levantará en el puerto configurado (usualmente `http://localhost:3000`).
+5. El servidor de desarrollo se levantará en el puerto configurado (usualmente `http://localhost:3000`).
 
 ## Opción 2: Usando Docker
 
