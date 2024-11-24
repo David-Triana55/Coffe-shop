@@ -54,3 +54,26 @@ Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar 
    ```bash
    docker-compose up
    ```
+
+## Características Principales
+- **Gestión de Carrito:** Persistencia en cliente mediante Zustand.
+- **Facturación Simulada:** Cálculo automatizado de IVA y totales.
+- **Control de Inventario:** Actualización automática mediante triggers.
+- **Páginas Dinámicas:** Rutas basadas en categorías.
+- **Autenticación:** Inicio de sesión y registro con tokens JWT.
+- **Responsive Design:** Optimización para móviles y tabletas.
+
+## Flujo de Datos
+1. **Exploración de Productos:** Consultas dinámicas para cargar productos por categoría.
+2. **Gestión de Carrito:** Persistencia local y sincronización en tiempo real.
+3. **Simulación de Compra:** Facturación y actualización de inventarios tras completar el checkout.
+4. **Perfil del Usuario:** Modificación de datos y consulta de historial.
+
+## Enlace del Proyecto
+[Demo en Producción](https://davecode.com.co/)
+
+## Buenas Prácticas
+- **Optimización SQL:** Uso de índices en columnas clave.
+- **Seguridad de Datos:** Consultas preparadas y cifrado de contraseñas.
+- **Caché:** Implementación en el cliente para mejorar la velocidad de carga.
+
