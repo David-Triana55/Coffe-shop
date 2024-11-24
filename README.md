@@ -24,12 +24,6 @@ Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada 
 ### Infraestructura
 - **Vercel:** Plataforma para despliegue y gestión del entorno.
 
-## Instrucciones de Ejecución
-### Prerrequisitos
-1. Instalar Node.js y npm.
-2. Clonar este repositorio:
-   ```bash
-   git clone https://github.com/David-Triana55/Coffe-shop.git
    
 Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar el proyecto usando `npm run dev` y `docker-compose up`:
 
