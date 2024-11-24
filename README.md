@@ -31,37 +31,7 @@ Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada 
 3. Clonar este repositorio:
    ```bash
    git clone https://github.com/usuario/ecommerce-cafes.git
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
 Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar el proyecto usando `npm run dev` y `docker-compose up`:
 
 # Instrucciones para levantar el proyecto
