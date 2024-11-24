@@ -1,3 +1,67 @@
+
+# Ecommerce de Cafés Especiales
+
+## Descripción del Proyecto
+Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada en la compra de cafés especiales y sostenibles. Permite a los usuarios explorar productos, gestionar su carrito, y realizar simulaciones de compra mientras mantiene control sobre inventarios y datos de facturación.
+
+## Integrantes del Equipo
+- Juan Pérez  
+- David Gómez  
+
+## Tecnologías Utilizadas
+### Frontend
+- **Next.js:** Framework de React para renderizado dinámico y fluido.
+- **Gestión de Estado:** Zustand con persistencia para el manejo eficiente del carrito.
+
+### Backend y Base de Datos
+- **Node.js y Express.js:** Para la creación de endpoints y lógica del servidor.
+- **PostgreSQL:** Base de datos relacional con triggers y funciones personalizadas para el control de inventarios y cálculos de facturación.
+
+### Autenticación y Seguridad
+- **JWT (JSON Web Tokens):** Para manejo de sesiones.
+- **bcrypt:** Para encriptación segura de contraseñas.
+
+### Infraestructura
+- **Vercel:** Plataforma para despliegue y gestión del entorno.
+
+## Instrucciones de Ejecución
+### Prerrequisitos
+1. Instalar Node.js y npm.
+2. Configurar una base de datos PostgreSQL y anotar los detalles de conexión.
+3. Clonar este repositorio:
+   ```bash
+   git clone https://github.com/usuario/ecommerce-cafes.git
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar el proyecto usando `npm run dev` y `docker-compose up`:
 
 # Instrucciones para levantar el proyecto
