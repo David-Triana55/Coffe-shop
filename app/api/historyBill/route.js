@@ -37,8 +37,9 @@ export async function GET (req) {
       }
     )
   }
+  console.log(decodedToken)
 
-  if (!decodedToken.id) {
+  if (!decodedToken.id || decodedToken.type !== 'cliente') {
     return new Response(
       JSON.stringify({
         message: 'Token invalid'

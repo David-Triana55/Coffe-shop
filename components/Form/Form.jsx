@@ -33,7 +33,7 @@ export default function Form ({ type }) {
       }
 
       const data = await response.json()
-      setLogin(data.token, true)
+      setLogin(data.token, true, data.type)
 
       const res = await fetch('/api/getInfo', {
         method: 'GET',
@@ -68,13 +68,14 @@ export default function Form ({ type }) {
       const number = form.get('number')
       const email = form.get('email')
       const password = form.get('password')
+      const type = form.get('type')
 
       const response = await fetch('/api/signUp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, lastName, number, password, email })
+        body: JSON.stringify({ name, lastName, number, password, email, type })
       })
 
       console.log(response)
