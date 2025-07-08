@@ -95,7 +95,7 @@ const categorias = [
 ]
 
 const InventoryManagement = () => {
-  const [inventory, setInventory] = useState(initialInventory)
+  const [inventory] = useState(initialInventory)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todas')
   const [isModalOpen, setIsModalOpen] = useState(false)

@@ -1,9 +1,20 @@
 {
-  "extends":[ "./node_modules/standard/eslintrc.json","next/core-web-vitals"],
+  "extends": [
+    "./node_modules/standard/eslintrc.json",
+    "next/core-web-vitals"
+  ],
   "rules": {
     "@next/next/no-img-element": "off",
     "react/jsx-indent-props": "off",
     "react/jsx-closing-tag-location": "off",
     "react/jsx-indent": "off"
-  }
+  },
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "cypress/globals": true
+  },
+  "plugins": [
+    "cypress"
+  ]
 }

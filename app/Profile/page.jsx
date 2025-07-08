@@ -138,11 +138,11 @@ export default function Profile () {
                 <User className='mr-2 h-4 w-4' />
                 Información
               </Button>
-              {login.type === 'cliente' && <Button
+              {login?.type === 'cliente' && <Button
                 variant='ghost'
                 className='justify-start'
                 onClick={() => setActiveTab('invoices')}
-                                           >
+                                            >
                 <FileText className='mr-2 h-4 w-4' />
                 Facturas
               </Button>}
@@ -164,8 +164,8 @@ export default function Profile () {
 
       <section className='md:w-3/4'>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={login.type === 'cliente' ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
-            {login.type === 'cliente' && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
+          <TabsList className={login?.type === 'cliente' ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
+            {login?.type === 'cliente' && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
             <TabsTrigger className='tab-button-information' value='information'>Información</TabsTrigger>
           </TabsList>
           <TabsContent value='information'>
