@@ -88,7 +88,7 @@ const navigationSeller = {
   categories: [],
   pages: [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Crear producto', href: '/Create-product' },
+    { name: 'Crear producto', href: '/create-product' },
     { name: 'Crear subasta', href: '/create-auction' },
     { name: 'Historial de ventas', href: '/History-bill' }
   ]

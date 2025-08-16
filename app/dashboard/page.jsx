@@ -1,5 +1,4 @@
-import { Coffee, DollarSign, Gavel, Clock, Bell, Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Coffee, DollarSign, Gavel, Clock, Bell } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -218,40 +217,8 @@ export default function AuctionDashboard () {
           </Card>
         </div>
 
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Acciones Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <Button className='w-full bg-[#33691E] hover:bg-[#1B5E20] text-white'>
-                <Plus className='mr-2 h-4 w-4' />
-                Crear Nueva Subasta
-              </Button>
-              <Button variant='outline' className='w-full'>
-                Ver Todas las Subastas
-              </Button>
-              <Button variant='outline' className='w-full'>
-                Gestionar Inventario
-              </Button>
-              <Button variant='outline' className='w-full'>
-                Historial de Ventas
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </main>
 
-      <footer className='bg-[#3E2723] text-white p-4 mt-12'>
-        <div className='container mx-auto flex flex-col md:flex-row justify-between items-center'>
-          <p>&copy; 2024 Coffee Auction Platform. Todos los derechos reservados.</p>
-          <nav className='flex space-x-4 mt-4 md:mt-0'>
-            <a href='#' className='hover:text-[#D7CCC8]'>Soporte</a>
-            <a href='#' className='hover:text-[#D7CCC8]'>Configuración</a>
-          </nav>
-        </div>
-      </footer>
     </div>
   )
 }

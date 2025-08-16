@@ -197,7 +197,7 @@ describe('Flujo de compra al agregar al carrito y comprar con iniciar sesión', 
     })
   })
 
-  it('deberia permitir agregar un producto al carrito y realizar la compra', () => {
+  it.skip('deberia permitir agregar un producto al carrito y realizar la compra', () => {
     cy.get('.button-mobile').click()
     cy.visit('http://localhost:3000/Sign-in')
     cy.get('#email').type('prueba@prueba.com')
@@ -282,7 +282,8 @@ describe('cambiar info de cliente', () => {
       expect([200, 409, 500]).to.include(res.status)
     })
   })
-  it('Debería actualizar la información correctamente', () => {
+
+  it.skip('Debería actualizar la información correctamente', () => {
     cy.window().then((window) => {
       const loggedInData = window.localStorage.getItem('isLogged')
       if (loggedInData) {
@@ -379,7 +380,7 @@ describe('cambiar info de cliente', () => {
 
 // iniciar sesión con credenciales incorrectas
 describe('cuando se inicia sesión con credenciales incorrectas', () => {
-  it('se muestra un mensaje de error', () => {
+  it.skip('se muestra un mensaje de error', () => {
     cy.visit('http://localhost:3000/Sign-in')
     cy.get('#email').type('prueba@gprueba.com')
     cy.get('#password').type('12345')

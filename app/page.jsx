@@ -1,9 +1,11 @@
-import { getAccesoriesPrincipal, getBrands } from '@/lib/data'
+import { getAccesoriesPrincipal } from '@/lib/data'
+import { fetchBrands } from '@/lib/api/brands'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
-  const brands = await getBrands()
+  const brands = await fetchBrands()
   const accesoriesCoffe = await getAccesoriesPrincipal()
+
   return (
 
     <main className='mt-16  min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
@@ -29,7 +31,7 @@ export default async function PagePrincipal () {
       <section className='mt-10'>
         <h2 className='text-3xl font-bold mb-8 text-center'>Marcas de café</h2>
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto overscroll-x-contain flex gap-x-5 overflow-y-hidden lg:justify-center'>
-          {brands.map((brand) => (
+          {brands?.map((brand) => (
             <Link href={`/Marcas-de-cafe/${brand.nombre_marca.split(' ').join('-')}`} aria-label={`visit page ${brand?.nombre_marca.split(' ').join('-')}`} key={brand.id_marca}>
               <div className='card-brands w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-4 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full rounded-lg bg-white shadow-md'>
