@@ -8,7 +8,10 @@ body {
   padding: 0;
   box-sizing: border-box;
   height: 100dvh;
+  font-family: 'Afacad', sans-serif;
+
 }
+
 
 @layer base {
   :root {
