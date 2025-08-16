@@ -77,4 +77,3 @@ Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar 
 - **Seguridad de Datos:** Consultas preparadas y cifrado de contraseñas.
 - **Caché:** Implementación en el cliente para mejorar la velocidad de carga.
 
-

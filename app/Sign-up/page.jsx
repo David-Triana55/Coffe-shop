@@ -11,7 +11,7 @@ export default function PageSignUP () {
     if (state.login.isLogged) {
       router.push('/')
     }
-  }, []) 
+  }, [])
   return (
     <section className='flex min-h-screen flex-col items-center justify-center overflow-y-hidden bg-background '>
       <Form type='signUp' />

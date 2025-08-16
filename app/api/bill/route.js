@@ -1,5 +1,5 @@
 import { detailBill, insertBill } from '@/lib/data'
-import jwt from 'jsonwebtoken' // Asegúrate de tener esta dependencia instalada
+import jwt from 'jsonwebtoken'
 const secretKey = 'supersecretkey'
 
 export async function POST (req) {
@@ -42,7 +42,7 @@ export async function POST (req) {
     )
   }
 
-  if (!decodedToken.id) {
+  if (!decodedToken.id || decodedToken.type !== 'cliente') {
     return new Response(
       JSON.stringify({
         message: 'Token invalid'

@@ -9,7 +9,8 @@ const useStore = create(persist(
     checkoutData: [],
     login: {
       token: null,
-      isLogged: false
+      isLogged: false,
+      type: ''
     },
     totalBill: 0,
     clientInfo: {},
@@ -63,16 +64,17 @@ const useStore = create(persist(
       set({ totalBill })
     },
 
-    setLogin: (token, isLogged) => {
+    setLogin: (token, isLogged, type) => {
       set((state) => ({
         login: {
           token,
-          isLogged
+          isLogged,
+          type
         }
       }))
     },
 
-    logOut: () => set({ login: { token: null, isLogged: false }, checkoutData: [], totalBill: 0, clientInfo: {} })
+    logOut: () => set({ login: { token: null, isLogged: false, type: '' }, checkoutData: [], totalBill: 0, clientInfo: {} })
   }),
   {
     name: 'isLogged', // Nombre de la clave en localStorage

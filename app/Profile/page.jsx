@@ -26,6 +26,7 @@ export default function Profile () {
   const [save, setSave] = useState(null)
   const [loadingInfo, setLoadingInfo] = useState(false)
   const [loadingBills, setLoadingBills] = useState(false)
+  const [history, setHistory] = useState([])
   const router = useRouter()
   const [dataClient, setDataClient] = useState({
     edit: {
@@ -36,7 +37,13 @@ export default function Profile () {
     }
   })
 
-  const [history, setHistory] = useState([])
+  useEffect(() => {
+    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
+
+    if (!state.login.isLogged) {
+      router.push('/')
+    }
+  }, [])
 
   useEffect(() => {
     setLoadingBills(true)
@@ -131,15 +138,14 @@ export default function Profile () {
                 <User className='mr-2 h-4 w-4' />
                 Información
               </Button>
-              <Button
+              {login?.type === 'cliente' && <Button
                 variant='ghost'
                 className='justify-start'
                 onClick={() => setActiveTab('invoices')}
-              >
+                                            >
                 <FileText className='mr-2 h-4 w-4' />
                 Facturas
-              </Button>
-
+              </Button>}
               <Button
                 onClick={() => {
                   setLogin(null, false)
@@ -158,8 +164,8 @@ export default function Profile () {
 
       <section className='md:w-3/4'>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>
+          <TabsList className={login?.type === 'cliente' ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
+            {login?.type === 'cliente' && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
             <TabsTrigger className='tab-button-information' value='information'>Información</TabsTrigger>
           </TabsList>
           <TabsContent value='information'>

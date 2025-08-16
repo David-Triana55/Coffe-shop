@@ -15,7 +15,7 @@ const typesCoffeeName = {
   Filtros: 'Filtros',
   Oma: 'Oma',
   'Juan Valdez': 'Juan Valdez',
-  'Nescafe': 'Nescafé',
+  Nescafe: 'Nescafé',
   Colcafe: 'Colcafé',
   'Cafe Devocion': 'Café Devoción'
 

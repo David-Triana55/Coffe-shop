@@ -31,7 +31,8 @@ export async function POST (req) {
 
     const userForToker = {
       id: user[0].id_cliente,
-      name: user[0].nombre_cliente
+      name: user[0].nombre_cliente,
+      type: user[0].tipo_cliente
     }
 
     const token = jwt.sign(userForToker, secretKey)
@@ -40,7 +41,8 @@ export async function POST (req) {
     return new Response(
       JSON.stringify({
         message: 'User authenticated',
-        token // Incluye el token en la respuesta JSON
+        token,
+        type: user[0].tipo_cliente
       }),
       {
         status: 200,

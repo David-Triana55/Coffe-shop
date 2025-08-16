@@ -1,7 +1,7 @@
-'use client' 
+'use client'
 
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable' 
+import 'jspdf-autotable'
 import { Button } from '../ui/button'
 import { Download } from 'lucide-react'
 
@@ -41,7 +41,7 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
         formatPrice(item.precio),
         formatPrice(item.precio_unitario)
       ]),
-      startY: 60, 
+      startY: 60,
       styles: {
         fontSize: 12,
         cellPadding: 5,
@@ -50,8 +50,8 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
         valign: 'middle'
       },
       headStyles: {
-        fillColor: '#4A3728', 
-        textColor: '#FFFFFF', 
+        fillColor: '#4A3728',
+        textColor: '#FFFFFF',
         fontSize: 14,
         halign: 'center'
       },
@@ -63,7 +63,7 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
     const total = subTotal + tax
 
     // Espacio antes de los totales
-    const startY = doc.autoTable.previous.finalY + 10 
+    const startY = doc.autoTable.previous.finalY + 10
 
     doc.setFontSize(12)
     doc.setFont('Helvetica', 'bold')
