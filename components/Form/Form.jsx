@@ -35,7 +35,7 @@ export default function Form ({ type }) {
       const data = await response.json()
       setLogin(data.token, true, data.type)
 
-      const res = await fetch('/api/getInfo', {
+      const res = await fetch('/api/info', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

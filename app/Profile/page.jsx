@@ -66,7 +66,7 @@ export default function Profile () {
   useEffect(() => {
     setLoadingInfo(true)
     const getClientInfo = async () => {
-      const res = await fetch('/api/getInfo', {
+      const res = await fetch('/api/info', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function Profile () {
         }
       }
 
-      const response = await fetch('/api/updateInfo', {
+      const response = await fetch('/api/info', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
