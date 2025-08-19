@@ -1,14 +1,12 @@
 import Loading from '@/components/Loading/Loading'
 import WrapperCards from '@/components/WrapperCards/WrapperCards'
-import { getProductByBrand } from '@/lib/data'
 import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 
 export default async function PageMarcas ({ params }) {
   const brand = await params.brands.split('-').join(' ')
-  const products = await getProductByBrand(brand)
+  const products = await fetch(`$/api/getProductsByBrand/${brand}`).then((res) => res.json())
   const typesCoffee = formatCategory(brand)
-  console.log(products)
 
   return (
     <div className='mt-16 py-12 w-full'>

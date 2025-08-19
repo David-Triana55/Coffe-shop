@@ -1,9 +1,8 @@
-import { getAccesoriesPrincipal } from '@/lib/data'
-import { fetchBrands } from '@/lib/api/brands'
+import { getBrands, getAccesoriesPrincipal } from '@/lib/data'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
-  const brands = await fetchBrands()
+  const brands = await getBrands()
   const accesoriesCoffe = await getAccesoriesPrincipal()
 
   return (

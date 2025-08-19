@@ -2,8 +2,6 @@ import { loginUser } from '@/lib/data'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const secretKey = 'supersecretkey'
-
 export async function POST (req) {
   try {
     const { email, password } = await req.json()
@@ -15,7 +13,6 @@ export async function POST (req) {
       })
     }
 
-    // Encriptar la contraseña
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -35,9 +32,8 @@ export async function POST (req) {
       type: user[0].tipo_cliente
     }
 
-    const token = jwt.sign(userForToker, secretKey)
+    const token = jwt.sign(userForToker, process.env.JWT_SECRET)
 
-    // Devolver la respuesta con el token
     return new Response(
       JSON.stringify({
         message: 'User authenticated',

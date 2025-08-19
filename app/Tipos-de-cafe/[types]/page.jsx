@@ -1,12 +1,12 @@
 import Loading from '@/components/Loading/Loading'
 import WrapperCards from '@/components/WrapperCards/WrapperCards'
-import { getProductByCategory } from '@/lib/data'
 import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 
 export default async function PageTiposDeCafe ({ params }) {
   const url = await params.types.split('-').join(' ')
-  const products = await getProductByCategory(url)
+  const products = await fetch(`/api/getProductsByCategory/${url}`)
+    .then((res) => res.json())
 
   const typesCoffee = formatCategory(url)
 

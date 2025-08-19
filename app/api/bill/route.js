@@ -1,6 +1,5 @@
 import { detailBill, insertBill } from '@/lib/data'
-import jwt from 'jsonwebtoken'
-const secretKey = 'supersecretkey'
+import { verifyToken } from '@/utils/verifyToken'
 
 export async function POST (req) {
   const authHeader = await req.headers.get('authorization')
@@ -15,32 +14,7 @@ export async function POST (req) {
     token = authHeader.split(' ')[1]
   }
 
-  if (!token) {
-    return new Response(
-      JSON.stringify({
-        message: 'Token invalid'
-      }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
-
-  let decodedToken
-  try {
-    decodedToken = jwt.verify(token, secretKey)
-  } catch (err) {
-    return new Response(
-      JSON.stringify({
-        message: 'Token invalid'
-      }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
+  const decodedToken = await verifyToken(token)
 
   if (!decodedToken.id || decodedToken.type !== 'cliente') {
     return new Response(

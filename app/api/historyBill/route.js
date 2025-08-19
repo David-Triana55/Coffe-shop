@@ -1,7 +1,6 @@
 import { historyBill } from '@/lib/data'
-import jwt from 'jsonwebtoken' // Asegúrate de tener esta dependencia instalada
-const secretKey = 'supersecretkey'
 
+import { verifyToken } from '@/utils/verifyToken'
 export async function GET (req) {
   const authHeader = req.headers.get('Authorization')
 
@@ -11,47 +10,10 @@ export async function GET (req) {
     token = authHeader.split(' ')[1]
   }
 
-  if (!token) {
-    return new Response(
-      JSON.stringify({
-        message: 'Token invalid'
-      }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
-
-  let decodedToken
-  try {
-    decodedToken = jwt.verify(token, secretKey)
-  } catch (err) {
-    return new Response(
-      JSON.stringify({
-        message: 'Token invalid'
-      }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
-  console.log(decodedToken)
-
-  if (!decodedToken.id || decodedToken.type !== 'cliente') {
-    return new Response(
-      JSON.stringify({
-        message: 'Token invalid'
-      }),
-      {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
-  }
-
+  const decodedToken = await verifyToken(token)
   const data = await historyBill(decodedToken.id)
+
+  console.log(data)
 
   return new Response(
     JSON.stringify({
