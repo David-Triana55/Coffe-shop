@@ -1,4 +1,4 @@
-import { getBrands, getAccesoriesPrincipal } from '@/lib/api/brands'
+import { getBrands, getAccesoriesPrincipal } from '@/lib/data'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
