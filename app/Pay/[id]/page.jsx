@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { detailBillById, getProductsByBill } from '@/lib/data'
 import { formatPrice } from '@/utils/formatter'
 
 import DownloadPDFButton from '@/components/Pdf/Pdf'
@@ -9,8 +8,8 @@ import Link from 'next/link'
 
 export default async function pagePay ({ params }) {
   const { id } = params
-  const detailBill = await detailBillById(id)
-  const billProduct = await getProductsByBill(id)
+  const detailBill = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bill/${id}`).then((res) => res.json())
+  const billProduct = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByBill/${id}`).then((res) => res.json())
 
   console.log(billProduct, 'billProduct')
   let data

@@ -7,8 +7,8 @@ import Link from 'next/link'
 
 export default async function pageBill ({ params }) {
   const { id } = params
-  const detailBill = await fetch(`$/api/bill/${id}`).then((res) => res.json())
-  const billProduct = await fetch(`/api/getProductsByBill/${id}`).then((res) => res.json())
+  const detailBill = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bill/${id}`).then((res) => res.json())
+  const billProduct = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByBill/${id}`).then((res) => res.json())
 
   let data
   let subTotal

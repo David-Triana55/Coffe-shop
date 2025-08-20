@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 
 export default async function PageMarcas ({ params }) {
   const brand = await params.brands.split('-').join(' ')
-  const products = await fetch(`$/api/getProductsByBrand/${brand}`).then((res) => res.json())
+  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByBrand/${brand}`).then((res) => res.json())
   const typesCoffee = formatCategory(brand)
 
   return (

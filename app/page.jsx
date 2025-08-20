@@ -1,12 +1,11 @@
-import { getBrands, getAccesoriesPrincipal } from '@/lib/data'
+import { getBrands, getCategoriesPrincipal } from '@/lib/data'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
   const brands = await getBrands()
-  const accesoriesCoffe = await getAccesoriesPrincipal()
+  const accesoriesCoffe = await getCategoriesPrincipal()
 
   return (
-
     <main className='mt-16  min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
       <section className='relative w-full h-full opacity-70 lg:opacity-80'>
 

@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 
 export default async function PageTiposDeCafe ({ params }) {
   const url = await params.types.split('-').join(' ')
-  const products = await fetch(`/api/getProductsByCategory/${url}`)
+  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByCategory/${url}`)
     .then((res) => res.json())
 
   const typesCoffee = formatCategory(url)
