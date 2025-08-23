@@ -63,22 +63,22 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
             <div className='w-full justify-center flex flex-row gap-1'>
               <div className='w-1/2'>
                 <label
-                  htmlFor='type'
+                  htmlFor='role'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Tipo de usuario
                 </label>
                 <div className='mt-2'>
                   <select
-                    id='type'
-                    name='type'
+                    id='role'
+                    name='role'
                     required
-                    autoComplete='type'
+                    autoComplete='role'
                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6'
                   >
                     <option value=''>Seleccione</option>
-                    <option value='cliente'>Cliente</option>
-                    <option value='vendedor'>Vendedor</option>
+                    <option value='CLIENTE'>Cliente</option>
+                    <option value='VENDEDOR'>Vendedor</option>
                   </select>
                 </div>
               </div>

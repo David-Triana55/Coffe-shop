@@ -5,6 +5,7 @@ import { useState } from 'react'
 import useStore from '@/store'
 import SignForm from './Sign'
 import LoginForm from './login'
+import { ROLES } from '@/utils/roles'
 
 export default function Form ({ type }) {
   const { setLogin, setClientInfo } = useStore(state => state)
@@ -33,21 +34,22 @@ export default function Form ({ type }) {
       }
 
       const data = await response.json()
-      setLogin(data.token, true, data.type)
+      console.log(data)
+      setLogin(true, data.role)
 
       const res = await fetch('/api/info', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${data.token}`
-        }
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       })
 
       if (!res.ok) throw new Error('fallllllla')
 
       const dataInfo = await res.json()
-      setClientInfo(dataInfo)
-
+      console.log(dataInfo)
+      setClientInfo(dataInfo.data)
       router.push('/')
     } catch (error) {
       setErrorLogin(error)
@@ -63,19 +65,19 @@ export default function Form ({ type }) {
     e.preventDefault()
     try {
       const form = new FormData(e.target)
-      const name = form.get('name')
-      const lastName = form.get('lastName')
+      const name = form.get('name').trim()
+      const lastName = form.get('lastName').trim()
       const number = form.get('number')
-      const email = form.get('email')
-      const password = form.get('password')
-      const type = form.get('type')
+      const email = form.get('email').trim()
+      const password = form.get('password').trim()
+      const role = ROLES[form.get('role')]
 
       const response = await fetch('/api/signUp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, lastName, number, password, email, type })
+        body: JSON.stringify({ name, lastName, number, password, email, role })
       })
 
       console.log(response)

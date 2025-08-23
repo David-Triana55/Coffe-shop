@@ -1,16 +1,14 @@
 import { formatPrice } from '@/utils/formatter'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-
 // Definir la tienda (store)
 const useStore = create(persist(
   (set, get) => ({
     checkoutWindow: false,
     checkoutData: [],
     login: {
-      token: null,
       isLogged: false,
-      type: ''
+      role: null
     },
     totalBill: 0,
     clientInfo: {},
@@ -64,17 +62,16 @@ const useStore = create(persist(
       set({ totalBill })
     },
 
-    setLogin: (token, isLogged, type) => {
+    setLogin: (isLogged, role) => {
       set((state) => ({
         login: {
-          token,
           isLogged,
-          type
+          role
         }
       }))
     },
 
-    logOut: () => set({ login: { token: null, isLogged: false, type: '' }, checkoutData: [], totalBill: 0, clientInfo: {} })
+    logOut: () => set({ login: { isLogged: false, role: null }, checkoutData: [], totalBill: 0, clientInfo: {} })
   }),
   {
     name: 'isLogged', // Nombre de la clave en localStorage

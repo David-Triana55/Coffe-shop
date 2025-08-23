@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Coffee, Upload, DollarSign, Package, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,6 +9,23 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function CreateProduct () {
+  const [categories, setCategories] = useState([])
+  const [origins, setOrigins] = useState([])
+  useEffect(() => {
+    const getCategories = async () => {
+      const res = await fetch('/api/getCategories', { credentials: 'include' })
+      const data = await res.json()
+      setCategories(data)
+    }
+    const getOrigins = async () => {
+      const res = await fetch('/api/getOrigins', { credentials: 'include' })
+      const data = await res.json()
+      setOrigins(data)
+    }
+
+    getOrigins()
+    getCategories()
+  }, [])
   const [formData, setFormData] = useState({
     productName: '',
     description: '',
@@ -85,7 +102,6 @@ export default function CreateProduct () {
       }
     } catch (err) {
       console.error('Error al enviar la solicitud:', err)
-      alert('Ocurrió un error inesperado.')
     }
   }
 
@@ -156,52 +172,29 @@ export default function CreateProduct () {
                         <SelectValue placeholder='Seleccionar' />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='arabica'>Arábica</SelectItem>
-                        <SelectItem value='robusta'>Robusta</SelectItem>
-                        <SelectItem value='blend'>Mezcla</SelectItem>
-                        <SelectItem value='specialty'>Especialidad</SelectItem>
+                        <SelectItem value='null'>No Aplica</SelectItem>
+                        {categories?.map((category) => (
+                          <SelectItem value={category.id} key={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className='space-y-2'>
                     <Label htmlFor='origin'>Origen</Label>
-                    <Input
-                      id='origin'
-                      placeholder='Ej: Huila, Colombia'
-                      value={formData.origin}
-                      onChange={(e) => handleInputChange('origin', e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className='grid grid-cols-2 gap-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='roastLevel'>Nivel de Tostado</Label>
-                    <Select value={formData.roastLevel} onValueChange={(value) => handleInputChange('roastLevel', value)}>
+                    <Select value={formData.origin} onValueChange={(value) => handleInputChange('origin', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder='Seleccionar' />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='light'>Claro</SelectItem>
-                        <SelectItem value='medium'>Medio</SelectItem>
-                        <SelectItem value='dark'>Oscuro</SelectItem>
-                        <SelectItem value='green'>Verde (sin tostar)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='processingMethod'>Método de Procesamiento</Label>
-                    <Select value={formData.processingMethod} onValueChange={(value) => handleInputChange('processingMethod', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Seleccionar' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='washed'>Lavado</SelectItem>
-                        <SelectItem value='natural'>Natural</SelectItem>
-                        <SelectItem value='honey'>Honey</SelectItem>
-                        <SelectItem value='semi-washed'>Semi-lavado</SelectItem>
+                        <SelectItem value='null'>No Aplica</SelectItem>
+                        {origins?.map((origin) => (
+                          <SelectItem value={origin.id} key={origin.id}>
+                            {origin.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -348,7 +341,7 @@ export default function CreateProduct () {
                   onChange={handleImageChange}
                 />
                 <Button variant='outline' type='button' onClick={() => document.getElementById('images').click()}>
-                  Seleccionar Imágenes
+                  Seleccionar Imagen
                 </Button>
                 <div className='flex flex-wrap gap-2 mt-4'>
                   {selectedImages.map((img, idx) => (
@@ -371,11 +364,8 @@ export default function CreateProduct () {
           </Card>
 
           <div className='flex justify-end space-x-4 mt-8'>
-            <Button variant='outline' type='button'>
-              Guardar como Borrador
-            </Button>
             <Button onClick={handleSubmit} type='submit' className='bg-[#33691E] hover:bg-[#1B5E20] text-white'>
-              Publicar Subasta
+              Crear Producto
             </Button>
           </div>
         </form>

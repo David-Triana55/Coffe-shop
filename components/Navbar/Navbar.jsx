@@ -21,6 +21,7 @@ import Cart from '../Cart/Cart'
 import Image from 'next/image'
 import useStore from '@/store'
 import { useRouter } from 'next/navigation'
+import { ROLES } from '@/utils/roles'
 
 const navigationClient = {
 
@@ -96,11 +97,11 @@ const navigationSeller = {
 
 export default function NavBar () {
   const { toogleCheckoutWindowValue, login, logOut } = useStore(state => state)
-  const { isLogged, type } = login
+  const { isLogged, role } = login
   const [open, setOpen] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  console.log('type', type)
+  console.log('role', role)
 
   const router = useRouter()
 
@@ -110,10 +111,27 @@ export default function NavBar () {
     toogleCheckoutWindowValue(false)
   }
 
-  const handleLogut = () => {
+  const handleLogut = async () => {
     setOpen(!open)
+    closePopover(false)
     logOut()
-    router.push('/')
+
+    try {
+      const res = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      res.json()
+      router.push('/')
+
+      if (!res.ok) {
+        throw new Error('Error al cerrar sesión')
+      }
+
+      console.log('logout')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -150,7 +168,7 @@ export default function NavBar () {
             <TabGroup className='mt-2'>
               <div className='border-b border-gray-200'>
                 <TabList className='-mb-px flex space-x-8 px-4'>
-                  {(type === 'vendedor' ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
+                  {(role === ROLES.VENDEDOR ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
                     <Tab
                       key={category.name}
                       className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar'
@@ -161,7 +179,7 @@ export default function NavBar () {
                 </TabList>
               </div>
               <TabPanels as={Fragment}>
-                {(type === 'vendedor' ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
+                {(role === ROLES.VENDEDOR ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
                   <TabPanel key={category.name} className='space-y-10 px-4 pb-8 pt-10'>
                     <div className='grid grid-cols-2 gap-x-4'>
                       {category?.featured?.map((item) => (
@@ -202,7 +220,7 @@ export default function NavBar () {
             </TabGroup>
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
-              {(type === 'vendedor' ? navigationSeller?.pages : navigationClient?.pages)?.map((page) => (
+              {(role === ROLES.VENDEDOR ? navigationSeller?.pages : navigationClient?.pages)?.map((page) => (
                 <div key={page.name} className='flow-root'>
                   <Link
                     onClick={() => {
@@ -288,7 +306,7 @@ export default function NavBar () {
               {/* Flyout menus */}
               <PopoverGroup className='hidden lg:ml-8 lg:block lg:self-stretch'>
                 <div className='flex h-full space-x-8'>
-                  {(type === 'vendedor' ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
+                  {(role === ROLES.VENDEDOR ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
                     <Popover key={category.name} className='flex'>
                       <div className='relative flex'>
                         <PopoverButton
@@ -357,7 +375,7 @@ export default function NavBar () {
                     </Popover>
                   ))}
 
-                  {(type === 'vendedor' ? navigationSeller?.pages : navigationClient?.pages)?.map((page) => (
+                  {(role === ROLES.VENDEDOR ? navigationSeller?.pages : navigationClient?.pages)?.map((page) => (
                     <Link
                       key={page.name}
                       href={page.href}
@@ -392,9 +410,7 @@ export default function NavBar () {
                     <span aria-hidden='true' className='h-6 w-px bg-gray-200' />
                     <button
                       onClick={() => {
-                        closePopover(false)
-                        logOut()
-                        router.push('/')
+                        handleLogut()
                       }} className='text-sm font-medium text-[#D2B48C] hover:text-gray-300'
                     >
                       Cerrar sesión

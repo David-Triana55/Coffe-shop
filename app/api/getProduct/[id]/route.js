@@ -2,7 +2,7 @@ import { getProductById } from '@/lib/data'
 
 /**
  * @openapi
- * /getProductById/{id}:
+ * /getProduct/{id}:
  *   get:
  *     tags:
  *       - getProduct

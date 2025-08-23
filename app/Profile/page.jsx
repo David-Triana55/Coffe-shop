@@ -18,10 +18,11 @@ import { useRouter } from 'next/navigation'
 import Bills from '@/components/Bills/Bills'
 import { formatPrice } from '@/utils/formatter'
 import Loading from '@/components/Loading/Loading'
+import { ROLES } from '@/utils/roles'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
-  const [activeTab, setActiveTab] = useState('invoices')
+  const [activeTab, setActiveTab] = useState(login?.role === ROLES.CLIENTE ? 'invoices' : 'information')
   const [noEdit, setNoEdit] = useState(true)
   const [save, setSave] = useState(null)
   const [loadingInfo, setLoadingInfo] = useState(false)
@@ -30,10 +31,10 @@ export default function Profile () {
   const router = useRouter()
   const [dataClient, setDataClient] = useState({
     edit: {
-      nombre_cliente: '',
-      apellido: '',
+      name: '',
+      last_name: '',
       email: '',
-      telefono: ''
+      phone_number: ''
     }
   })
 
@@ -51,9 +52,9 @@ export default function Profile () {
       const res = await fetch('/api/historyBill', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
-        }
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       })
 
       const { data } = await res.json()
@@ -66,12 +67,13 @@ export default function Profile () {
   useEffect(() => {
     setLoadingInfo(true)
     const getClientInfo = async () => {
-      const res = await fetch('/api/info', {
+      const res = await fetch('/api/userInfo', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
-        }
+          'Content-Type': 'application/json'
+
+        },
+        credentials: 'include'
       })
 
       const data = await res.json()
@@ -80,29 +82,28 @@ export default function Profile () {
       setLoadingInfo(false)
     }
     getClientInfo()
-  }, [login.token, save])
+  }, [save])
 
   const handleSubmitInfo = async (e) => {
     try {
       e.preventDefault()
 
       const objClient = {
-        data: {
-          nombre_cliente: dataClient.edit.nombre_cliente === '' ? clientInfo.data.nombre_cliente : dataClient.edit.nombre_cliente,
-          apellido: dataClient.edit.apellido === '' ? clientInfo.data.apellido : dataClient.edit.apellido,
-          email: dataClient.edit.email === '' ? clientInfo.data.email : dataClient.edit.email,
-          telefono: dataClient.edit.telefono === '' ? clientInfo.data.telefono : dataClient.edit.telefono
-        }
+        name: dataClient.edit.name === '' ? clientInfo.data.name : dataClient.edit.name,
+        lastName: dataClient.edit.last_name === '' ? clientInfo.data.last_name : dataClient.edit.last_name,
+        email: dataClient.edit.email === '' ? clientInfo.data.email : dataClient.edit.email,
+        phoneNumber: dataClient.edit.phone_number === '' ? clientInfo.data.phone_number : dataClient.edit.phone_number
       }
 
-      const response = await fetch('/api/info', {
+      const response = await fetch('/api/userInfo', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(objClient)
       })
+      console.log(response)
 
       if (!response.ok) {
         throw new Error('Error al actualizar la información')
@@ -118,6 +119,19 @@ export default function Profile () {
       console.error(error)
     } finally {
       e.target.reset()
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      setLogin(null, false)
+      router.push('/')
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -138,19 +152,16 @@ export default function Profile () {
                 <User className='mr-2 h-4 w-4' />
                 Información
               </Button>
-              {login?.type === 'cliente' && <Button
+              {login?.role === ROLES.CLIENTE && <Button
                 variant='ghost'
                 className='justify-start'
                 onClick={() => setActiveTab('invoices')}
-                                            >
+                                                >
                 <FileText className='mr-2 h-4 w-4' />
                 Facturas
               </Button>}
               <Button
-                onClick={() => {
-                  setLogin(null, false)
-                  router.push('/')
-                }}
+                onClick={() => handleLogout()}
                 variant='ghost'
                 className='justify-start text-red-600 hover:text-red-700 hover:bg-red-100'
               >
@@ -164,8 +175,8 @@ export default function Profile () {
 
       <section className='md:w-3/4'>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={login?.type === 'cliente' ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
-            {login?.type === 'cliente' && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
+          <TabsList className={login?.role === ROLES.CLIENTE ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
+            {login?.role === ROLES.CLIENTE && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
             <TabsTrigger className='tab-button-information' value='information'>Información</TabsTrigger>
           </TabsList>
           <TabsContent value='information'>
@@ -186,9 +197,9 @@ export default function Profile () {
                     <Input
                       disabled={noEdit}
                       id='name'
-                      placeholder={clientInfo.data?.nombre_cliente}
-                      value={dataClient?.edit?.nombre_cliente || ''}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, nombre_cliente: e.target.value } })}
+                      placeholder={clientInfo.data?.name}
+                      value={dataClient?.edit?.name || ''}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, name: e.target.value } })}
                     />
 
                   </div>
@@ -197,9 +208,9 @@ export default function Profile () {
                     <Input
                       disabled={noEdit}
                       id='lastName'
-                      placeholder={clientInfo.data?.apellido}
-                      value={dataClient?.edit?.apellido}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, apellido: e.target.value } })}
+                      placeholder={clientInfo.data?.last_name}
+                      value={dataClient?.edit?.last_name || ''}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, last_name: e.target.value } })}
                     />
 
                   </div>
@@ -221,9 +232,9 @@ export default function Profile () {
                       disabled={noEdit}
                       id='number'
                       type='number'
-                      placeholder={clientInfo.data?.telefono}
-                      value={dataClient?.edit?.telefono}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, telefono: e.target.value } })}
+                      placeholder={clientInfo.data?.phone_number}
+                      value={dataClient?.edit?.phone_number}
+                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, phone_number: e.target.value } })}
                     />
                   </div>
                   {noEdit && <button
@@ -244,7 +255,8 @@ export default function Profile () {
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value='invoices'>
+
+          {login?.role === ROLES.CLIENTE && <TabsContent value='invoices'>
             <Card>
               <CardHeader>
                 <CardTitle>Historial de Facturas</CardTitle>
@@ -275,7 +287,7 @@ export default function Profile () {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent>}
         </Tabs>
       </section>
     </main>
