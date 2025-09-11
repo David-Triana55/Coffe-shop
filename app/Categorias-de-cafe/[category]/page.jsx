@@ -3,19 +3,19 @@ import WrapperCards from '@/components/WrapperCards/WrapperCards'
 import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 
-export default async function PageTiposDeCafe ({ params }) {
-  const url = await params.types.split('-').join(' ')
-  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByCategory/${url}`)
-    .then((res) => res.json())
-
-  const typesCoffee = formatCategory(url)
-
+export default async function PageCategories ({ params }) {
+  const url = await params.category.split('-').join(' ')
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${url}`)
+  const products = await res.json()
   console.log(products)
+
+  console.log(products[0].images_url[0].url, 'data')
+  const typesCoffee = formatCategory(url)
 
   return (
     <div className='mt-16 py-12 w-full'>
       <h1 className='text-2xl font-bold text-center text-balance bg-white '>
-        {typesCoffee}
+        {typesCoffee || url}
       </h1>
       <Suspense fallback={<Loading />}>
         <WrapperCards products={products} />

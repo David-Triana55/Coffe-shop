@@ -21,13 +21,14 @@ export default function WrapperCards ({ products }) {
     // hook que encapsula la logica del filtrado de los productos
     useFilter(setFilteredProducts, filteredProducts, filtroValue)
   }
+  console.log(filteredProducts, 'fileterderdpiraodjfaj')
 
   const handleChangeSearch = (e) => {
     setSearch(e.target.value)
     if (e.target.value === '') {
       setFilteredProducts(remainProducts)
     } else {
-      setFilteredProducts(filteredProducts.filter((product) => product.nombre_producto.toLowerCase().includes(e.target.value.toLowerCase())))
+      setFilteredProducts(filteredProducts.filter((product) => product.name.toLowerCase().includes(e.target.value.toLowerCase())))
     }
   }
 
@@ -35,7 +36,6 @@ export default function WrapperCards ({ products }) {
     <div className='wrapper_cards'>
       <div className='w-full px-4 flex flex-wrap-reverse justify-between items-center gap-4 mt-4 text-black font-bold mb-9'>
         <select className='w-2/4 lg:w-1/4 rounded-md' onChange={handleChangeOptions}>
-          <option value=''>Seleccionar filtro</option>
           <option value='Ordenar por precio alto a bajo'>Ordenar por precio: alto a bajo</option>
           <option value='Ordenar por precio bajo a alto'>Ordenar por precio: bajo a alto</option>
 
@@ -50,10 +50,9 @@ export default function WrapperCards ({ products }) {
       <div className='wrapper_cards__content'>
         {
         filteredProducts?.map((product) => (
-          <div className=' last:mb-6 ' key={product.id_producto}>
+          <div className=' last:mb-6 ' key={product.id}>
             <Suspense fallback={<Loading />}>
               <CardProducts products={product} />
-
             </Suspense>
           </div>
         ))

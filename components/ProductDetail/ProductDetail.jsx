@@ -38,7 +38,7 @@ export default function ProductDetail ({ params }) {
   useEffect(() => {
     async function fetchProduct () {
       try {
-        const response = await fetch(`/api/productById?id=${params.id}`)
+        const response = await fetch(`/api/getProductById?id=${params.id}`)
         const data = await response.json()
         setProduct(data[0])
       } catch (error) {

@@ -25,62 +25,11 @@ import { ROLES } from '@/utils/roles'
 
 const navigationClient = {
 
-  categories: [
-    {
-      id: 'Cafes',
-      name: 'Cafes',
-      featured: [
-        {
-          name: 'variedades de cafés',
-          imageSrc: 'https://th.bing.com/th/id/OIP.Uztyg-o8Bjn5_u0VK2-aRgHaE8?rs=1&pid=ImgDetMain',
-          imageAlt: 'Imagen de cafés con una variedad de cafés'
-        },
-        {
-          name: 'Accessorios de café',
-          imageSrc: 'https://p0.pikist.com/photos/267/192/cafe-coffee-aroma-beverage-cup-thumbnail.jpg',
-          imageAlt: 'Imagen de varios accesorios de café'
-        }
-      ],
-      sections: [
-        {
-          id: 'Tipos de Café',
-          name: 'Tipos de Café',
-          items: [
-            { name: 'Café Molido', href: '/Tipos-de-cafe/Cafe-molido' },
-            { name: 'Cápsulas de Café', href: '/Tipos-de-cafe/Capsulas-de-cafe' },
-            { name: 'Mezclas Especiales', href: '/Tipos-de-cafe/Mezclas-Especiales' }
-          ]
-        },
-        {
-
-          id: 'Accesorios de Café ',
-          name: 'Accesorios de Café ',
-          items: [
-            { name: 'Molinillos', href: '/Accesorios-de-cafe/Molinillos' },
-            { name: 'Cafeteras ', href: '/Accesorios-de-cafe/Cafeteras' },
-            { name: 'Tazas y termos', href: '/Accesorios-de-cafe/Tazas-y-termos' },
-            { name: 'Filtros', href: '/Accesorios-de-cafe/Filtros' }
-          ]
-        },
-        {
-          id: 'Marcas de Café',
-          name: 'Marcas de Café',
-          items: [
-            { name: 'Oma', href: '/Marcas-de-cafe/Oma' },
-            { name: 'Juan Valdez', href: '/Marcas-de-cafe/Juan-Valdez' },
-            { name: 'Nescafé', href: '/Marcas-de-cafe/Nescafe' },
-            { name: 'Colcafé', href: '/Marcas-de-cafe/Colcafe' },
-            { name: 'Café Devoción', href: '/Marcas-de-cafe/Cafe-Devocion' }
-          ]
-        }
-      ]
-    }
-  ],
   pages: [
-    { name: 'Mision', href: '/Mision' },
-    { name: 'Vision', href: '/Vision' },
-
-    { name: 'Nosotros', href: '/Nosotros' }
+    { name: 'Inicio', href: '/' },
+    { name: 'Tienda', href: '/Tienda' },
+    { name: 'Subastas', href: '/Subastas' },
+    { name: 'Sobre nosotros', href: '/Nosotros' }
   ]
 
 }
@@ -171,7 +120,7 @@ export default function NavBar () {
                   {(role === ROLES.VENDEDOR ? navigationSeller?.categories : navigationClient?.categories)?.map((category) => (
                     <Tab
                       key={category.name}
-                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar'
+                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar flex items-center'
                     >
                       {category.name}
                     </Tab>
@@ -326,20 +275,9 @@ export default function NavBar () {
                       >
                         <div className='relative bg-white'>
                           <div className='mx-auto max-w-7xl px-8'>
-                            <div className='grid grid-cols-2 gap-x-8 gap-y-10 py-16'>
-                              <div className='col-start-2 grid grid-cols-2 gap-x-8'>
-                                {category?.featured?.map((item) => (
-                                  <div key={item.name} className='group relative text-base sm:text-sm '>
-                                    <div className='aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 '>
-                                      <img
-                                        className='object-cover object-center' alt={item.imageAlt}
-                                        src={item.imageSrc}
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className='row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm'>
+                            <div className='grid grid-cols-1 gap-x-8 gap-y-10 py-16'>
+
+                              <div className='row-start-1 grid grid-cols-5 gap-x-8 gap-y-10 text-sm'>
                                 {category?.sections?.map((section) => (
                                   <div key={section.name}>
                                     <p id={`${section.name}-heading`} className='font-medium text-textNavbar'>

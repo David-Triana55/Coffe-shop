@@ -1,22 +1,19 @@
 import { detailBill, insertBill } from '@/lib/data'
+import { ROLES } from '@/utils/roles'
 import { verifyToken } from '@/utils/verifyToken'
+import { cookies } from 'next/headers'
 
 export async function POST (req) {
-  const authHeader = await req.headers.get('authorization')
+  const cookie = cookies()
+  const token = cookie.get(process.env.COOKIE_NAME)?.value
   const res = await req.json()
 
   const { productos } = res
   console.log(productos)
-  console.log(authHeader)
-  let token = ''
-
-  if (authHeader && authHeader.toLowerCase().startsWith('bearer')) {
-    token = authHeader.split(' ')[1]
-  }
 
   const decodedToken = await verifyToken(token)
 
-  if (!decodedToken.id || decodedToken.type !== 'cliente') {
+  if (!decodedToken.id || decodedToken.role !== ROLES.CLIENTE) {
     return new Response(
       JSON.stringify({
         message: 'Token invalid'

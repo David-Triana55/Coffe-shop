@@ -1,4 +1,5 @@
-import { getBrands } from '@/lib/data'
+import { getBrands } from '@/lib/data/brands'
+import { NextResponse } from 'next/server'
 
 /**
  * @openapi
@@ -37,14 +38,17 @@ import { getBrands } from '@/lib/data'
  */
 
 export async function GET (req) {
-  return new Response(
-    JSON.stringify({
-      data: await getBrands(),
-      message: 'Respuesta exitosa'
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    }
-  )
+  try {
+    const { searchParams } = new URL(req.url)
+
+    const products = searchParams.get('products') ?? false
+
+    const brands = await getBrands(products)
+    console.log('brands', brands)
+
+    return NextResponse.json(brands, { status: 200 })
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json({ message: 'Error interno del servidor', status: 500 })
+  }
 }

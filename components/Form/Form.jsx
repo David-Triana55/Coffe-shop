@@ -37,7 +37,7 @@ export default function Form ({ type }) {
       console.log(data)
       setLogin(true, data.role)
 
-      const res = await fetch('/api/info', {
+      const res = await fetch('/api/userInfo', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -45,7 +45,7 @@ export default function Form ({ type }) {
         credentials: 'include'
       })
 
-      if (!res.ok) throw new Error('fallllllla')
+      if (!res.ok) throw new Error('Error al obtener la informacion del usuario')
 
       const dataInfo = await res.json()
       console.log(dataInfo)

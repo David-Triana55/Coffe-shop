@@ -1,10 +1,10 @@
 export function useFilter (setProducts, products, value) {
   if (value === 'Ordenar por precio alto a bajo') {
-    setProducts(products.sort((a, b) => a.valor_producto_iva - b.valor_producto_iva))
+    setProducts(products.sort((a, b) => a.price - b.price))
   } else if (value === 'Ordenar por precio bajo a alto') {
-    setProducts(products.sort((a, b) => b.valor_producto_iva - a.valor_producto_iva))
+    setProducts(products.sort((a, b) => b.price - a.price))
   } else if (value === 'Ordenar por alfabeto') {
-    setProducts(products.sort((a, b) => a.nombre_producto.localeCompare(b.nombre_producto)))
+    setProducts(products.sort((a, b) => a.name.localeCompare(b.name)))
   } else {
     setProducts(products)
   }

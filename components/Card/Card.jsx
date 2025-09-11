@@ -14,14 +14,14 @@ export default function Card ({ products }) {
   // router para controlar la navegacion
   const router = useRouter()
   // formatear la moneda de los productos
-  const precio = formatPrice(products?.valor_producto_iva)
+  const precio = formatPrice(products?.price)
   // verificar si el producto ya se encuentra agregado en el objeto de checkoutdata
-  const isInCart = checkoutData.some(item => item.id_producto === products.id_producto)
+  const isInCart = checkoutData.some(item => item.id === products.id)
 
   const handleIconCard = (product) => {
     setIsCart(!isCart)
     if (isInCart) {
-      removeToCart(product.id_producto)
+      removeToCart(product.id)
     } else {
       addToCart(product)
     }
@@ -46,12 +46,12 @@ export default function Card ({ products }) {
       </span>
       <div className='card_product__image'>
         <img
-          alt={products?.nombre_producto}
-          src={products?.imagen}
-          onClick={() => handleProductClick(products.id_producto)}
+          alt={products?.name}
+          src={products[0]?.images_url[0].url}
+          onClick={() => handleProductClick(products.id)}
         />
       </div>
-      <h1 className='card_product__title'>{products?.nombre_producto}</h1>
+      <h1 className='card_product__title'>{products?.name}</h1>
       <p className='card_product__price'>{precio}</p>
     </div>
   )

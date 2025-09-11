@@ -1,4 +1,4 @@
-import { detailBillById } from '@/lib/data'
+import { getDetailBillId } from '@/lib/data/bills'
 
 export async function GET (req, { params }) {
   const { id } = params
@@ -10,7 +10,7 @@ export async function GET (req, { params }) {
     })
   }
 
-  const bill = await detailBillById(id)
+  const bill = await getDetailBillId(id)
 
   if (!bill) {
     return new Response(JSON.stringify({ message: 'Bill not found' }), {

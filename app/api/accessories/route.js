@@ -1,4 +1,5 @@
-import { getCategoriesPrincipal } from '@/lib/data'
+import { getAccessories } from '@/lib/data/accessories'
+import { NextResponse } from 'next/server'
 
 /**
  * @openapi
@@ -21,13 +22,13 @@ import { getCategoriesPrincipal } from '@/lib/data'
  *                   items:
  *                     type: object
  *                     properties:
- *                       id_categoria:
- *                         type: integer
- *                         example: 1
- *                       nombre_categoria:
+ *                       id:
+ *                         type: UUID
+ *                         example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+ *                       name:
  *                         type: string
- *                         example: Cafe molido
- *                       imagenes:
+ *                         example: Cafetera Italiana
+ *                       image_url:
  *                         type: string
  *                         format: uri
  *                         nullable: true
@@ -38,17 +39,13 @@ import { getCategoriesPrincipal } from '@/lib/data'
  */
 
 export async function GET (req) {
-  const products = await getCategoriesPrincipal()
+  const { searchParams } = new URL(req.url)
 
-  console.log(products)
+  const products = searchParams.get('products') ?? false
 
-  return new Response(
-    JSON.stringify({
-      data: products
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    }
-  )
+  const accesories = await getAccessories(products)
+
+  console.log(accesories)
+
+  return NextResponse.json(accesories, { status: 200 })
 }

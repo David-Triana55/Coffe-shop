@@ -21,11 +21,11 @@ const useStore = create(persist(
     // Métodos para el manejo del carrito de compras
     addToCart: (product, count = 1) => {
       set((state) => {
-        const alreadyInCart = state.checkoutData.find((item) => item.id_producto === product.id_producto)
+        const alreadyInCart = state.checkoutData.find((item) => item.id === product.id)
         if (alreadyInCart) {
           return {
             checkoutData: state.checkoutData.map((item) =>
-              item.id_producto === product.id_producto
+              item.id === product.id
                 ? { ...item, count }
                 : item
             )
@@ -41,7 +41,7 @@ const useStore = create(persist(
     },
     removeToCart: (id) => {
       set((state) => ({
-        checkoutData: state.checkoutData.filter((product) => product.id_producto !== id)
+        checkoutData: state.checkoutData.filter((product) => product.id !== id)
       }))
 
       const { calculateTotalBill } = get()
@@ -57,7 +57,7 @@ const useStore = create(persist(
     // Métodos para calcular el total de la cuenta
     calculateTotalBill: () => {
       const { checkoutData } = get()
-      const total = checkoutData.reduce((total, item) => total + item.valor_producto_iva * item.count, 0)
+      const total = checkoutData.reduce((total, item) => total + item.price * item.count, 0)
       const totalBill = formatPrice(total)
       set({ totalBill })
     },

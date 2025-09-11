@@ -5,15 +5,15 @@ import { Suspense } from 'react'
 
 export default async function PageAccesories ({ params }) {
   const url = await params.items.split('-').join(' ')
-  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByCategory/${url}`).then((res) => res.json())
-
-  const typesCoffee = formatCategory(url)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accessories/${url}`)
+  const products = await res.json()
   console.log(products)
+  const typesCoffee = formatCategory(url)
 
   return (
     <div className='mt-16 py-12 w-full'>
       <h1 className='text-2xl font-bold text-center text-balance bg-white '>
-        {typesCoffee}
+        {typesCoffee || url}
       </h1>
       <Suspense fallback={<Loading />}>
         <WrapperCards products={products} />

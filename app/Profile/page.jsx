@@ -57,12 +57,12 @@ export default function Profile () {
         credentials: 'include'
       })
 
-      const { data } = await res.json()
+      const data = await res.json()
       setHistory(data)
       setLoadingBills(false)
     }
     getHistory()
-  }, [login.token])
+  }, [])
 
   useEffect(() => {
     setLoadingInfo(true)
@@ -273,14 +273,14 @@ export default function Profile () {
                 {loadingBills
                   ? <Loading position='start' />
                   : history
-                    ?.sort((a, b) => b.id_factura - a.id_factura)
+                    ?.sort((a, b) => b.id - a.id)
                     .map((item) => (
                     <Bills
-                      key={item.id_factura}
-                      id_factura={item.id_factura}
-                      fecha={item.fecha}
+                      key={item.id}
+                      id={item.id}
+                      date={item.date}
                       total={formatPrice(item.total)}
-                      client={item.cliente?.nombre_cliente}
+                      user={item.user?.name}
                     />
                     ))}
 
