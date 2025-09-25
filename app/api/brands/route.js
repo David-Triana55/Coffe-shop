@@ -44,7 +44,6 @@ export async function GET (req) {
     const products = searchParams.get('products') ?? false
 
     const brands = await getBrands(products)
-    console.log('brands', brands)
 
     return NextResponse.json(brands, { status: 200 })
   } catch (error) {

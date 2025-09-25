@@ -1,4 +1,4 @@
-import { getProductById } from '@/lib/data'
+import { getProductById } from '@/lib/data/products'
 
 /**
  * @openapi
@@ -58,7 +58,7 @@ import { getProductById } from '@/lib/data'
 
 export async function GET (request, { params }) {
   const { id } = params // capturamos el parámetro dinámico de la URL
-
+  console.log(id)
   if (!id) {
     return new Response(JSON.stringify({ message: 'ID del producto es requerido' }), {
       status: 400,
@@ -66,7 +66,7 @@ export async function GET (request, { params }) {
     })
   }
   const product = await getProductById(id)
-
+  console.log(product)
   if (!product) {
     return new Response(JSON.stringify({ message: 'Producto no encontrado' }), {
       status: 404,

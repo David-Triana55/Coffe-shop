@@ -1,11 +1,15 @@
-import { getProductByCategory } from '@/lib/data/categories'
+import { getProductsByCategory, getInfoCategory } from '@/lib/data/categories'
 import { NextResponse } from 'next/server'
 
 export async function GET (request, { params }) {
-  const { category } = params
-  console.log(category)
-  const products = await getProductByCategory(category) || []
-  console.log(products)
+  try {
+    const { category } = params
+    const products = await getProductsByCategory(category) || []
+    const infoCategory = await getInfoCategory(category)
 
-  return NextResponse.json(products, { status: 200 })
+    return NextResponse.json({ products, infoCategory }, { status: 200 })
+  } catch (e) {
+    console.log(e)
+    return NextResponse.json({ message: 'Error interno del servidor', status: 500 })
+  }
 }

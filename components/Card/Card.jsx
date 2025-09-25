@@ -7,17 +7,13 @@ import { useState } from 'react'
 import { formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
 
-export default function Card ({ products }) {
-  // consumir el estado global
+export default function Card ({ product }) {
   const { addToCart, removeToCart, checkoutData } = useStore(state => state)
   const [isCart, setIsCart] = useState(false)
-  // router para controlar la navegacion
   const router = useRouter()
-  // formatear la moneda de los productos
-  const precio = formatPrice(products?.price)
-  // verificar si el producto ya se encuentra agregado en el objeto de checkoutdata
-  const isInCart = checkoutData.some(item => item.id === products.id)
-
+  const precio = formatPrice(product?.price)
+  const isInCart = checkoutData.some(item => item.id === product.id)
+  console.log(product)
   const handleIconCard = (product) => {
     setIsCart(!isCart)
     if (isInCart) {
@@ -35,7 +31,7 @@ export default function Card ({ products }) {
     <div className='card_product__content'>
       <span
         className='card_product__cart'
-        onClick={() => handleIconCard(products)}
+        onClick={() => handleIconCard(product)}
       >
         {
           isInCart
@@ -46,12 +42,12 @@ export default function Card ({ products }) {
       </span>
       <div className='card_product__image'>
         <img
-          alt={products?.name}
-          src={products[0]?.images_url[0].url}
-          onClick={() => handleProductClick(products.id)}
+          alt={product?.name}
+          src={product?.images_url[0]}
+          onClick={() => handleProductClick(product.id)}
         />
       </div>
-      <h1 className='card_product__title'>{products?.name}</h1>
+      <h1 className='card_product__title'>{product?.name}</h1>
       <p className='card_product__price'>{precio}</p>
     </div>
   )

@@ -9,11 +9,11 @@ export default function PageSignIn () {
   useEffect(() => {
     const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
 
-    if (state?.login?.isLogged && state?.login?.type === ROLES.CLIENTE) {
+    if (state?.login?.isLogged && state?.login?.role === ROLES.CLIENTE) {
       router.push('/')
     }
 
-    if (state?.login?.isLogged && state?.login?.type === 'vendedor') {
+    if (state?.login?.isLogged && state?.login?.role !== ROLES.CLIENTE) {
       router.push('/dashboard')
     }
   }, [])

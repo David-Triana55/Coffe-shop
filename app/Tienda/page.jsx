@@ -13,8 +13,11 @@ import CardProducts from '@/components/Card/Card'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { formatCategory } from '@/utils/formatter'
+import Loading from '@/components/Loading/Loading'
+import NotProducts from '@/components/NotProducts/NotProducts'
 
 export default function CoffeeStore () {
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('recent')
   const [selectedCategories, setSelectedCategories] = useState([])
@@ -55,46 +58,19 @@ export default function CoffeeStore () {
   }
 
   useEffect(() => {
-    const getCategories = async () => {
-      const res = await fetch('/api/categories')
-      const data = await res.json()
-      setCategories(data)
+    const fetchData = async () => {
+      await Promise.all([
+        fetch('/api/categories').then((res) => res.json()).then(setCategories),
+        fetch('/api/brands').then((res) => res.json()).then(setBrands),
+        fetch('/api/origins').then((res) => res.json()).then(setOrigins),
+        fetch('/api/presentations').then((res) => res.json()).then(setPresentations),
+        fetch('/api/products').then((res) => res.json()).then(setProducts),
+        fetch('/api/accessories').then((res) => res.json()).then(setAccesories)
+      ])
+      setLoading(false)
     }
 
-    const getBrands = async () => {
-      const res = await fetch('/api/brands')
-      const data = await res.json()
-      setBrands(data)
-    }
-
-    const getOrigins = async () => {
-      const res = await fetch('/api/origins')
-      const data = await res.json()
-      setOrigins(data)
-    }
-    const getPresentations = async () => {
-      const res = await fetch('/api/presentations')
-      const data = await res.json()
-      setPresentations(data)
-    }
-
-    const getProducts = async () => {
-      const res = await fetch('/api/products')
-      const data = await res.json()
-      setProducts(data)
-    }
-    const getAccesories = async () => {
-      const res = await fetch('/api/accessories')
-      const data = await res.json()
-      setAccesories(data)
-    }
-
-    getCategories()
-    getBrands()
-    getOrigins()
-    getPresentations()
-    getProducts()
-    getAccesories()
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -124,7 +100,7 @@ export default function CoffeeStore () {
     }
 
     fetchFilteredProducts()
-  }, [selectedCategories, selectedBrands, selectedTypes, selectedOrigins, selectedAccessories, query, sortBy, page])
+  }, [selectedCategories, selectedBrands, selectedTypes, selectedOrigins, selectedAccessories, query, page])
 
   const handleCategoryChange = (category, checked) => {
     setSelectedCategories((prev) => (checked ? [...prev, category] : prev.filter((c) => c.id !== category.id)))
@@ -304,7 +280,9 @@ export default function CoffeeStore () {
 
   return (
     <div className='min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
-      <main className='container mx-auto p-4'>
+      {loading
+        ? (<Loading />)
+        : (<main className='container mx-auto p-4'>
         {/* Barra de búsqueda compacta */}
         <div className='mb-6 mt-16'>
           <div className='flex flex-col md:flex-row gap-4 items-center justify-center'>
@@ -439,19 +417,21 @@ export default function CoffeeStore () {
               )}
             </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-              {products?.map((product) => (
-                <div key={product.id} className='group'>
-                  <CardProducts
-                    products={product}
-                    className='overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white border-0 rounded-xl'
-                  />
-                </div>
-              ))}
-            </div>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                  {products?.map((product) => (
+                  <div key={product.id} className='group'>
+                    <CardProducts
+                      product={product}
+                      className='overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white border-0 rounded-xl'
+                    />
+                  </div>
+                  ))}
+              </div>
+              {products?.length === 0 && <NotProducts product={searchTerm} />}
+
           </div>
         </div>
-      </main>
+      </main>)}
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {

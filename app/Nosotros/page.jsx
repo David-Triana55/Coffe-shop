@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 
 export default function SobreNosotros () {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#D7CCC8] via-[#EFEBE9] to-[#D7CCC8] text-[#3E2723] mt-14'>
+    <div className='min-h-screen bg-gradient-to-br bg-[#D7CCC8]  text-[#3E2723] mt-14'>
       <main className='container mx-auto p-4'>
         {/* Hero Section */}
         <section className='text-center py-16 relative'>

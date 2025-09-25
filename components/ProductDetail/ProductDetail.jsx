@@ -9,19 +9,18 @@ import useStore from '@/store'
 import { ChevronLeft, Minus, Plus } from 'lucide-react'
 import Loading from '../Loading/Loading'
 import { useRouter } from 'next/navigation'
-export default function ProductDetail ({ params }) {
+export default function ProductDetail ({ id }) {
   const router = useRouter()
   const [product, setProduct] = useState(null)
   const [count, setCount] = useState(1)
   const { addToCart, checkoutData } = useStore((state) => state)
   const [productInCart, setProductInCart] = useState(null)
-
-  const price = formatPrice(product?.valor_producto_iva)
-
-  const category = formatCategory(product?.nombre_categoria)
+  const price = formatPrice(product?.price)
+  console.log(id, 'id')
+  const category = formatCategory(product?.name)
 
   const handleAddToCart = (product) => {
-    if (productInCart?.id_producto === product?.id_producto || checkoutData.some(item => item.id_producto === product.id_producto)) {
+    if (productInCart?.id === product?.id || checkoutData.some(item => item.id === product.id)) {
       setCount(prevCount => {
         const newCount = prevCount + 1
         addToCart(product, newCount)
@@ -38,16 +37,17 @@ export default function ProductDetail ({ params }) {
   useEffect(() => {
     async function fetchProduct () {
       try {
-        const response = await fetch(`/api/getProductById?id=${params.id}`)
+        const response = await fetch(`/api/productById?id=${id}`)
         const data = await response.json()
         setProduct(data[0])
+        console.log(data)
       } catch (error) {
         console.error('Error fetching product:', error)
       }
     }
 
     fetchProduct()
-  }, [params.id])
+  }, [id])
 
   if (!product) return <Loading />
 
@@ -55,13 +55,13 @@ export default function ProductDetail ({ params }) {
     <div className='grid grid-cols-1 lg:grid-cols-2 w-full lg:pt-4'>
       <div className='product_detail__content relative'>
         <ChevronLeft className=' cursor-pointer absolute left-4 top-4 w-6 h-6 text-black hover:text-primary-500' onClick={() => router.back()} />
-        <img src={product.imagen} alt={product.nombre_producto} />
+        <img src={product.images_url[0]} alt={product.name} />
 
       </div>
 
       <div className='product_detail__cart'>
         <p className='product_detail__category'>{category}</p>
-        <h1 className='product_detail__title'>{product?.nombre_producto}</h1>
+        <h1 className='product_detail__title'>{product?.name}</h1>
         <p className='product_detail__price'>{price}</p>
         <div className='flex gap-2 lg:mt-4'>
           <button

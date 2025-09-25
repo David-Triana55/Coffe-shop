@@ -1,9 +1,17 @@
+'use client'
 import { Coffee, DollarSign, Gavel, Clock, Bell } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { useEffect, useState } from 'react'
 
 export default function AuctionDashboard () {
+  const [name, setName] = useState('')
+  useEffect(() => {
+    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
+    setName(state?.clientInfo?.data?.name)
+  }, [])
+
   const auctionData = {
     totalEarnings: 28750.00,
     activeAuctions: 12,
@@ -97,9 +105,9 @@ export default function AuctionDashboard () {
             <Bell className='h-6 w-6 cursor-pointer' />
             <div className='flex items-center space-x-2'>
               <div className='w-8 h-8 bg-[#D7CCC8] rounded-full flex items-center justify-center'>
-                <span className='text-[#3E2723] font-bold'>JD</span>
+                <span className='text-[#3E2723] font-bold'>{name}</span>
               </div>
-              <span>Juan Díaz</span>
+              <span>{name}</span>
             </div>
           </div>
         </div>
@@ -107,7 +115,7 @@ export default function AuctionDashboard () {
 
       <main className='container mx-auto p-4'>
         <div className='mb-6'>
-          <h2 className='text-3xl font-bold mb-2'>Bienvenido, Juan</h2>
+          <h2 className='text-3xl font-bold mb-2'>Bienvenido, {name}</h2>
           <p className='text-lg'>Gestiona tus subastas de café y maximiza tus ganancias</p>
         </div>
 

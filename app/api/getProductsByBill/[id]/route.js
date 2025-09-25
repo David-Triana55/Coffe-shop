@@ -1,4 +1,4 @@
-import { getProductByBrand } from '@/lib/data'
+import { getProductByBrand } from '@/lib/data/bills'
 
 export async function GET (request, { params }) {
   const { id } = params
