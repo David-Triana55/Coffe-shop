@@ -47,7 +47,7 @@ export async function POST (req) {
           payment.external_reference ||
           'unknown'
 
-        console.log('User ID:', userId)
+        console.log('User ID:', userId, typeof userId)
 
         // 🔹 Fecha actual
         const currentDate = new Date().toISOString().split('T')[0]
