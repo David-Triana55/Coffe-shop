@@ -41,9 +41,9 @@ export async function POST (req) {
       body: {
         items: mpItems,
         back_urls: {
-          success: 'http://localhost:3000/success' || `${process.env.NEXT_PUBLIC_APP_URL}/success`,
-          failure: 'http://localhost:3000/failure' || `${process.env.NEXT_PUBLIC_APP_URL}/failure`,
-          pending: 'http://localhost:3000/pending' || `${process.env.NEXT_PUBLIC_APP_URL}/pending`
+          success: `${process.env.APP_URL}/success`,
+          failure: `${process.env.APP_URL}/failure`,
+          pending: `${process.env.APP_URL}/pending`
         },
         metadata: {
           userId: decodedToken.id
@@ -52,7 +52,6 @@ export async function POST (req) {
       }
     })
 
-    console.log(preference, 'preferences')
     return NextResponse.json({
       preferenceId: preference.id,
       init_point: preference.init_point
