@@ -6,9 +6,9 @@ import { useEffect } from 'react'
 export default function PageSignUP () {
   const router = useRouter()
   useEffect(() => {
-    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
+    const state = JSON.parse(window.localStorage?.getItem('isLogged'))
 
-    if (state.login.isLogged) {
+    if (state?.state?.login?.isLogged) {
       router.push('/')
     }
   }, [])

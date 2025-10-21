@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-'use client' // Esto asegura que el componente es un Client Component
+'use client'
 import { useRouter } from 'next/navigation'
 import './Card.css'
 import { CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -7,21 +7,17 @@ import { useState } from 'react'
 import { formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
 
-export default function Card ({ products }) {
-  // consumir el estado global
+export default function Card ({ product }) {
   const { addToCart, removeToCart, checkoutData } = useStore(state => state)
   const [isCart, setIsCart] = useState(false)
-  // router para controlar la navegacion
   const router = useRouter()
-  // formatear la moneda de los productos
-  const precio = formatPrice(products?.valor_producto_iva)
-  // verificar si el producto ya se encuentra agregado en el objeto de checkoutdata
-  const isInCart = checkoutData.some(item => item.id_producto === products.id_producto)
-
+  const precio = formatPrice(product?.price)
+  const isInCart = checkoutData.some(item => item.id === product.id)
+  console.log(product)
   const handleIconCard = (product) => {
     setIsCart(!isCart)
     if (isInCart) {
-      removeToCart(product.id_producto)
+      removeToCart(product.id)
     } else {
       addToCart(product)
     }
@@ -35,7 +31,7 @@ export default function Card ({ products }) {
     <div className='card_product__content'>
       <span
         className='card_product__cart'
-        onClick={() => handleIconCard(products)}
+        onClick={() => handleIconCard(product)}
       >
         {
           isInCart
@@ -46,12 +42,12 @@ export default function Card ({ products }) {
       </span>
       <div className='card_product__image'>
         <img
-          alt={products?.nombre_producto}
-          src={products?.imagen}
-          onClick={() => handleProductClick(products.id_producto)}
+          alt={product?.name}
+          src={product?.images_url != null ? product?.images_url[0] || '/placeholder.svg' : '/placeholder.svg'}
+          onClick={() => handleProductClick(product.id)}
         />
       </div>
-      <h1 className='card_product__title'>{products?.nombre_producto}</h1>
+      <h1 className='card_product__title'>{product?.name}</h1>
       <p className='card_product__price'>{precio}</p>
     </div>
   )

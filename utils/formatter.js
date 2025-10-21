@@ -7,6 +7,7 @@ export function formatPrice (price) {
 
 const typesCoffeeName = {
   'Cafe molido': 'Café Molido',
+  'Cafe en Grano': 'Café en grano',
   'Capsulas de cafe': 'Cápsulas de Café',
   'Mezclas Especiales': 'Mezclas Especiales',
   Molinillos: 'Molinillos',
@@ -17,7 +18,11 @@ const typesCoffeeName = {
   'Juan Valdez': 'Juan Valdez',
   Nescafe: 'Nescafé',
   Colcafe: 'Colcafé',
-  'Cafe Devocion': 'Café Devoción'
+  'Cafe Devocion': 'Café Devoción',
+  Arabica: 'Arábica',
+  Instantaneo: 'Instantáneo',
+  'Cafetera de Capsulas': 'Cafetera de Cápsulas',
+  'Molinillo Electrico': 'Molinillo Eléctrico'
 
 }
 

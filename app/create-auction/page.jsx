@@ -7,8 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import useStore from '@/store/index'
 
 export default function CreateAuctionForm () {
+  const { login } = useStore((state) => state)
+
   const [formData, setFormData] = useState({
     productName: '',
     description: '',
@@ -56,11 +59,12 @@ export default function CreateAuctionForm () {
     })
 
     try {
-      const response = await fetch('http://localhost:5183/cqrs/command/help_request_create', {
+      const response = await fetch('api/upload', {
         method: 'POST',
         body: formDataToSend,
         headers: {
-          Authorization: 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VybmFtZSI6ImNhcmxvcy5nYXJ6b25nKzgyQG9waXRlY2guY29tLmNvIiwiVXNlcmlkIjoiOWZiY2U0ZDQtMzI3Ni00MDEyLWI5ZWItM2YzMGY3ZDlmNjYyIiwiQ29tcGFueSI6IjQ5YzQ1MTEwLWYxNDItNDQ1OS04NTZhLTcwMGZkYjcwZmU5NiIsIm5iZiI6MTc1MTQ2ODIyNywiZXhwIjoxNzUxNTU0NjI3LCJpc3MiOiJrakZEejVxdFFXbWJQWTRJU0FscGdPdFVUdm1WQ3pKYSIsImF1ZCI6ImtqRkR6NXF0UVdtYlBZNElTQWxwZ090VVR2bVZDekphIn0.njXiSUINBE9jhZZQjq1smmXyB74eD-IsStC833xeYF4' // si es necesario
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${login.token}`
         }
       })
 

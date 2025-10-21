@@ -11,14 +11,14 @@ export default function OrderCard ({ product }) {
     removeToCart(id)
   }
 
-  const price = formatPrice(product.valor_producto_iva)
+  const price = formatPrice(product.price)
   return (
     <article className=' grid grid-cols-[1fr,2fr,30px]  w-full  justify-between items-center mt-2'>
-      <Link onClick={() => toogleCheckoutWindowValue(false)} href={`/ProductDetail/${product.id_producto}`}>
-        <img className='w-20 h-20 object-contain mx-auto' src={product.imagen} alt={product.descripcion} />
+      <Link onClick={() => toogleCheckoutWindowValue(false)} href={`/ProductDetail/${product.id}`}>
+        <img className='w-20 h-20 object-contain mx-auto' src={product?.images_url[0]} alt={product.descripcion} />
       </Link>
       <div className='flex flex-col w-full items-start'>
-        <p className=' text-black'>{product.nombre_producto}</p>
+        <p className=' text-black'>{product.name}</p>
         <span className='text-gray-600'>
 
           {price}
@@ -27,7 +27,7 @@ export default function OrderCard ({ product }) {
           </span>
         </span>
       </div>
-      <div onClick={() => handleRemove(product.id_producto)} className='flex justify-end cursor-pointer'>
+      <div onClick={() => handleRemove(product.id)} className='flex justify-end cursor-pointer'>
         <TrashIcon className='remove-element h-8 w-8 text-black' />
       </div>
 

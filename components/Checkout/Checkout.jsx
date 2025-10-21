@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function Checkout () {
-  const { toogleCheckoutWindow, cleanCart, checkoutWindow, checkoutData, clientInfo, totalBill, login } = useStore((state) => state)
+  const { toogleCheckoutWindow, cleanCart, checkoutWindow, checkoutData, totalBill, login } = useStore((state) => state)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
@@ -16,38 +16,64 @@ export default function Checkout () {
       router.push('/Sign-in')
       return
     }
-    try {
-      const bill = {
-        cliente: clientInfo,
-        productos: checkoutData.map(item => ({
-          id_producto: item.id_producto,
-          cantidad: item.count,
-          precio_unitario: item.valor_producto_iva
-        }))
-      }
 
+    try {
       setLoading(true)
 
-      const response = await fetch('/api/bill', {
+      // const bill = {
+      //   cliente: clientInfo,
+      //   productos: Array.isArray(checkoutData)
+      //     ? checkoutData.map(item => ({
+      //       productId: item.id,
+      //       quantity: item.count,
+      //       unitPrice: item.price
+      //     }))
+      //     : []
+      // }
+
+      // // 1️⃣ Crear factura
+      // const response = await fetch('/api/bill', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(bill),
+      //   credentials: 'include'
+      // })
+
+      // if (!response.ok) throw new Error('Error al enviar el bill')
+
+      // const { billId } = await response.json()
+
+      // console.log(billId, 'data---------------')
+
+      // 2️⃣ Crear preferencia de pago en Mercado Pago
+      const res = await fetch('/api/payments/create-preference', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
-        },
-        body: JSON.stringify(bill)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: checkoutData.map(item => ({
+            id: item.id,
+            title: item.name,
+            quantity: item.count,
+            unit_price: parseInt(item.price)
+          }))
+        }),
+        credentials: 'include'
       })
 
-      if (!response.ok) {
-        throw new Error('Error al enviar el bill')
+      const data = await res.json()
+      if (data.init_point) {
+        // Redirige al checkout de Mercado Pago
+        window.location.href = data.init_point
+      } else {
+        alert('Error creando preferencia')
+        console.error(data)
       }
-
-      setLoading(false)
-      const { data } = await response.json()
+      // // 3️⃣ Redirigir al checkout de Mercado Pago
       cleanCart()
-      router.push(`/Pay/${data[0].id_factura}`)
     } catch (error) {
-      setLoading(false)
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -63,20 +89,21 @@ export default function Checkout () {
         <div className='checkout__products-content'>
           <h4 className='text-gray-500'>Productos</h4>
           {checkoutData?.map((product) => (
-            <OrderCard key={product.id_producto} product={product} />
+            <OrderCard key={product.id} product={product} />
           ))}
 
         </div>
         <div className='flex justify-between items-center gap-4 mt-4 text-black font-bold'>
           <h4>Total: {totalBill}</h4>
           <button
-            onClick={handleBill}
+            onClick={() => handleBill()}
             disabled={checkoutData.length === 0}
             type='button'
             className='bg-stone-500 text-white px-2 py-2 rounded-md w-32 disabled:cursor-not-allowed disabled:opacity-50'
           >
-              {checkoutData.length === 0 ? 'Carrito vacio' : 'Finalizar'}
-          </button>
+          {checkoutData.length === 0 ? 'Carrito vacío' : 'Finalizar'}
+        </button>
+
         </div>
       </aside>}
 

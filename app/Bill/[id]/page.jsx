@@ -10,13 +10,16 @@ export default async function pageBill ({ params }) {
   const detailBill = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bill/${id}`).then((res) => res.json())
   const billProduct = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProductsByBill/${id}`).then((res) => res.json())
 
+  console.log(detailBill, 'detailbill')
+  console.log(billProduct, 'bill product')
+
   let data
   let subTotal
   if (billProduct.length === 0) {
-    data = billProduct.precio
-    subTotal = billProduct.precio
+    data = billProduct.price
+    subTotal = billProduct.price
   } else {
-    data = billProduct?.map(item => Number(item.precio) * item.cantidad)
+    data = billProduct.product?.map(item => Number(item.price) * item.quantity)
     subTotal = data.reduce((a, b) => a + b, 0)
   }
 
@@ -25,14 +28,14 @@ export default async function pageBill ({ params }) {
       <Card className='w-full max-w-4xl mx-auto'>
         <CardHeader className='flex flex-col md:flex-row justify-between items-start md:items-center'>
           <div>
-            <CardTitle className='text-2xl'>Factura #{detailBill[0].id_factura}</CardTitle>
-            <CardDescription>Fecha de emisión: {detailBill[0].fecha.toString().slice(0, 10)}</CardDescription>
+            <CardTitle className='text-2xl'>Factura #{detailBill[0].id}</CardTitle>
+            <CardDescription>Fecha de emisión: {detailBill[0].date.toString().slice(0, 10)}</CardDescription>
           </div>
           <div className='mt-4 md:mt-0 flex space-x-2'>
 
             <DownloadPDFButton
               detailBill={detailBill[0]}
-              billProduct={billProduct}
+              billProduct={billProduct.product}
               subTotal={subTotal}
             />
           </div>
@@ -41,7 +44,7 @@ export default async function pageBill ({ params }) {
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
             <div>
               <h3 className='font-semibold mb-2'>Facturar a:</h3>
-              <p>{detailBill[0].nombre_cliente + ' ' + detailBill[0].apellido}</p>
+              <p>{detailBill[0].name + ' ' + detailBill[0].last_name}</p>
               <p>{detailBill[0].email}</p>
             </div>
           </div>
@@ -55,26 +58,26 @@ export default async function pageBill ({ params }) {
               </TableRow>
             </TableHeader>
               <TableBody>
-                {billProduct.map((item) => (
-                  <TableRow key={item.id_producto}>
+                {billProduct.product.map((item) => (
+                  <TableRow key={item.id}>
                     <TableCell>
-                      <Link href={`/ProductDetail/${item.id_producto}`}>
-                        {item.nombre_producto}
+                      <Link href={`/ProductDetail/${item.id}`}>
+                        {item.name}
                       </Link>
                     </TableCell>
                     <TableCell className='text-right'>
-                      <Link href={`/ProductDetail/${item.id_producto}`}>
-                        {item.cantidad}
+                      <Link href={`/ProductDetail/${item.id}`}>
+                        {item.quantity}
                       </Link>
                     </TableCell>
                     <TableCell className='text-right'>
-                      <Link href={`/ProductDetail/${item.id_producto}`}>
-                        {formatPrice(item.precio)}
+                      <Link href={`/ProductDetail/${item.id}`}>
+                        {formatPrice(item.price)}
                       </Link>
                     </TableCell>
                     <TableCell className='text-right'>
-                      <Link href={`/ProductDetail/${item.id_producto}`}>
-                        {formatPrice(item.precio_unitario * item.cantidad)}
+                      <Link href={`/ProductDetail/${item.id}`}>
+                        {formatPrice(item.unit_price * item.quantity)}
                       </Link>
                     </TableCell>
                   </TableRow>
@@ -86,7 +89,7 @@ export default async function pageBill ({ params }) {
             <div className='w-full max-w-xs'>
               <div className='flex justify-between mb-2'>
                 <span>Subtotal: </span>
-                <span>{formatPrice(subTotal)}</span>
+                <span>{formatPrice(subTotal - (subTotal * 0.19))}</span>
               </div>
               <div className='flex justify-between mb-2'>
                 <span>Impuestos (19%):</span>

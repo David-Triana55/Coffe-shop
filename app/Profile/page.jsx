@@ -1,283 +1,993 @@
-/* eslint-disable react/jsx-props-no-multi-spaces */
 'use client'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileText, LogOut, User } from 'lucide-react'
+  FileText,
+  LogOut,
+  User,
+  Upload,
+  XIcon,
+  Loader2,
+  Edit3,
+  Save,
+  Camera,
+  Mail,
+  Phone,
+  Building,
+  AlertCircle
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import useStore from '@/store'
 import { useRouter } from 'next/navigation'
 import Bills from '@/components/Bills/Bills'
 import { formatPrice } from '@/utils/formatter'
 import Loading from '@/components/Loading/Loading'
+import { ROLES } from '@/utils/roles'
+import { Bounce, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { getRoleName } from '@/utils/roleName'
+import { toastError, toastSuccess } from '@/utils/toast'
+import { CONSTANTS } from '@/utils/constants'
+import Link from 'next/link'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
-  const [activeTab, setActiveTab] = useState('invoices')
-  const [noEdit, setNoEdit] = useState(true)
-  const [save, setSave] = useState(null)
+  const [activeTab, setActiveTab] = useState(login?.role === ROLES.CLIENTE ? 'invoices' : 'information')
+  const [noEditUser, setNoEditUser] = useState(true)
+  const [noEditBrand, setNoEditBrand] = useState(true)
+  const [selectedImages, setSelectedImages] = useState([])
+  const [imageUrls, setImageUrls] = useState('')
+  const [uploading, setUploading] = useState(false)
   const [loadingInfo, setLoadingInfo] = useState(false)
   const [loadingBills, setLoadingBills] = useState(false)
+  const [savingUser, setSavingUser] = useState(false)
+  const [savingBrand, setSavingBrand] = useState(false)
   const [history, setHistory] = useState([])
+  const [validationErrors, setValidationErrors] = useState({})
   const router = useRouter()
+
+  const [originalUserData, setOriginalUserData] = useState({})
+  const [originalBrandData, setOriginalBrandData] = useState({})
+
   const [dataClient, setDataClient] = useState({
+    data: {},
     edit: {
-      nombre_cliente: '',
-      apellido: '',
+      name: '',
+      last_name: '',
       email: '',
-      telefono: ''
+      phone_number: ''
     }
   })
 
-  useEffect(() => {
-    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
+  const [dataBrand, setDataBrand] = useState({
+    data: {},
+    edit: {
+      name: '',
+      image_url: ''
+    }
+  })
 
-    if (!state.login.isLogged) {
+  const validateField = (name, value) => {
+    const errors = { ...validationErrors }
+
+    switch (name) {
+      case 'name':
+      case 'last_name':
+        if (value && value.length < 2) {
+          errors[name] = 'Debe tener al menos 2 caracteres'
+        } else if (value && value.length > 50) {
+          errors[name] = 'No puede exceder 50 caracteres'
+        } else if (value && !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+          errors[name] = 'Solo puede contener letras'
+        } else {
+          delete errors[name]
+        }
+        break
+
+      case 'email':
+        if (value && value.length > 100) {
+          errors.email = 'El correo no puede exceder 100 caracteres'
+        } else if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errors.email = 'Ingrese un correo electrónico válido'
+        } else {
+          delete errors.email
+        }
+        break
+
+      case 'phone_number':
+        if (value && value.length < 10) {
+          errors.phone_number = 'El teléfono debe tener al menos 10 dígitos'
+        } else if (value && value.length > 15) {
+          errors.phone_number = 'El teléfono no puede exceder 15 dígitos'
+        } else {
+          delete errors.phone_number
+        }
+        break
+
+      default:
+        break
+    }
+
+    setValidationErrors(errors)
+  }
+
+  const handleInputChange = (field, value) => {
+    setDataClient({
+      ...dataClient,
+      edit: { ...dataClient.edit, [field]: value }
+    })
+    validateField(field, value)
+  }
+
+  const handleBrandInputChange = (field, value) => {
+    setDataBrand({
+      ...dataBrand,
+      edit: { ...dataBrand.edit, [field]: value }
+    })
+  }
+
+  // Subir imagen a Cloudinary
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toastError('Por favor selecciona un archivo de imagen válido', 3000, Bounce)
+      return
+    }
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toastError('La imagen no puede exceder 2MB', 3000, Bounce)
+      return
+    }
+
+    setSelectedImages([file])
+
+    const data = new FormData()
+    data.append('file', file)
+
+    setUploading(true)
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: data
+      })
+      const result = await res.json()
+
+      if (res.ok) {
+        setImageUrls(result.urls[0])
+        toastSuccess('¡Imagen subida correctamente!', 3000, Bounce)
+      } else {
+        throw new Error(result.error || 'Error al subir la imagen')
+      }
+    } catch (err) {
+      toastError('Error al subir la imagen', 5000, Bounce)
+      console.error('Error subiendo imagen:', err)
+    } finally {
+      setUploading(false)
+    }
+
+    e.target.value = null
+  }
+
+  const handleDrop = async (e) => {
+    e.preventDefault()
+    const file = Array.from(e.dataTransfer.files).find((f) => f.type.startsWith('image/'))
+    if (file) {
+      const fakeEvent = { target: { files: [file] } }
+      await handleImageChange(fakeEvent)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setSelectedImages([])
+    setImageUrls('')
+  }
+
+  // Función para resetear datos de usuario
+  const resetUserData = () => {
+    setDataClient({
+      ...dataClient,
+      edit: { ...originalUserData }
+    })
+    setValidationErrors({})
+  }
+
+  // Función para resetear datos de marca
+  const resetBrandData = () => {
+    setDataBrand({
+      ...dataBrand,
+      edit: { ...originalBrandData }
+    })
+    setSelectedImages([])
+    setImageUrls(originalBrandData.image_url || '')
+  }
+
+  console.log(history, 'history')
+
+  useEffect(() => {
+    const storedData = JSON.parse(window.localStorage.getItem('isLogged'))
+
+    if (!storedData?.state?.login?.isLogged) {
       router.push('/')
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
-    setLoadingBills(true)
-    const getHistory = async () => {
-      const res = await fetch('/api/historyBill', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
-        }
-      })
+    if (login?.role === ROLES.CLIENTE) {
+      setLoadingBills(true)
+      const getHistory = async () => {
+        try {
+          const res = await fetch('/api/historyBill', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+          })
 
-      const { data } = await res.json()
-      setHistory(data)
-      setLoadingBills(false)
+          if (res.ok) {
+            const { data } = await res.json()
+            setHistory(data)
+          }
+        } catch (error) {
+          console.error('Error fetching history:', error)
+        } finally {
+          setLoadingBills(false)
+        }
+      }
+      getHistory()
     }
-    getHistory()
-  }, [login.token])
+  }, [login?.role])
 
   useEffect(() => {
     setLoadingInfo(true)
-    const getClientInfo = async () => {
-      const res = await fetch('/api/info', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
-        }
-      })
 
-      const data = await res.json()
-      setDataClient({ ...data, edit: { ...data.data } })
-      setClientInfo(data)
+    const getClientInfo = async () => {
+      try {
+        const res = await fetch('/api/userInfo', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          const userData = data.data || {}
+
+          setDataClient({
+            data: userData,
+            edit: { ...userData }
+          })
+          setOriginalUserData({ ...userData })
+          setClientInfo(data)
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error)
+      }
+    }
+
+    const getBrandInfo = async () => {
+      try {
+        const res = await fetch('/api/brandInfo', { credentials: 'include' })
+        if (res.ok) {
+          const data = await res.json()
+          console.log(data, 'data brand')
+          const brandData = data.data || {}
+
+          setDataBrand({
+            data: brandData,
+            edit: { ...brandData }
+          })
+          setOriginalBrandData({ ...brandData })
+          setImageUrls(brandData.image_url || '')
+        }
+      } catch (error) {
+        console.error('Error fetching brand info:', error)
+      }
+    }
+
+    const fetchData = async () => {
+      await getClientInfo()
+      if (login?.role === ROLES.VENDEDOR) {
+        await getBrandInfo()
+      }
       setLoadingInfo(false)
     }
-    getClientInfo()
-  }, [login.token, save])
+
+    fetchData()
+  }, [login?.role, setClientInfo])
 
   const handleSubmitInfo = async (e) => {
-    try {
-      e.preventDefault()
+    e.preventDefault()
 
+    // Validar todos los campos
+    const fields = ['name', 'last_name', 'email', 'phone_number']
+    fields.forEach((field) => {
+      validateField(field, dataClient.edit[field])
+    })
+
+    if (Object.keys(validationErrors).length > 0) {
+      toastError('Por favor corrige los errores en el formulario', 3000, Bounce)
+      return
+    }
+
+    setSavingUser(true)
+
+    try {
       const objClient = {
-        data: {
-          nombre_cliente: dataClient.edit.nombre_cliente === '' ? clientInfo.data.nombre_cliente : dataClient.edit.nombre_cliente,
-          apellido: dataClient.edit.apellido === '' ? clientInfo.data.apellido : dataClient.edit.apellido,
-          email: dataClient.edit.email === '' ? clientInfo.data.email : dataClient.edit.email,
-          telefono: dataClient.edit.telefono === '' ? clientInfo.data.telefono : dataClient.edit.telefono
-        }
+        name: dataClient.edit.name || dataClient.data.name,
+        lastName: dataClient.edit.last_name || dataClient.data.last_name,
+        email: dataClient.edit.email || dataClient.data.email,
+        phoneNumber: dataClient.edit.phone_number || dataClient.data.phone_number
       }
 
-      const response = await fetch('/api/info', {
+      const response = await fetch('/api/userInfo', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${login.token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(objClient)
       })
 
       if (!response.ok) {
         throw new Error('Error al actualizar la información')
       }
-      setClientInfo(objClient)
 
-      setSave(true)
-      setTimeout(() => {
-        setSave(false)
-      }, 2000)
-      setNoEdit(true)
+      const updatedData = {
+        name: objClient.name,
+        last_name: objClient.lastName,
+        email: objClient.email,
+        phone_number: objClient.phoneNumber
+      }
+
+      setDataClient({
+        data: updatedData,
+        edit: { ...updatedData }
+      })
+      setOriginalUserData({ ...updatedData })
+      setClientInfo({ data: updatedData })
+      setNoEditUser(true)
+      toastSuccess('¡Información actualizada correctamente!', 3000, Bounce)
     } catch (error) {
       console.error(error)
+      toastError('Error al actualizar la información', 5000, Bounce)
     } finally {
-      e.target.reset()
+      setSavingUser(false)
+    }
+  }
+
+  const handleSubmitInfoBrand = async (e) => {
+    e.preventDefault()
+    setSavingBrand(true)
+
+    try {
+      const objBrand = {
+        name: dataBrand.edit.name || dataBrand.data.name,
+        image: imageUrls || dataBrand.data.image_url
+      }
+
+      const response = await fetch('/api/brandInfo', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(objBrand)
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la información')
+      }
+
+      const updatedBrandData = {
+        name: objBrand.name,
+        image_url: objBrand.image
+      }
+
+      setDataBrand({
+        data: updatedBrandData,
+        edit: { ...updatedBrandData }
+      })
+      setOriginalBrandData({ ...updatedBrandData })
+      setNoEditBrand(true)
+      setSelectedImages([])
+      toastSuccess('¡Información de marca actualizada correctamente!', 3000, Bounce)
+    } catch (error) {
+      console.error(error)
+      toastError('Error al actualizar la información de marca', 5000, Bounce)
+    } finally {
+      setSavingBrand(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      setLogin(false, ROLES.DESCONOCIDO)
+      router.push('/')
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const getRoleColor = (role) => {
+    switch (role) {
+      case ROLES.ADMIN:
+        return 'bg-red-100 text-red-800'
+      case ROLES.VENDEDOR:
+        return 'bg-blue-100 text-blue-800'
+      case ROLES.CLIENTE:
+        return 'bg-green-100 text-green-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
     }
   }
 
   return (
-    <main className='container mt-16 mx-auto p-4 flex flex-col md:flex-row gap-8'>
-      <aside className='md:w-1/4'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Menú de Perfil</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <nav className='flex flex-col space-y-2'>
-              <Button
-                variant='ghost'
-                className='justify-start buton-information'
-                onClick={() => setActiveTab('information')}
-              >
-                <User className='mr-2 h-4 w-4' />
-                Información
-              </Button>
-              {login?.type === 'cliente' && <Button
-                variant='ghost'
-                className='justify-start'
-                onClick={() => setActiveTab('invoices')}
-                                            >
-                <FileText className='mr-2 h-4 w-4' />
-                Facturas
-              </Button>}
-              <Button
-                onClick={() => {
-                  setLogin(null, false)
-                  router.push('/')
-                }}
-                variant='ghost'
-                className='justify-start text-red-600 hover:text-red-700 hover:bg-red-100'
-              >
-                <LogOut className='mr-2 h-4 w-4' />
-                Cerrar Sesión
-              </Button>
-            </nav>
-          </CardContent>
-        </Card>
-      </aside>
-
-      <section className='md:w-3/4'>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className={login?.type === 'cliente' ? 'grid w-full grid-cols-2' : 'grid w-full grid-cols-1'}>
-            {login?.type === 'cliente' && <TabsTrigger className='tab-button-invoices' value='invoices'>Facturas</TabsTrigger>}
-            <TabsTrigger className='tab-button-information' value='information'>Información</TabsTrigger>
-          </TabsList>
-          <TabsContent value='information'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Información del Perfil</CardTitle>
-                <CardDescription>
-                  Gestiona tu información personal y de contacto.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-
-                {loadingInfo
-                  ? <Loading position='start' />
-                  : <form onSubmit={handleSubmitInfo}>
-                  <div className='space-y-2'>
-                    <Label htmlFor='name'>Nombre</Label>
-                    <Input
-                      disabled={noEdit}
-                      id='name'
-                      placeholder={clientInfo.data?.nombre_cliente}
-                      value={dataClient?.edit?.nombre_cliente || ''}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, nombre_cliente: e.target.value } })}
-                    />
-
-                  </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='lastName'>Apellido</Label>
-                    <Input
-                      disabled={noEdit}
-                      id='lastName'
-                      placeholder={clientInfo.data?.apellido}
-                      value={dataClient?.edit?.apellido}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, apellido: e.target.value } })}
-                    />
-
-                  </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='email'>Correo Electrónico</Label>
-                    <Input
-                      disabled={noEdit}
-                      id='email'
-                      type='email'
-                      placeholder={clientInfo.data?.email}
-                      value={dataClient?.edit?.email}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, email: e.target.value } })}
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='number'>Telefono</Label>
-                    <Input
-                      disabled={noEdit}
-                      id='number'
-                      type='number'
-                      placeholder={clientInfo.data?.telefono}
-                      value={dataClient?.edit?.telefono}
-                      onChange={(e) => setDataClient({ ...dataClient, edit: { ...dataClient.edit, telefono: e.target.value } })}
-                    />
-                  </div>
-                  {noEdit && <button
-                    onClick={() => setNoEdit(!noEdit)}
-                    className='edit-button-information mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
-                             >
-                    Editar Perfil
-                  </button>}
-
-                 {noEdit === false && <button
-                    type='submit'
-                    className='mt-3 flex w-40 justify-center rounded-md bg-buttonColor px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-textNavbar focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-textNavbar'
-                                      >
-                    Guardar Cambios
-                  </button>}
-                  {save && <p className='text-green-500 mt-3'>Cambios guardados</p>}
-                </form>}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value='invoices'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Historial de Facturas</CardTitle>
-                <CardDescription>
-                  Revisa tus facturas recientes y su estado.
-                </CardDescription>
-                <CardDescription className='text-right text-md pt-3'>
-                  {history?.length > 0 ? history?.length + ' Facturas recientes' : 'No tienes facturas recientes'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-
-                {loadingBills
-                  ? <Loading position='start' />
-                  : history
-                    ?.sort((a, b) => b.id_factura - a.id_factura)
-                    .map((item) => (
-                    <Bills
-                      key={item.id_factura}
-                      id_factura={item.id_factura}
-                      fecha={item.fecha}
-                      total={formatPrice(item.total)}
-                      client={item.cliente?.nombre_cliente}
-                    />
-                    ))}
-
+    <div className='min-h-screen bg-gradient-to-br from-[#D2B48C]/20 via-white to-[#D2B48C]/10'>
+      <main className='container mt-16 mx-auto p-4 flex flex-col lg:flex-row gap-8 min-h-screen'>
+        {/* Sidebar */}
+        <aside className='lg:w-1/4'>
+          <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+            <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+              <div className='flex items-center space-x-4'>
+                  {login?.role === ROLES.VENDEDOR
+                    ? (
+                      <Avatar className='h-16 w-16 border-2 border-white'>
+                        <Link className='mx-auto' href={`Marcas-de-cafe/${dataBrand?.data?.name}`}>
+                          <AvatarImage src={imageUrls || dataBrand?.data?.image_url || CONSTANTS.IMAGE_PLACEHOLDER} />
+                        </Link>
+                      </Avatar>
+                      )
+                    : (
+                      <Avatar className='h-16 w-16 border-2 border-white'>
+                        <AvatarFallback className='bg-[#D2B48C] text-[#4A3728] text-lg font-bold'>
+                          {dataClient?.data?.name?.charAt(0) || clientInfo?.data?.name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      )}
+                <div>
+                  <CardTitle className='text-lg'>
+                    {dataClient?.data?.name || clientInfo?.data?.name}{' '}
+                    {dataClient?.data?.last_name || clientInfo?.data?.last_name}
+                  </CardTitle>
+                  <Badge className={`mt-1 ${getRoleColor(login?.role)}`}>{getRoleName(login?.role)}</Badge>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </section>
-    </main>
+              </div>
+            </CardHeader>
+            <CardContent className='p-6'>
+              <nav className='flex flex-col space-y-3'>
+                <Button
+                  variant={activeTab === 'information' ? 'default' : 'ghost'}
+                  className={`justify-start transition-all duration-200 ${
+                    activeTab === 'information'
+                      ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                      : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                  }`}
+                  onClick={() => setActiveTab('information')}
+                >
+                  <User className='mr-3 h-4 w-4' />
+                  Información Personal
+                </Button>
+
+                {login?.role === ROLES.CLIENTE && (
+                  <Button
+                    variant={activeTab === 'invoices' ? 'default' : 'ghost'}
+                    className={`justify-start transition-all duration-200 ${
+                      activeTab === 'invoices'
+                        ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                        : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                    }`}
+                    onClick={() => setActiveTab('invoices')}
+                  >
+                    <FileText className='mr-3 h-4 w-4' />
+                    Mis Facturas
+                  </Button>
+                )}
+
+                {login?.role === ROLES.VENDEDOR && (
+                  <Button
+                    variant={activeTab === 'information-brand' ? 'default' : 'ghost'}
+                    className={`justify-start transition-all duration-200 ${
+                      activeTab === 'information-brand'
+                        ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                        : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                    }`}
+                    onClick={() => setActiveTab('information-brand')}
+                  >
+                    <Building className='mr-3 h-4 w-4' />
+                    Mi Marca
+                  </Button>
+                )}
+
+                <Separator className='my-4' />
+
+                <Button
+                  onClick={handleLogout}
+                  variant='ghost'
+                  className='justify-start text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200'
+                >
+                  <LogOut className='mr-3 h-4 w-4' />
+                  Cerrar Sesión
+                </Button>
+              </nav>
+            </CardContent>
+          </Card>
+        </aside>
+
+        {/* Main Content */}
+        <section className='lg:w-3/4'>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            {/* Information Tab */}
+            <TabsContent value='information'>
+              <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+                <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+                  <CardTitle className='flex items-center gap-2'>
+                    <User className='h-5 w-5' />
+                    Información Personal
+                  </CardTitle>
+                  <CardDescription className='text-gray-200'>
+                    Gestiona tu información personal y de contacto
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className='p-6'>
+                  {loadingInfo
+                    ? (
+                    <div className='flex justify-center items-center py-12'>
+                      <Loading position='start' />
+                    </div>
+                      )
+                    : (
+                    <form onSubmit={noEditUser ? (e) => e.preventDefault() : handleSubmitInfo} className='space-y-6'>
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                        <div className='space-y-2'>
+                          <Label htmlFor='name' className='text-[#4A3728] font-medium'>
+                            Nombre *
+                          </Label>
+                          <div className='relative'>
+                            <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
+                            <Input
+                              disabled={noEditUser}
+                              id='name'
+                              placeholder={dataClient.data?.name || 'Ingresa tu nombre'}
+                              value={dataClient?.edit?.name || ''}
+                              onChange={(e) => handleInputChange('name', e.target.value)}
+                              className={`pl-10 border-[#D2B48C]/30 focus:ring-[#D2B48C] focus:border-[#D2B48C] ${
+                                validationErrors.name ? 'border-red-300' : ''
+                              } ${noEditUser ? 'bg-gray-50' : 'bg-white'}`}
+                            />
+                          </div>
+                          {validationErrors.name && (
+                            <p className='text-xs text-red-600 flex items-center gap-1'>
+                              <AlertCircle className='h-3 w-3' />
+                              {validationErrors.name}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className='space-y-2'>
+                          <Label htmlFor='lastName' className='text-[#4A3728] font-medium'>
+                            Apellido *
+                          </Label>
+                          <div className='relative'>
+                            <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
+                            <Input
+                              disabled={noEditUser}
+                              id='lastName'
+                              placeholder={dataClient.data?.last_name || 'Ingresa tu apellido'}
+                              value={dataClient?.edit?.last_name || ''}
+                              onChange={(e) => handleInputChange('last_name', e.target.value)}
+                              className={`pl-10 border-[#D2B48C]/30 focus:ring-[#D2B48C] focus:border-[#D2B48C] ${
+                                validationErrors.last_name ? 'border-red-300' : ''
+                              } ${noEditUser ? 'bg-gray-50' : 'bg-white'}`}
+                            />
+                          </div>
+                          {validationErrors.last_name && (
+                            <p className='text-xs text-red-600 flex items-center gap-1'>
+                              <AlertCircle className='h-3 w-3' />
+                              {validationErrors.last_name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className='space-y-2'>
+                        <Label htmlFor='email' className='text-[#4A3728] font-medium'>
+                          Correo Electrónico *
+                        </Label>
+                        <div className='relative'>
+                          <Mail className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
+                          <Input
+                            disabled={noEditUser}
+                            id='email'
+                            type='email'
+                            placeholder={dataClient.data?.email || 'ejemplo@correo.com'}
+                            value={dataClient?.edit?.email || ''}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            className={`pl-10 border-[#D2B48C]/30 focus:ring-[#D2B48C] focus:border-[#D2B48C] ${
+                              validationErrors.email ? 'border-red-300' : ''
+                            } ${noEditUser ? 'bg-gray-50' : 'bg-white'}`}
+                          />
+                        </div>
+                        {validationErrors.email && (
+                          <p className='text-xs text-red-600 flex items-center gap-1'>
+                            <AlertCircle className='h-3 w-3' />
+                            {validationErrors.email}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className='space-y-2'>
+                        <Label htmlFor='number' className='text-[#4A3728] font-medium'>
+                          Teléfono *
+                        </Label>
+                        <div className='relative'>
+                          <Phone className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
+                          <Input
+                            disabled={noEditUser}
+                            id='number'
+                            type='tel'
+                            placeholder={dataClient.data?.phone_number || '+57 300 123 4567'}
+                            value={dataClient?.edit?.phone_number || ''}
+                            onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                            className={`pl-10 border-[#D2B48C]/30 focus:ring-[#D2B48C] focus:border-[#D2B48C] ${
+                              validationErrors.phone_number ? 'border-red-300' : ''
+                            } ${noEditUser ? 'bg-gray-50' : 'bg-white'}`}
+                          />
+                        </div>
+                        {validationErrors.phone_number && (
+                          <p className='text-xs text-red-600 flex items-center gap-1'>
+                            <AlertCircle className='h-3 w-3' />
+                            {validationErrors.phone_number}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className='flex gap-4 pt-4'>
+                        {noEditUser
+                          ? (
+                          <Button
+                            type='button'
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              console.log('Activando modo edición usuario, noEditUser actual:', noEditUser)
+                              setNoEditUser(false)
+                            }}
+                            className='bg-[#4A3728] hover:bg-[#5D4037] text-white transition-all duration-200'
+                          >
+                            <Edit3 className='mr-2 h-4 w-4' />
+                            Editar Perfil
+                          </Button>
+                            )
+                          : (
+                          <>
+                            <Button
+                              type='submit'
+                              disabled={savingUser || Object.keys(validationErrors).length > 0}
+                              className='bg-[#4A3728] hover:bg-[#5D4037] text-white transition-all duration-200'
+                            >
+                              {savingUser
+                                ? (
+                                <>
+                                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                                  Guardando...
+                                </>
+                                  )
+                                : (
+                                <>
+                                  <Save className='mr-2 h-4 w-4' />
+                                  Guardar Cambios
+                                </>
+                                  )}
+                            </Button>
+                            <Button
+                              type='button'
+                              variant='outline'
+                              onClick={() => {
+                                setNoEditUser(true)
+                                resetUserData()
+                              }}
+                              className='border-[#D2B48C] text-[#4A3728] hover:bg-[#D2B48C]/10'
+                            >
+                              Cancelar
+                            </Button>
+                          </>
+                            )}
+                      </div>
+                    </form>
+                      )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Invoices Tab */}
+            {login?.role === ROLES.CLIENTE && (
+              <TabsContent value='invoices'>
+                <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+                  <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+                    <CardTitle className='flex items-center gap-2'>
+                      <FileText className='h-5 w-5' />
+                      Historial de Facturas
+                    </CardTitle>
+                    <CardDescription className='text-gray-200'>
+                      Revisa tus facturas recientes y su estado
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='p-6'>
+                    <div className='mb-4 flex justify-between items-center'>
+                      <Badge variant='outline' className='border-[#D2B48C] text-[#4A3728]'>
+                        {history?.length > 0 ? `${history.length} facturas encontradas` : 'Sin facturas'}
+                      </Badge>
+                    </div>
+
+                    <div className='space-y-4'>
+                      {loadingBills
+                        ? (
+                        <div className='flex justify-center items-center py-12'>
+                          <Loading position='start' />
+                        </div>
+                          )
+                        : history?.length > 0
+                          ? (
+                              history
+                                .sort((a, b) => b.id - a.id)
+                                .map((item) => (
+                            <Bills
+                              key={item.id}
+                              id={item.id}
+                              date={item.date}
+                              total={formatPrice(item.total)}
+                              user={item.user?.name}
+                            />
+                                ))
+                            )
+                          : (
+                        <div className='text-center py-12'>
+                          <FileText className='mx-auto h-12 w-12 text-gray-400 mb-4' />
+                          <h3 className='text-lg font-medium text-gray-900 mb-2'>No hay facturas</h3>
+                          <p className='text-gray-500'>Cuando realices compras, aparecerán aquí.</p>
+                        </div>
+                            )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+
+            {/* Brand Information Tab */}
+            {login?.role === ROLES.VENDEDOR && (
+              <TabsContent value='information-brand'>
+                <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+                  <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+                    <CardTitle className='flex items-center gap-2'>
+                      <Building className='h-5 w-5' />
+                      Información de la Marca
+                    </CardTitle>
+                    <CardDescription className='text-gray-200'>
+                      Gestiona la información de tu marca y logo
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='p-6'>
+                    {loadingInfo
+                      ? (
+                      <div className='flex justify-center items-center py-12'>
+                        <Loading position='start' />
+                      </div>
+                        )
+                      : (
+                      <form
+                        onSubmit={noEditBrand ? (e) => e.preventDefault() : handleSubmitInfoBrand}
+                        className='space-y-6'
+                      >
+                        <div className='space-y-2'>
+                          <Label htmlFor='brandName' className='text-[#4A3728] font-medium'>
+                            Nombre de la Marca *
+                          </Label>
+                          <div className='relative'>
+                            <Building className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
+                            <Input
+                              disabled={noEditBrand}
+                              id='brandName'
+                              placeholder={dataBrand.data?.name || 'Nombre de tu marca'}
+                              value={dataBrand?.edit?.name || ''}
+                              onChange={(e) => handleBrandInputChange('name', e.target.value)}
+                              className={`pl-10 border-[#D2B48C]/30 focus:ring-[#D2B48C] focus:border-[#D2B48C] ${
+                                noEditBrand ? 'bg-gray-50' : 'bg-white'
+                              }`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Image Upload Section */}
+                        <div className='space-y-4'>
+                          <Label className='text-[#4A3728] font-medium'>Logo de la Marca</Label>
+                          <div
+                            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
+                              noEditBrand
+                                ? 'border-gray-200 bg-gray-50'
+                                : 'border-[#D2B48C]/50 hover:border-[#D2B48C] bg-white'
+                            }`}
+                            onDrop={handleDrop}
+                            onDragOver={(e) => e.preventDefault()}
+                          >
+                            {selectedImages.length > 0 || imageUrls || dataBrand.data?.image_url
+                              ? (
+                              <div className='space-y-4'>
+                                <div className='relative inline-block'>
+                                  <img
+                                    src={
+                                      selectedImages.length > 0
+                                        ? URL.createObjectURL(selectedImages[0])
+                                        : imageUrls || dataBrand.data?.image_url
+                                    }
+                                    alt='Logo preview'
+                                    className='h-32 w-32 object-cover rounded-lg mx-auto border-2 border-[#D2B48C]/20'
+                                  />
+                                  {!noEditBrand && (
+                                    <button
+                                      type='button'
+                                      onClick={handleRemoveImage}
+                                      disabled={uploading}
+                                      className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors'
+                                      title='Eliminar imagen'
+                                    >
+                                      <XIcon className='h-4 w-4' />
+                                    </button>
+                                  )}
+                                </div>
+                                {!noEditBrand && (
+                                  <Button
+                                    type='button'
+                                    variant='outline'
+                                    onClick={() => document.getElementById('brandImage').click()}
+                                    disabled={uploading}
+                                    className='border-[#D2B48C] text-[#4A3728] hover:bg-[#D2B48C]/10'
+                                  >
+                                    <Camera className='mr-2 h-4 w-4' />
+                                    Cambiar imagen
+                                  </Button>
+                                )}
+                              </div>
+                                )
+                              : (
+                              <div className='space-y-4'>
+                                <Upload className='mx-auto h-12 w-12 text-[#8D6E63]' />
+                                <div>
+                                  <p className='text-lg font-medium text-[#4A3728] mb-2'>
+                                    Arrastra y suelta tu logo aquí
+                                  </p>
+                                  <p className='text-sm text-[#8D6E63] mb-4'>o haz clic para seleccionar un archivo</p>
+                                  <p className='text-xs text-[#8D6E63]'>PNG, JPG hasta 5MB</p>
+                                </div>
+                                {!noEditBrand && (
+                                  <Button
+                                    type='button'
+                                    variant='outline'
+                                    onClick={() => document.getElementById('brandImage').click()}
+                                    disabled={uploading}
+                                    className='border-[#D2B48C] text-[#4A3728] hover:bg-[#D2B48C]/10'
+                                  >
+                                    {uploading
+                                      ? (
+                                      <>
+                                        <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                                        Subiendo...
+                                      </>
+                                        )
+                                      : (
+                                      <>
+                                        <Upload className='mr-2 h-4 w-4' />
+                                        Seleccionar imagen
+                                      </>
+                                        )}
+                                  </Button>
+                                )}
+                              </div>
+                                )}
+
+                            <input
+                              id='brandImage'
+                              type='file'
+                              accept='image/*'
+                              style={{ display: 'none' }}
+                              onChange={handleImageChange}
+                              disabled={noEditBrand}
+                            />
+                          </div>
+                        </div>
+
+                        <div className='flex gap-4 pt-4'>
+                          {noEditBrand
+                            ? (
+                            <Button
+                              type='button'
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                console.log('Activando modo edición marca, noEditBrand actual:', noEditBrand)
+                                setNoEditBrand(false)
+                              }}
+                              className='bg-[#4A3728] hover:bg-[#5D4037] text-white transition-all duration-200'
+                            >
+                              <Edit3 className='mr-2 h-4 w-4' />
+                              Editar Marca
+                            </Button>
+                              )
+                            : (
+                            <>
+                              <Button
+                                type='submit'
+                                disabled={savingBrand}
+                                className='bg-[#4A3728] hover:bg-[#5D4037] text-white transition-all duration-200'
+                              >
+                                {savingBrand
+                                  ? (
+                                  <>
+                                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                                    Guardando...
+                                  </>
+                                    )
+                                  : (
+                                  <>
+                                    <Save className='mr-2 h-4 w-4' />
+                                    Guardar Cambios
+                                  </>
+                                    )}
+                              </Button>
+                              <Button
+                                type='button'
+                                variant='outline'
+                                onClick={() => {
+                                  setNoEditBrand(true)
+                                  resetBrandData()
+                                }}
+                                className='border-[#D2B48C] text-[#4A3728] hover:bg-[#D2B48C]/10'
+                              >
+                                Cancelar
+                              </Button>
+                            </>
+                              )}
+                        </div>
+                      </form>
+                        )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+          </Tabs>
+        </section>
+      </main>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position='bottom-right'
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover
+        theme='dark'
+        transition={Bounce}
+      />
+    </div>
   )
 }

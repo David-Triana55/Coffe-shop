@@ -2,17 +2,18 @@
 import Form from '@/components/Form/Form'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { ROLES } from '@/utils/roles'
 
 export default function PageSignIn () {
   const router = useRouter()
   useEffect(() => {
     const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
 
-    if (state?.login?.isLogged && state?.login?.type === 'cliente') {
+    if (state?.login?.isLogged && state?.login?.role === ROLES.CLIENTE) {
       router.push('/')
     }
 
-    if (state?.login?.isLogged && state?.login?.type === 'vendedor') {
+    if (state?.login?.isLogged && state?.login?.role !== ROLES.CLIENTE) {
       router.push('/dashboard')
     }
   }, [])
