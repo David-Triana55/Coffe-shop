@@ -29,10 +29,6 @@ export async function POST (req) {
       }
 
       const payment = await paymentClient.get({ id: paymentId })
-      console.log('payment.additional_info:', payment.additional_info)
-      console.log('payment.metadata:', payment.metadata)
-      console.log('payment.external_reference:', payment.external_reference)
-      console.log('Pago obtenido:', payment.id, payment.status)
 
       if (payment.status === 'approved') {
         // 🔹 Extraer items
@@ -44,18 +40,11 @@ export async function POST (req) {
         // 🔹 Extraer userId (de metadata.user_id o de external_reference)
         const userId =
           payment.metadata?.user_id ||
-          payment.external_reference ||
-          'unknown'
-
-        console.log('User ID:', userId, typeof userId)
-
-        // 🔹 Fecha actual
-        const currentDate = new Date().toISOString().split('T')[0]
+          payment.external_reference
 
         // 🔹 Crear factura
         const newBill = await insertBill({
           userId,
-          date: currentDate,
           mpPaymentId: payment.id
         })
 

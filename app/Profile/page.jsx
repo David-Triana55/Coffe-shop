@@ -231,7 +231,8 @@ export default function Profile () {
             headers: {
               'Content-Type': 'application/json'
             },
-            credentials: 'include'
+            credentials: 'include',
+            cache: 'no-cache'
           })
 
           if (res.ok) {
