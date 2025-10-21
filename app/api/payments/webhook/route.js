@@ -22,48 +22,38 @@ export async function POST (req) {
     if (body.type === 'payment' && body.data?.id) {
       const paymentId = String(body.data.id)
 
-      // Evita procesar dos veces el mismo pago
       const existing = await findBillByMPPaymentId(paymentId)
       if (existing) {
         console.log('Pago ya procesado:', paymentId)
         return NextResponse.json({ received: true })
       }
 
-      // Obtener datos del pago desde Mercado Pago
       const payment = await paymentClient.get({ id: paymentId })
+      console.log(payment, 'payment')
       console.log('Pago obtenido:', payment.id, payment.status)
 
       if (payment.status === 'approved') {
-        const externalReference =
-          payment.external_reference || payment.order?.external_reference || null
-
         const items =
           payment.order?.items ||
           payment.additional_info?.items ||
           []
 
-        // Si guardaste userId en external_reference (por ejemplo "order_user-123_...")
-        let userId = 'unknown'
-        if (externalReference) {
-          const match = externalReference.match(/^order_(.*?)_/)
-          if (match) userId = match[1]
-        }
+        const userId = payment.metadata?.userId
+        const currentDate = new Date().toISOString().split('T')[0]
 
         // Crear factura
         const newBill = await insertBill({
           userId,
-          externalReference,
-          mpPaymentId: payment.id,
-          total: payment.transaction_amount
+          date: currentDate,
+          mpPaymentId: payment.id
         })
 
         // Crear detalles de la factura
         for (const item of items) {
-          const productId = String(item.id ?? item.sku ?? item.title)
+          const productId = String(item.id)
           const quantity = Number(item.quantity ?? 1)
           const unitPrice = Number(
-            item.unit_price ?? payment.transaction_amount / (items.length || 1)
-          )
+            item.unit_price)
 
           await insertDetailBill({
             billId: Number(newBill.id),
