@@ -11,6 +11,8 @@ const mpClient = new MercadoPagoConfig({
 // Crear instancia de Payment
 const paymentClient = new Payment(mpClient)
 
+export const dynamic = 'force-dynamic'
+
 export async function POST (req) {
   try {
     const body = await req.json()
