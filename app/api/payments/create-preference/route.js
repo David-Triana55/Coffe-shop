@@ -47,8 +47,8 @@ export async function POST (req) {
         },
         metadata: {
           userId: decodedToken.id
-        },
-        auto_return: 'approved'
+        }
+        // auto_return: 'approved'
       }
     })
 
