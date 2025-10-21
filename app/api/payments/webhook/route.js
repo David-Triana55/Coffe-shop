@@ -30,6 +30,10 @@ export async function POST (req) {
 
       const payment = await paymentClient.get({ id: paymentId })
       console.log(payment, 'payment')
+      console.log('payment.additional_info:', payment.additional_info)
+      console.log('payment.metadata:', payment.metadata)
+      console.log('payment.external_reference:', payment.external_reference)
+
       console.log('Pago obtenido:', payment.id, payment.status)
 
       if (payment.status === 'approved') {
@@ -39,6 +43,7 @@ export async function POST (req) {
           []
 
         const userId = payment.metadata?.userId
+        console.log(payment.metadata)
         console.log(userId)
         const currentDate = new Date().toISOString().split('T')[0]
         console.log(currentDate)
