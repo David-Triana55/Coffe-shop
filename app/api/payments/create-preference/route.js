@@ -47,7 +47,8 @@ export async function POST (req) {
         },
         metadata: {
           userId: decodedToken.id
-        }
+        },
+        notification_url: `${process.env.APP_URL}/api/payments/webhook`
         // auto_return: 'approved'
       }
     })
