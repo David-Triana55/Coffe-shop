@@ -68,14 +68,14 @@ export async function POST (req) {
           const unitPrice = Number(item.unit_price)
 
           await insertDetailBill({
-            billId: newBill.id,
+            billId: newBill[0].id,
             productId,
             quantity,
             unitPrice: Math.round(unitPrice)
           })
         }
 
-        console.log('Factura guardada:', newBill.id)
+        console.log('Factura guardada:', newBill[0].id)
       } else {
         console.log('Pago no aprobado:', payment.status)
       }
