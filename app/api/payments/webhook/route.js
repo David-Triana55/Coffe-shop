@@ -39,8 +39,9 @@ export async function POST (req) {
           []
 
         const userId = payment.metadata?.userId
+        console.log(userId)
         const currentDate = new Date().toISOString().split('T')[0]
-
+        console.log(currentDate)
         // Crear factura
         const newBill = await insertBill({
           userId,
@@ -50,13 +51,13 @@ export async function POST (req) {
 
         // Crear detalles de la factura
         for (const item of items) {
-          const productId = String(item.id)
+          const productId = item.id
           const quantity = Number(item.quantity ?? 1)
           const unitPrice = Number(
             item.unit_price)
 
           await insertDetailBill({
-            billId: Number(newBill.id),
+            billId: newBill.id,
             productId,
             quantity,
             unitPrice: Math.round(unitPrice)
