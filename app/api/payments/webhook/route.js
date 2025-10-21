@@ -59,6 +59,8 @@ export async function POST (req) {
           mpPaymentId: payment.id
         })
 
+        console.log(newBill, 'bill')
+
         // 🔹 Crear detalles
         for (const item of items) {
           const productId = item.id
