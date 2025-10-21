@@ -68,7 +68,7 @@ export async function POST (req) {
           const unitPrice = Number(item.unit_price)
 
           await insertDetailBill({
-            billId: newBill.id,
+            billId: newBill[0].id,
             productId,
             quantity,
             unitPrice: Math.round(unitPrice)
