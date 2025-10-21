@@ -166,7 +166,7 @@ export default function CreateProduct () {
   }
 
   return (
-    <div className='min-h-screen bg-[#D7CCC8] text-[#3E2723] mt-12'>
+    <div className='min-h-screen  text-[#3E2723] mt-12'>
       {/* MAIN */}
       <main className='container mx-auto p-6'>
         <div className='mb-8 text-center'>

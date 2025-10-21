@@ -16,7 +16,7 @@ export async function PUT (req) {
 
     const decodedToken = await verifyToken(token)
 
-    if (decodedToken.role !== ROLES.VENDEDOR || decodedToken.role !== ROLES.VENDEDOR) {
+    if (decodedToken.role !== ROLES.ADMIN || decodedToken.role !== ROLES.VENDEDOR) {
       return NextResponse.json({ message: 'No ha proporcionado credenciales de autenticación validas' }, { status: 401 })
     }
 

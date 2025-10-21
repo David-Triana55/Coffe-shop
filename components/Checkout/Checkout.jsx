@@ -20,32 +20,6 @@ export default function Checkout () {
     try {
       setLoading(true)
 
-      // const bill = {
-      //   cliente: clientInfo,
-      //   productos: Array.isArray(checkoutData)
-      //     ? checkoutData.map(item => ({
-      //       productId: item.id,
-      //       quantity: item.count,
-      //       unitPrice: item.price
-      //     }))
-      //     : []
-      // }
-
-      // // 1️⃣ Crear factura
-      // const response = await fetch('/api/bill', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(bill),
-      //   credentials: 'include'
-      // })
-
-      // if (!response.ok) throw new Error('Error al enviar el bill')
-
-      // const { billId } = await response.json()
-
-      // console.log(billId, 'data---------------')
-
-      // 2️⃣ Crear preferencia de pago en Mercado Pago
       const res = await fetch('/api/payments/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -62,13 +36,11 @@ export default function Checkout () {
 
       const data = await res.json()
       if (data.init_point) {
-        // Redirige al checkout de Mercado Pago
         window.location.href = data.init_point
       } else {
         alert('Error creando preferencia')
         console.error(data)
       }
-      // // 3️⃣ Redirigir al checkout de Mercado Pago
       cleanCart()
     } catch (error) {
       console.error(error)
