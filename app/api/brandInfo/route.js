@@ -11,10 +11,13 @@ export async function GET () {
   try {
     const cookieStore = cookies()
     const token = cookieStore.get(CONSTANTS.COOKIE_NAME)?.value
-
+    console.log(token, 'token')
     const decodedToken = await verifyToken(token)
 
+    console.log(decodedToken, 'token descifrado')
+
     const brandInfo = await getBrandInfo(decodedToken.brandId)
+
     console.log(brandInfo)
 
     return NextResponse.json({ data: brandInfo[0] }, { status: 200 })
@@ -29,7 +32,6 @@ export async function PUT (req) {
   try {
     const data = await req.json()
     const { name, image } = data
-    console.log(name, image)
 
     const cookieStore = cookies()
     const token = cookieStore.get(CONSTANTS.COOKIE_NAME)?.value

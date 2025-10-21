@@ -21,7 +21,7 @@ import { getProductById } from '@/lib/data/products'
  *           application/json:
  *             schema:
  *               type: object
- *               properties:
+ *               poperties:
  *                 id_producto:
  *                   type: integer
  *                 id_marca:
@@ -58,7 +58,7 @@ import { getProductById } from '@/lib/data/products'
 
 export async function GET (request, { params }) {
   const { id } = params // capturamos el parámetro dinámico de la URL
-  console.log(id)
+  console.log(id, 'hola')
   if (!id) {
     return new Response(JSON.stringify({ message: 'ID del producto es requerido' }), {
       status: 400,

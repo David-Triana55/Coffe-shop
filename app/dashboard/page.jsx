@@ -1,231 +1,231 @@
 'use client'
-import { Coffee, DollarSign, Gavel, Clock, Bell } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { DollarSign, Package, Gavel, Users, AlertTriangle, ArrowUpRight } from 'lucide-react'
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts'
+import useStore from '@/store'
+import { ROLES } from '@/utils/roles'
+import { formatPrice } from '@/utils/formatter'
+import Link from 'next/link'
+import Loading from '@/components/Loading/Loading'
 
-export default function AuctionDashboard () {
-  const [name, setName] = useState('')
+export default function DashboardPage () {
+  const { login, clientInfo } = useStore((state) => state)
+  const [metrics, setMetrics] = useState({
+    totalSales: 0,
+    activeProducts: 0,
+    activeAuctions: 0,
+    activeVendors: 0
+  })
+  const [salesData, setSalesData] = useState([])
+  const [lowStockProducts, setLowStockProducts] = useState([])
+  const [categoryData, setCategoryData] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const COLORS = ['#33691E', '#8BC34A', '#CDDC39', '#FFC107', '#FF9800']
+
   useEffect(() => {
-    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
-    setName(state?.clientInfo?.data?.name)
+    const metrics = async () => {
+      setLoading(true)
+      const data = await fetch('/api/dashboard', { credentials: 'include' })
+      const res = await data.json()
+      console.log(res)
+      setSalesData(res?.monthly)
+      setLowStockProducts(res?.stock)
+      setMetrics((prev) => ({
+        totalSales: res?.sales[0]?.total_ventas ?? prev.totalSales,
+        activeProducts: res?.products[0]?.productos_activos ?? prev.activeProducts,
+        activeAuctions: res?.auctions[0]?.subastas_activas ?? prev.activeAuctions,
+        activeVendors: res?.sellers[0]?.vendedores_activos ?? prev.activeVendors
+      }))
+      console.log(res, 'respuesta')
+      setCategoryData(
+        res?.category.map(c => ({
+          name: c.name,
+          cantidad: c.cantidad,
+          value: parseFloat(c.value)
+        })))
+
+      setLoading(false)
+    }
+
+    metrics()
   }, [])
 
-  const auctionData = {
-    totalEarnings: 28750.00,
-    activeAuctions: 12,
-    completedAuctions: 45,
-    successRate: 78
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    )
   }
 
-  const activeAuctions = [
-    {
-      id: 'AUC-001',
-      product: 'Café Colombiano Premium',
-      minPrice: 15.99,
-      currentBid: 18.50,
-      timeLeft: '2h 15m',
-      bids: 8,
-      status: 'Activa'
-    },
-    {
-      id: 'AUC-002',
-      product: 'Café Etíope Yirgacheffe',
-      minPrice: 18.99,
-      currentBid: 22.00,
-      timeLeft: '45m',
-      bids: 12,
-      status: 'Activa'
-    },
-    {
-      id: 'AUC-003',
-      product: 'Mezcla Especial',
-      minPrice: 12.50,
-      currentBid: 12.50,
-      timeLeft: '1h 30m',
-      bids: 1,
-      status: 'Activa'
-    },
-    {
-      id: 'AUC-004',
-      product: 'Café Descafeinado',
-      minPrice: 14.99,
-      currentBid: 16.75,
-      timeLeft: '3h 20m',
-      bids: 5,
-      status: 'Activa'
-    }
-  ]
-
-  const recentCompletedAuctions = [
-    {
-      id: 'AUC-098',
-      product: 'Café Orgánico',
-      minPrice: 16.00,
-      finalPrice: 19.50,
-      buyer: 'Tostadores Unidos',
-      status: 'Vendida'
-    },
-    {
-      id: 'AUC-097',
-      product: 'Café Arábica Especial',
-      minPrice: 20.00,
-      finalPrice: 0,
-      buyer: '-',
-      status: 'Sin ofertas'
-    },
-    {
-      id: 'AUC-096',
-      product: 'Café de Altura',
-      minPrice: 17.50,
-      finalPrice: 21.25,
-      buyer: 'Café Central',
-      status: 'Vendida'
-    },
-    {
-      id: 'AUC-095',
-      product: 'Café Tostado Medio',
-      minPrice: 13.99,
-      finalPrice: 15.80,
-      buyer: 'Barista Pro',
-      status: 'Vendida'
-    }
-  ]
-
+  console.log(categoryData)
   return (
-    <div className='min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
-      <header className='bg-[#3E2723] text-white p-4'>
-        <div className='container mx-auto flex justify-between items-center'>
-          <div className='flex items-center space-x-4'>
-            <Coffee className='h-8 w-8' />
-            <h1 className='text-2xl font-bold'>Dashboard Subastas</h1>
-          </div>
-          <div className='flex items-center space-x-4'>
-            <Bell className='h-6 w-6 cursor-pointer' />
-            <div className='flex items-center space-x-2'>
-              <div className='w-8 h-8 bg-[#D7CCC8] rounded-full flex items-center justify-center'>
-                <span className='text-[#3E2723] font-bold'>{name}</span>
-              </div>
-              <span>{name}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className='mt-16 p-6'>
+      {/* Header */}
+      <div>
+        <h1 className='text-4xl font-bold text-[#3E2723] mb-2'>Dashboard</h1>
+        <p className='text-[#5D4037]'>
+          Bienvenido, <span className='font-semibold'>{clientInfo?.name}</span>
+        </p>
+      </div>
 
-      <main className='container mx-auto p-4'>
-        <div className='mb-6'>
-          <h2 className='text-3xl font-bold mb-2'>Bienvenido, {name}</h2>
-          <p className='text-lg'>Gestiona tus subastas de café y maximiza tus ganancias</p>
-        </div>
+      {/* Metrics Cards */}
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3'>
+        <Card className='bg-gradient-to-br from-[#33691E] to-[#1B5E20] text-white border-0'>
+          <CardHeader className='flex flex-row items-center justify-between pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Ventas</CardTitle>
+            <DollarSign className='h-4 w-4 opacity-70' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>{formatPrice(metrics.totalSales)}</div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Ganancias Totales</CardTitle>
-              <DollarSign className='h-4 w-4 text-[#33691E]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>${auctionData.totalEarnings.toLocaleString()}</div>
-              <p className='text-xs text-muted-foreground'>
-                De subastas completadas
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Subastas Activas</CardTitle>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
+          <CardHeader className='flex flex-row items-center justify-between pb-2'>
+            <CardTitle className='text-sm font-medium text-[#3E2723]'>Productos Activos</CardTitle>
+            <Package className='h-4 w-4 text-[#33691E]' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-[#3E2723]'>{metrics.activeProducts}</div>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
+          <CardHeader className='flex flex-row items-center justify-between pb-2'>
+            <CardTitle className='text-sm font-medium text-[#3E2723]'>
+              {login?.role === ROLES.ADMIN ? 'Vendedores Activos' : 'Subastas Activas'}
+            </CardTitle>
+            {login?.role === ROLES.ADMIN
+              ? (
+              <Users className='h-4 w-4 text-[#33691E]' />
+                )
+              : (
               <Gavel className='h-4 w-4 text-[#33691E]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>{auctionData.activeAuctions}</div>
-              <p className='text-xs text-muted-foreground'>
-                En curso ahora
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Subastas Completadas</CardTitle>
-              <Clock className='h-4 w-4 text-[#33691E]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>{auctionData.completedAuctions}</div>
-              <p className='text-xs text-muted-foreground'>
-                Este mes
-              </p>
-            </CardContent>
-          </Card>
+                )}
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-[#3E2723]'>
+              {login?.role === ROLES.ADMIN ? metrics.activeVendors : metrics.activeAuctions}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-        </div>
+      {/* Charts */}
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-5'>
+        {/* Sales Chart */}
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
+          <CardHeader>
+            <CardTitle className='text-[#3E2723]'>Ventas Mensuales</CardTitle>
+            <CardDescription>Últimos 5 meses</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width='100%' height={300}>
+              <LineChart data={salesData}>
+                <CartesianGrid strokeDasharray='3 3' stroke='#D7CCC8' />
+                <XAxis dataKey='month' stroke='#5D4037' />
+                <YAxis stroke='#5D4037' tickFormatter={(value) => `$${value / 1000}k`} />
+                <Tooltip
+                  formatter={(value) => formatPrice(value)}
+                  contentStyle={{ backgroundColor: 'white', border: '1px solid #D7CCC8' }}
+                />
+                <Line type='monotone' dataKey='ventas' stroke='#33691E' strokeWidth={2} dot={{ fill: '#33691E' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Subastas Activas</CardTitle>
-              <CardDescription>Subastas en curso con ofertas activas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Producto</TableHead>
-                    <TableHead>Oferta Actual</TableHead>
-                    <TableHead>Tiempo Restante</TableHead>
-                    <TableHead>Ofertas</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {activeAuctions.map((auction) => (
-                    <TableRow key={auction.id}>
-                      <TableCell className='font-medium'>{auction.product}</TableCell>
-                      <TableCell>${auction.currentBid.toFixed(2)}</TableCell>
-                      <TableCell>{auction.timeLeft}</TableCell>
-                      <TableCell>{auction.bids}</TableCell>
-                    </TableRow>
+        {/* Category Distribution */}
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8] '>
+          <CardHeader>
+            <CardTitle className='text-[#3E2723]'>Productos por Categoría</CardTitle>
+            <CardDescription>Distribución actual</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width='100%' height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx='50%'
+                  cy='50%'
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill='#8884d8'
+                  dataKey='value'
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Subastas Recientes</CardTitle>
-              <CardDescription>Últimas subastas completadas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Producto</TableHead>
-                    <TableHead>Precio Final</TableHead>
-                    <TableHead>Estado</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentCompletedAuctions.map((auction) => (
-                    <TableRow key={auction.id}>
-                      <TableCell className='font-medium'>{auction.product}</TableCell>
-                      <TableCell>
-                        {auction.finalPrice > 0 ? `$${auction.finalPrice.toFixed(2)}` : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={auction.status === 'Vendida' ? 'default' : 'destructive'}
-                        >
-                          {auction.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Low Stock Products */}
+      {login?.role === ROLES.VENDEDOR && lowStockProducts?.length > 0 && (
 
-      </main>
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8] mt-5'>
+          <CardHeader>
+            <div className='flex items-center justify-between'>
+              <div>
+                <CardTitle className='text-[#3E2723] flex items-center gap-2'>
+                  <AlertTriangle className='h-5 w-5 text-orange-500' />
+                  Productos con Stock Bajo
+                </CardTitle>
+                <CardDescription>Stock menor a 5 unidades</CardDescription>
+              </div>
+              <Link href='/products'>
+                <Button variant='outline' size='sm'>
+                  Ver todos
+                  <ArrowUpRight className='h-4 w-4 ml-2' />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-4'>
+              {lowStockProducts.map((product) => (
+                  <div
+                  key={product.id}
+                  className='flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200'
+                  >
+                  <div className='flex items-center gap-4'>
+                    <Package className='h-8 w-8 text-orange-500' />
+                    <div>
+                      <p className='font-medium text-[#3E2723]'>{product.name}</p>
+                      <p className='text-sm text-[#5D4037]'>{product.category}</p>
+                    </div>
+                  </div>
+                  <Badge variant='outline' className='bg-orange-100 text-orange-700 border-orange-300'>
+                    Stock: {product.stock}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
     </div>
   )

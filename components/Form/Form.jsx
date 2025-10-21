@@ -72,12 +72,18 @@ export default function Form ({ type }) {
       const password = form.get('password').trim()
       const role = ROLES[form.get('role')]
 
-      const response = await fetch('/api/signUp', {
+      let brandName
+
+      if (role !== ROLES.CLIENTE) {
+        brandName = form.get('brandName').trim()
+      }
+
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, lastName, number, password, email, role })
+        body: JSON.stringify({ name, lastName, number, password, email, role, brandName })
       })
 
       console.log(response)

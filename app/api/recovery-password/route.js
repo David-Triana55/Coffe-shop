@@ -2,7 +2,6 @@ import { alreadyRegistered, updateResetToken } from '@/lib/data/user'
 import { v4 as uuidv4 } from 'uuid'
 export async function POST (req, res) {
   const { email } = await req.json()
-  console.log(email)
 
   const isAlreadyRegistered = await alreadyRegistered(email)
   if (!isAlreadyRegistered) {
@@ -14,7 +13,6 @@ export async function POST (req, res) {
   await updateResetToken(email, resetToken, expiration)
 
   const data = { resetToken, expiration }
-  console.log(data)
   return new Response(JSON.stringify(data), {
     status: 200,
     headers: { 'Content-Type': 'application/json' }

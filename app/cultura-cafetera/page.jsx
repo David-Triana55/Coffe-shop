@@ -21,6 +21,7 @@ import {
   Brain as Grain,
   Sparkles
 } from 'lucide-react'
+import Image from 'next/image'
 
 export default function CulturaCafetera () {
   const [activeSection, setActiveSection] = useState('metodos')
@@ -220,7 +221,12 @@ export default function CulturaCafetera () {
           <div className='p-6'>
             <div className='text-center mb-8'>
               <div className='w-16 h-16 bg-gradient-to-r from-[#3E2723] to-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4'>
-                <Coffee className='h-8 w-8 text-white' />
+                <Image
+                  width={80}
+                  height={80}
+                  alt='logo cofeeshop'
+                  src='/logo.svg'
+                />
               </div>
               <h1 className='text-2xl font-bold text-[#3E2723] mb-2'>Cultura Cafetera</h1>
               <p className='text-sm text-[#5D4037]'>Guía interactiva del mundo del café</p>
@@ -515,7 +521,6 @@ export default function CulturaCafetera () {
                   className='bg-[#33691E] hover:bg-[#1B5E20] text-white px-8 py-3 text-lg'
                   onClick={() => (window.location.href = '/Tienda')}
                 >
-                  <Coffee className='mr-2 h-5 w-5' />
                   Explorar Tienda
                 </Button>
               </div>

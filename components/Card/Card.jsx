@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-'use client' // Esto asegura que el componente es un Client Component
+'use client'
 import { useRouter } from 'next/navigation'
 import './Card.css'
 import { CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -43,7 +43,7 @@ export default function Card ({ product }) {
       <div className='card_product__image'>
         <img
           alt={product?.name}
-          src={product?.images_url[0]}
+          src={product?.images_url != null ? product?.images_url[0] || '/placeholder.svg' : '/placeholder.svg'}
           onClick={() => handleProductClick(product.id)}
         />
       </div>

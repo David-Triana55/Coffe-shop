@@ -5,7 +5,6 @@ import { validTokenExpiration, updatePassword } from '@/lib/data/user'
 export async function POST (req) {
   try {
     const { token, password } = await req.json()
-    console.log(token, password)
 
     if (!token || !password) {
       return NextResponse.json(
@@ -14,7 +13,6 @@ export async function POST (req) {
       )
     }
 
-    // Buscar al usuario con ese token y que no esté expirado
     const res = (await validTokenExpiration(token)).rows
     const isValid = res.length > 0
 
@@ -24,11 +22,9 @@ export async function POST (req) {
         { status: 400 }
       )
     }
-    // Hashear la nueva contraseña
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const update = await updatePassword(res[0].id, hashedPassword)
-    console.log(update)
+    await updatePassword(res[0].id, hashedPassword)
 
     return NextResponse.json({ message: 'Login success', res })
   } catch (error) {

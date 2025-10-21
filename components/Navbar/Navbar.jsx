@@ -1,19 +1,12 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels
+  PopoverGroup
+
 } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
@@ -36,13 +29,34 @@ const navigationClient = {
 }
 
 const navigationSeller = {
-  categories: [],
   pages: [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Crear producto', href: '/create-product' },
-    { name: 'Crear subasta', href: '/create-auction' },
-    { name: 'Historial de ventas', href: '/History-bill' }
+    { name: 'Mis Productos', href: '/products' },
+    { name: 'Crear Producto', href: '/create-product' },
+    { name: 'Mis Subastas', href: '/manage-auctions' }
   ]
+}
+
+const navigationAdmin = {
+  pages: [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Gestión Productos', href: '/products' },
+    { name: 'Gestión Usuarios', href: '/manage-users' },
+    { name: 'Gestión Subastas', href: '/manage-auctions' },
+    { name: 'Gestión Catalogo', href: '/manage-catalogs' }
+  ]
+}
+
+const getRoleNavigation = (role) => {
+  switch (role) {
+    case ROLES.ADMIN:
+      return navigationAdmin
+    case ROLES.VENDEDOR:
+      return navigationSeller
+
+    default:
+      return navigationClient
+  }
 }
 
 export default function NavBar () {
@@ -113,62 +127,9 @@ export default function NavBar () {
             </div>
 
             {/* Links */}
-            <TabGroup className='mt-2'>
-              <div className='border-b border-gray-200'>
-                <TabList className='-mb-px flex space-x-8 px-4'>
-                  {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO ? navigationClient?.categories : navigationSeller?.categories)?.map((category) => (
-                    <Tab
-                      key={category.name}
-                      className='flex-1 whitespace-nowrap border-b-2 border-transparent px-1 py-4 text-base font-medium text-gray-900 data-[selected]:border-textNavbar data-[selected]:text-textNavbar flex items-center'
-                    >
-                      {category.name}
-                    </Tab>
-                  ))}
-                </TabList>
-              </div>
-              <TabPanels as={Fragment}>
-                {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO ? navigationClient?.categories : navigationSeller?.categories)?.map((category) => (
-                  <TabPanel key={category.name} className='space-y-10 px-4 pb-8 pt-10'>
-                    <div className='grid grid-cols-2 gap-x-4'>
-                      {category?.featured?.map((item) => (
-                        <div key={item.name} className='group relative text-sm'>
-                          <div className='aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 '>
-                            <img alt={item.imageAlt} src={item.imageSrc} className='object-cover object-center' />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    {category?.sections?.map((section) => (
-                      <div key={section.name}>
-                        <p id={`${category.id}-${section.id}-heading-mobile`} className='font-medium text-textNavbar'>
-                          {section.name}
-                        </p>
-                        <ul
-                          role='list'
-                          aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                          className='mt-6 flex flex-col space-y-6'
-                        >
-                          {section.items.map((item) => (
-                            <li key={item.name} className='flow-root'>
-                              <Link
-                                onClick={() => {
-                                  setOpen(false)
-                                }} href={item.href} className='link-navbar-mobile -m-2 block p-2 text-gray-500'
-                              >
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </TabPanel>
-                ))}
-              </TabPanels>
-            </TabGroup>
 
             <div className='space-y-6 border-t border-gray-200 px-4 py-6'>
-              {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO ? navigationClient?.pages : navigationSeller?.pages)?.map((page) => (
+              {getRoleNavigation(role).pages?.map((page) => (
                 <div key={page.name} className='flow-root'>
                   <Link
                     onClick={() => {
@@ -254,65 +215,8 @@ export default function NavBar () {
               {/* Flyout menus */}
               <PopoverGroup className='hidden lg:ml-8 lg:block lg:self-stretch'>
                 <div className='flex h-full space-x-8'>
-                  {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO ? navigationClient?.categories : navigationSeller?.categories)?.map((category) => (
-                    <Popover key={category.name} className='flex'>
-                      <div className='relative flex'>
-                        <PopoverButton
-                          onClick={() => {
-                            setIsOpen(true)
-                            toogleCheckoutWindowValue(false)
-                          }}
-                          className='button-desktop relative border-none z-10 -mb-px flex items-center border-transparent pt-px text-sm font-medium text-[#D2B48C] transition-colors duration-200 ease-out hover:text-gray-300 data-[open]:border-textNavbar data-[open]:text-[#D2B48C]'
-                        >
-                          {category.name}
-                        </PopoverButton>
-                      </div>
 
-                      <PopoverPanel
-                        transition
-                        className={` ${isOpen ? 'block' : 'hidden'} absolute inset-x-0 top-full text-sm text-[#D2B48C] transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in `}
-                      >
-                        <div className='relative bg-white'>
-                          <div className='mx-auto max-w-7xl px-8'>
-                            <div className='grid grid-cols-1 gap-x-8 gap-y-10 py-16'>
-
-                              <div className='row-start-1 grid grid-cols-5 gap-x-8 gap-y-10 text-sm'>
-                                {category?.sections?.map((section) => (
-                                  <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className='font-medium text-textNavbar'>
-                                      {section.name}
-                                    </p>
-                                    <ul
-                                      role='list'
-                                      aria-labelledby={`${section.name}-heading`}
-                                      className='mt-6 space-y-6 sm:mt-4 sm:space-y-4 text-[#c09255]'
-                                    >
-                                      {section.items.map((item) => (
-                                        <li key={item.name} className='flex'>
-                                          <Link
-                                            href={item.href}
-                                            className='link-navbar-desktop hover:text-yellow-950 data-[closed]'
-                                            onClick={() => {
-                                              closePopover()
-                                            }}
-                                          >
-                                            {item.name}
-                                          </Link>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-
-                        </div>
-                      </PopoverPanel>
-                    </Popover>
-                  ))}
-
-                  {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO ? navigationClient?.pages : navigationSeller?.pages)?.map((page) => (
+                  {getRoleNavigation(role).pages?.map((page) => (
                     <Link
                       key={page.name}
                       href={page.href}

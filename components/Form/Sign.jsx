@@ -8,6 +8,15 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
   const [validationErrors, setValidationErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isClient, setIsClient] = useState(true)
+
+  const handleChange = (e) => {
+    if (e.target.value !== 'CLIENTE') {
+      setIsClient(false)
+    } else {
+      setIsClient(true)
+    }
+  }
 
   const validateField = (name, value) => {
     const errors = { ...validationErrors }
@@ -68,6 +77,18 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
           errors.password = 'La contraseña debe contener al menos una mayúscula, una minúscula y un número'
         } else {
           delete errors.password
+        }
+        break
+
+      case 'brandName':
+        if (value.length < 2) {
+          errors.brandName = 'El nombre debe tener al menos 2 caracteres'
+        } else if (value.length > 50) {
+          errors.brandName = 'El nombre no puede exceder 50 caracteres'
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+          errors.brandName = 'El nombre solo puede contener letras'
+        } else {
+          delete errors.brandName
         }
         break
 
@@ -187,7 +208,7 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
               </div>
 
               {/* Role and Phone */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className={`grid grid-cols-1  gap-4 ${isClient ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
                 <div>
                   <label htmlFor='role' className='block text-sm font-medium text-[#4A3728] mb-2'>
                     Tipo de usuario *
@@ -197,6 +218,7 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
                       <UserCheck className='h-5 w-5 text-[#8D6E63]' />
                     </div>
                     <select
+                      onChange={handleChange}
                       id='role'
                       name='role'
                       required
@@ -238,6 +260,38 @@ export default function SignForm ({ handleSbmitSignUp, error }) {
                   </div>
                   {validationErrors.number && <p className='mt-1 text-xs text-red-600'>{validationErrors.number}</p>}
                 </div>
+
+              {!isClient && <div>
+                  <label htmlFor='brandName' className='block text-sm font-medium text-[#4A3728] mb-2'>
+                    Nombre Marca *
+                  </label>
+                  <div className='relative'>
+                    <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                      <User className='h-5 w-5 text-[#8D6E63]' />
+                    </div>
+                    <input
+                      id='brandName'
+                      name='brandName'
+                      type='text'
+                      required
+                      minLength={2}
+                      maxLength={50}
+                      pattern='[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+'
+                      autoComplete='family-name'
+                      onChange={handleInputChange}
+                      placeholder='Oma'
+                      className={`block w-full pl-10 pr-3 py-3 border rounded-xl text-[#4A3728] placeholder-[#8D6E63]/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 bg-white/80 ${
+                        validationErrors.brandName
+                          ? 'border-red-300 focus:ring-red-500'
+                          : 'border-[#D2B48C]/30 focus:ring-[#D2B48C]'
+                      }`}
+                    />
+                  </div>
+                  {validationErrors.brandName && (
+                    <p className='mt-1 text-xs text-red-600'>{validationErrors.brandName}</p>
+                  )}
+                </div>}
+
               </div>
 
               {/* Email */}

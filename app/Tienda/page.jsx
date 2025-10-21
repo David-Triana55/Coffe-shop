@@ -64,7 +64,7 @@ export default function CoffeeStore () {
         fetch('/api/brands').then((res) => res.json()).then(setBrands),
         fetch('/api/origins').then((res) => res.json()).then(setOrigins),
         fetch('/api/presentations').then((res) => res.json()).then(setPresentations),
-        fetch('/api/products').then((res) => res.json()).then(setProducts),
+        fetch('/api/products', { cache: 'no-store' }).then((res) => res.json()).then(setProducts),
         fetch('/api/accessories').then((res) => res.json()).then(setAccesories)
       ])
       setLoading(false)
@@ -100,7 +100,7 @@ export default function CoffeeStore () {
     }
 
     fetchFilteredProducts()
-  }, [selectedCategories, selectedBrands, selectedTypes, selectedOrigins, selectedAccessories, query, page])
+  }, [selectedCategories, selectedBrands, selectedTypes, selectedOrigins, selectedAccessories, query, page, sortBy])
 
   const handleCategoryChange = (category, checked) => {
     setSelectedCategories((prev) => (checked ? [...prev, category] : prev.filter((c) => c.id !== category.id)))

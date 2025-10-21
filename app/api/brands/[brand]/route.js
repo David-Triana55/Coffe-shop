@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server'
 export async function GET (request, { params }) {
   try {
     const { brand } = params
-    console.log(brand)
     const products = await getProductsByBrand(brand) || []
     const infoBrand = await getInfoBrandName(brand)
 

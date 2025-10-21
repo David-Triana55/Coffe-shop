@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Coffee, Upload, DollarSign, Package, XIcon } from 'lucide-react'
+import { Upload, DollarSign, Package, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,7 +9,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
 import { ROLES } from '@/utils/roles'
-import { toast, ToastContainer, Bounce } from 'react-toastify'
+import { ToastContainer, Bounce } from 'react-toastify'
+import Loading from '@/components/Loading/Loading'
+import { toastError, toastSuccess } from '@/utils/toast'
 
 export default function CreateProduct () {
   const router = useRouter()
@@ -23,6 +25,7 @@ export default function CreateProduct () {
   const [imageUrls, setImageUrls] = useState([])
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -37,6 +40,14 @@ export default function CreateProduct () {
   })
 
   useEffect(() => {
+    setIsLoading(true)
+    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
+
+    if (state?.login?.isLogged && state?.login?.role === ROLES.CLIENTE) {
+      router.push('/')
+    }
+
+    setRole(state?.login?.role)
     const fetchData = async (url, setter) => {
       const res = await fetch(url, { credentials: 'include' })
       const data = await res.json()
@@ -47,23 +58,14 @@ export default function CreateProduct () {
     fetchData('/api/brands', setBrands)
     fetchData('/api/presentations', setPresentations)
     fetchData('/api/accessories', setAccessories)
-  }, [])
 
-  useEffect(() => {
-    const { state } = JSON.parse(window.localStorage.getItem('isLogged'))
-
-    if (state?.login?.isLogged && state?.login?.role === ROLES.CLIENTE) {
-      router.push('/')
-    }
-
-    setRole(state?.login?.role)
+    setIsLoading(false)
   }, [])
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Subida múltiple de imágenes a cloudinary
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files)
     setSelectedImages((prev) => [...prev, ...files])
@@ -82,43 +84,14 @@ export default function CreateProduct () {
       const result = await res.json()
       if (res.ok) {
         setImageUrls((prev) => [...prev, ...result.urls])
-        toast.success('¡Imágenes subidas correctamente!', {
-          position: 'bottom-right',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Bounce
-        })
+        toastSuccess('¡Imágenes subidas correctamente!', 3000, Bounce)
       } else {
-        toast.error('Error al subir las imágenes', {
-          position: 'bottom-right',
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Bounce
-        })
+        toastError('Error al subir las imágenes', 5000, Bounce)
         console.error(result.error)
       }
     } catch (err) {
-      toast.error('Error al subir las imágenes', {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Bounce
-      })
+      toastError('Error al subir las imágenes', 5000, Bounce)
+
       console.error('Error subiendo imágenes:', err)
     } finally {
       setUploading(false)
@@ -136,9 +109,14 @@ export default function CreateProduct () {
     e.preventDefault()
     setSubmitting(true)
 
+    const cleanFormData = Object.entries(formData).reduce((acc, [key, value]) => {
+      acc[key] = value === '' ? null : value
+      return acc
+    }, {})
+
     const data = {
       images: imageUrls,
-      ...formData
+      ...cleanFormData
     }
 
     try {
@@ -148,22 +126,9 @@ export default function CreateProduct () {
         body: JSON.stringify(data)
       })
 
-      const result = await response.json()
-
       if (response.ok) {
-        toast.success('¡Producto creado exitosamente!', {
-          position: 'bottom-right',
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Bounce
-        })
+        toastSuccess('¡Producto creado exitosamente!', 5000, Bounce)
 
-        // Limpiar el formulario después del éxito
         setFormData({
           name: '',
           description: '',
@@ -179,64 +144,29 @@ export default function CreateProduct () {
         setSelectedImages([])
         setImageUrls([])
 
-        // Opcional: redirigir después de un tiempo
         setTimeout(() => {
-          router.push('/dashboard')
-        }, 2000)
+          router.push('/products')
+        }, 3000)
       } else {
-        toast.error(result.message || 'Error al crear el producto', {
-          position: 'bottom-right',
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Bounce
-        })
+        toastError('Error al crear el producto', 5000, Bounce)
       }
     } catch (err) {
-      toast.error('Error de conexión. Intenta nuevamente.', {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Bounce
-      })
+      toastError('Error al crear el producto', 5000, Bounce)
+
       console.error('Error al enviar la solicitud:', err)
     } finally {
       setSubmitting(false)
     }
   }
 
-  return (
-    <div className='min-h-screen bg-[#D7CCC8] text-[#3E2723]'>
-      {/* HEADER */}
-      <header className='bg-[#3E2723] text-white p-4'>
-        <div className='container mx-auto flex justify-between items-center'>
-          <div className='flex items-center space-x-3'>
-            <Coffee className='h-8 w-8' />
-            <h1 className='text-2xl font-bold'>Crear Nuevo Producto</h1>
-          </div>
-          <nav className='hidden md:flex space-x-6'>
-            <a href='#' className='hover:text-[#D7CCC8]'>
-              Dashboard
-            </a>
-            <a href='#' className='hover:text-[#D7CCC8]'>
-              Mis Subastas
-            </a>
-            <a href='#' className='hover:text-[#D7CCC8]'>
-              Perfil
-            </a>
-          </nav>
-        </div>
-      </header>
+  if (isLoading) {
+    return (
+      <Loading />
+    )
+  }
 
+  return (
+    <div className='min-h-screen bg-[#D7CCC8] text-[#3E2723] mt-12'>
       {/* MAIN */}
       <main className='container mx-auto p-6'>
         <div className='mb-8 text-center'>
@@ -445,21 +375,6 @@ export default function CreateProduct () {
           </div>
         </form>
       </main>
-
-      {/* FOOTER */}
-      <footer className='bg-[#3E2723] text-white p-4 mt-12'>
-        <div className='container mx-auto flex flex-col md:flex-row justify-between items-center'>
-          <p>&copy; 2024 Coffee Auction Platform. Todos los derechos reservados.</p>
-          <nav className='flex space-x-4 mt-4 md:mt-0'>
-            <a href='#' className='hover:text-[#D7CCC8]'>
-              Soporte
-            </a>
-            <a href='#' className='hover:text-[#D7CCC8]'>
-              Términos
-            </a>
-          </nav>
-        </div>
-      </footer>
 
       {/* Toast Container */}
       <ToastContainer

@@ -2,7 +2,7 @@ import { formatPrice } from '@/utils/formatter'
 import { ROLES } from '@/utils/roles'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-// Definir la tienda (store)
+
 const useStore = create(persist(
   (set, get) => ({
     checkoutWindow: false,
@@ -14,12 +14,9 @@ const useStore = create(persist(
     totalBill: 0,
     clientInfo: {},
 
-    // Método para abrir y cerrar el modal del checkout
-
     toogleCheckoutWindow: () => set((state) => ({ checkoutWindow: !state.checkoutWindow })),
     toogleCheckoutWindowValue: (value) => set({ checkoutWindow: value }),
 
-    // Métodos para el manejo del carrito de compras
     addToCart: (product, count = 1) => {
       set((state) => {
         const alreadyInCart = state.checkoutData.find((item) => item.id === product.id)
@@ -55,7 +52,6 @@ const useStore = create(persist(
 
     cleanCart: () => set({ checkoutData: [], totalBill: 0 }),
 
-    // Métodos para calcular el total de la cuenta
     calculateTotalBill: () => {
       const { checkoutData } = get()
       const total = checkoutData.reduce((total, item) => total + item.price * item.count, 0)
@@ -75,8 +71,8 @@ const useStore = create(persist(
     logOut: () => set({ login: { isLogged: false, role: ROLES.DESCONOCIDO }, checkoutData: [], totalBill: 0, clientInfo: {} })
   }),
   {
-    name: 'isLogged', // Nombre de la clave en localStorage
-    getStorage: () => localStorage // Usar localStorage para persistir el estado
+    name: 'isLogged',
+    getStorage: () => localStorage
   }
 ))
 

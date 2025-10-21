@@ -37,7 +37,7 @@ export default async function PagePrincipal () {
               <div className='card-brands w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-4 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full relative rounded-lg bg-white shadow-md'>
                   <p className='text-terciary text-center font-bold text-xl absolute -top-6 dark:text-white'>{brand.name}</p>
-                  <img className='w-full h-full object-contain' src={brand.image_url} alt='' />
+                  <img className='w-full h-full object-contain' src={brand?.image_url} alt='' />
                 </div>
               </div>
             </Link>
@@ -56,11 +56,11 @@ export default async function PagePrincipal () {
         <div className='w-auto h-72 pt-4 px-2 items-center mt-6 overflow-x-clip flex gap-x-5 overflow-y-hidden lg:justify-center scroll-smooth'>
 
           {products?.map((coffe) => (
-            <Link href={`/Accesorios-de-cafe/${coffe?.name.split(' ').join('-')}`} aria-label={`visit page ${coffe?.name.split(' ').join('-')}`} key={coffe.id}>
+            <Link href={`ProductDetail/${coffe?.id}`} aria-label={`visit page ${coffe?.name.split(' ').join('-')}`} key={coffe.id}>
               <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-6 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full relative rounded-lg bg-white shadow-md'>
                   <p className='text-terciary text-center font-bold text-xl absolute -top-6 dark:text-white'>{coffe.name}</p>
-                  <img className='w-full h-full object-cover rounded-lg' src={coffe.image_url} alt='' />
+                  <img className='w-full h-full object-cover rounded-lg' src={coffe.images_url != null ? coffe.images_url[0] : '/placeholder.svg'} alt='' />
                 </div>
               </div>
             </Link>

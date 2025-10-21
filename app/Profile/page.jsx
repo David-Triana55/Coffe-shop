@@ -33,6 +33,8 @@ import { Bounce, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getRoleName } from '@/utils/roleName'
 import { toastError, toastSuccess } from '@/utils/toast'
+import { CONSTANTS } from '@/utils/constants'
+import Link from 'next/link'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
@@ -71,7 +73,6 @@ export default function Profile () {
     }
   })
 
-  // Validación de campos
   const validateField = (name, value) => {
     const errors = { ...validationErrors }
 
@@ -210,6 +211,8 @@ export default function Profile () {
     setImageUrls(originalBrandData.image_url || '')
   }
 
+  console.log(history, 'history')
+
   useEffect(() => {
     const storedData = JSON.parse(window.localStorage.getItem('isLogged'))
 
@@ -232,7 +235,7 @@ export default function Profile () {
           })
 
           if (res.ok) {
-            const data = await res.json()
+            const { data } = await res.json()
             setHistory(data)
           }
         } catch (error) {
@@ -279,6 +282,7 @@ export default function Profile () {
         const res = await fetch('/api/brandInfo', { credentials: 'include' })
         if (res.ok) {
           const data = await res.json()
+          console.log(data, 'data brand')
           const brandData = data.data || {}
 
           setDataBrand({
@@ -442,12 +446,21 @@ export default function Profile () {
           <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
             <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
               <div className='flex items-center space-x-4'>
-                <Avatar className='h-16 w-16 border-2 border-white'>
-                  <AvatarImage src={imageUrls || dataBrand?.data?.image_url || '/placeholder.svg'} />
-                  <AvatarFallback className='bg-[#D2B48C] text-[#4A3728] text-lg font-bold'>
-                    {dataClient?.data?.name?.charAt(0) || clientInfo?.data?.name?.charAt(0) || 'U'}
-                  </AvatarFallback>
-                </Avatar>
+                  {login?.role === ROLES.VENDEDOR
+                    ? (
+                      <Avatar className='h-16 w-16 border-2 border-white'>
+                        <Link className='mx-auto' href={`Marcas-de-cafe/${dataBrand?.data?.name}`}>
+                          <AvatarImage src={imageUrls || dataBrand?.data?.image_url || CONSTANTS.IMAGE_PLACEHOLDER} />
+                        </Link>
+                      </Avatar>
+                      )
+                    : (
+                      <Avatar className='h-16 w-16 border-2 border-white'>
+                        <AvatarFallback className='bg-[#D2B48C] text-[#4A3728] text-lg font-bold'>
+                          {dataClient?.data?.name?.charAt(0) || clientInfo?.data?.name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      )}
                 <div>
                   <CardTitle className='text-lg'>
                     {dataClient?.data?.name || clientInfo?.data?.name}{' '}

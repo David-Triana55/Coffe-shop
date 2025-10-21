@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dvmfporel',
-  api_key: process.env.CLOUDINARY_API_KEY || '373577861554897',
-  api_secret: process.env.CLOUDINARY_API_KEY_SECRET || 'B4btiyChZNMJJaSbfxCvVIhw8hY'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_KEY_SECRET
 })
 
 export async function POST (req) {
@@ -33,9 +33,8 @@ export async function POST (req) {
     })
 
     urls.push(response.secure_url)
+    console.log(urls)
   }
-
-  console.log(urls)
 
   return new Response(
     JSON.stringify({ urls }),

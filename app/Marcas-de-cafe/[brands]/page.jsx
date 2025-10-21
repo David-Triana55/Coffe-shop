@@ -8,10 +8,9 @@ import { Coffee, Star, Award } from 'lucide-react'
 
 export default async function PageBrands ({ params }) {
   const brand = await params.brands.split('-').join(' ')
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/brands/${brand}`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/brands/${brand}`, { cache: 'no-store' })
   const data = await res.json()
   const { products, infoBrand } = data
-  console.log(infoBrand, 'informacion de la marca')
   const typesCoffee = formatCategory(brand)
 
   return (
