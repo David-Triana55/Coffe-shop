@@ -29,37 +29,41 @@ export async function POST (req) {
       }
 
       const payment = await paymentClient.get({ id: paymentId })
-      console.log(payment, 'payment')
       console.log('payment.additional_info:', payment.additional_info)
       console.log('payment.metadata:', payment.metadata)
       console.log('payment.external_reference:', payment.external_reference)
-
       console.log('Pago obtenido:', payment.id, payment.status)
 
       if (payment.status === 'approved') {
+        // 🔹 Extraer items
         const items =
           payment.order?.items ||
           payment.additional_info?.items ||
           []
 
-        const userId = payment.metadata?.userId
-        console.log(payment.metadata)
-        console.log(userId)
+        // 🔹 Extraer userId (de metadata.user_id o de external_reference)
+        const userId =
+          payment.metadata?.user_id ||
+          payment.external_reference ||
+          'unknown'
+
+        console.log('User ID:', userId)
+
+        // 🔹 Fecha actual
         const currentDate = new Date().toISOString().split('T')[0]
-        console.log(currentDate)
-        // Crear factura
+
+        // 🔹 Crear factura
         const newBill = await insertBill({
           userId,
           date: currentDate,
           mpPaymentId: payment.id
         })
 
-        // Crear detalles de la factura
+        // 🔹 Crear detalles
         for (const item of items) {
           const productId = item.id
           const quantity = Number(item.quantity ?? 1)
-          const unitPrice = Number(
-            item.unit_price)
+          const unitPrice = Number(item.unit_price)
 
           await insertDetailBill({
             billId: newBill.id,
