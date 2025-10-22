@@ -19,12 +19,14 @@ import {
   Beaker,
   Package,
   Brain as Grain,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react'
 import Image from 'next/image'
 
 export default function CulturaCafetera () {
   const [activeSection, setActiveSection] = useState('metodos')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const menuItems = [
     { id: 'metodos', label: 'Métodos de Preparación', icon: Coffee },
@@ -188,7 +190,7 @@ export default function CulturaCafetera () {
   useEffect(() => {
     const handleScroll = () => {
       const sections = menuItems.map((item) => item.id)
-      const scrollPosition = window.scrollY + 100
+      const scrollPosition = window.scrollY + 200
 
       for (const section of sections) {
         const element = document.getElementById(section)
@@ -209,323 +211,376 @@ export default function CulturaCafetera () {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const offset = 80
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+      window.scrollTo({
+        top: elementPosition - offset,
+        behavior: 'smooth'
+      })
+      setMobileMenuOpen(false)
     }
   }
 
+  const MenuContent = () => (
+    <>
+      <div className='text-center mb-6 lg:mb-8'>
+        <div className='w-16 h-16 bg-gradient-to-r from-[#3E2723] to-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4'>
+          <Image width={64} height={64} alt='logo coffeeshop' src='/logo.svg' className='w-12 h-12' />
+        </div>
+        <h2 className='text-xl lg:text-2xl font-bold text-[#3E2723] mb-2'>Cultura Cafetera</h2>
+        <p className='text-xs lg:text-sm text-[#5D4037]'>Guía interactiva del café</p>
+      </div>
+
+      <nav className='space-y-2'>
+        {menuItems.map((item) => {
+          const Icon = item.icon
+          return (
+            <Button
+              key={item.id}
+              variant='ghost'
+              className={`w-full justify-start text-left p-3 lg:p-4 h-auto transition-all duration-300 ${
+                activeSection === item.id
+                  ? 'bg-gradient-to-r from-[#3E2723] to-[#5D4037] text-white shadow-lg'
+                  : 'hover:bg-[#D7CCC8]/30 text-[#3E2723]'
+              }`}
+              onClick={() => scrollToSection(item.id)}
+            >
+              <Icon className='h-4 w-4 lg:h-5 lg:w-5 mr-2 lg:mr-3 flex-shrink-0' />
+              <span className='flex-1 text-sm lg:text-base'>{item.label}</span>
+              <ChevronRight
+                className={`h-3 w-3 lg:h-4 lg:w-4 transition-transform ${activeSection === item.id ? 'rotate-90' : ''}`}
+              />
+            </Button>
+          )
+        })}
+      </nav>
+
+      <div className='mt-6 lg:mt-8 p-3 lg:p-4 bg-gradient-to-r from-[#33691E]/10 to-[#8BC34A]/10 rounded-xl'>
+        <h3 className='font-semibold text-[#3E2723] mb-2 text-sm lg:text-base'>¿Sabías que...?</h3>
+        <p className='text-xs lg:text-sm text-[#5D4037] leading-relaxed'>
+          El café es la segunda bebida más consumida en el mundo después del agua.
+        </p>
+      </div>
+    </>
+  )
+
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#D7CCC8] via-[#EFEBE9] to-[#D7CCC8] text-[#3E2723] mt-14'>
+    <div className='min-h-screen bg-gradient-to-br from-[#D7CCC8] via-[#EFEBE9] to-[#D7CCC8] text-[#3E2723] pt-16'>
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <>
+          <div className='fixed inset-0 bg-black/50 z-40 lg:hidden' onClick={() => setMobileMenuOpen(false)} />
+          <div className='fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-2xl transform transition-transform duration-300 lg:hidden overflow-y-auto'>
+            <div className='p-6'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute top-4 right-4'
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <X className='h-5 w-5' />
+              </Button>
+              <MenuContent />
+            </div>
+          </div>
+        </>
+      )}
+
       <div className='flex w-full'>
-        {/* Sidebar */}
-        <aside className='h-screen sticky w-80 top-14 bg-white/90 backdrop-blur-sm border-r border-[#D7CCC8] shadow-lg'>
+        {/* Desktop Sidebar */}
+        <aside className='hidden lg:block h-screen sticky w-80 top-16 bg-white/90 backdrop-blur-sm border-r border-[#D7CCC8] shadow-lg overflow-y-auto'>
           <div className='p-6'>
-            <div className='text-center mb-8'>
-              <div className='w-16 h-16 bg-gradient-to-r from-[#3E2723] to-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4'>
-                <Image
-                  width={80}
-                  height={80}
-                  alt='logo cofeeshop'
-                  src='/logo.svg'
-                />
-              </div>
-              <h1 className='text-2xl font-bold text-[#3E2723] mb-2'>Cultura Cafetera</h1>
-              <p className='text-sm text-[#5D4037]'>Guía interactiva del mundo del café</p>
-            </div>
-
-            <nav className='space-y-2'>
-              {menuItems.map((item) => {
-                const Icon = item.icon
-                return (
-                  <Button
-                    key={item.id}
-                    variant='ghost'
-                    className={`w-full justify-start text-left p-4 h-auto transition-all duration-300 ${
-                      activeSection === item.id
-                        ? 'bg-gradient-to-r from-[#3E2723] to-[#5D4037] text-white shadow-lg'
-                        : 'hover:bg-[#D7CCC8]/30 text-[#3E2723]'
-                    }`}
-                    onClick={() => scrollToSection(item.id)}
-                  >
-                    <Icon className='h-5 w-5 mr-3 flex-shrink-0' />
-                    <span className='flex-1'>{item.label}</span>
-                    <ChevronRight
-                      className={`h-4 w-4 transition-transform ${activeSection === item.id ? 'rotate-90' : ''}`}
-                    />
-                  </Button>
-                )
-              })}
-            </nav>
-
-            <div className='mt-8 p-4 bg-gradient-to-r from-[#33691E]/10 to-[#8BC34A]/10 rounded-xl'>
-              <h3 className='font-semibold text-[#3E2723] mb-2'>¿Sabías que...?</h3>
-              <p className='text-sm text-[#5D4037]'>
-                El café es la segunda bebida más consumida en el mundo después del agua, y la segunda mercancía más
-                comercializada después del petróleo.
-              </p>
-            </div>
+            <MenuContent />
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className='flex-1 p-4'>
-          {/* Hero Section */}
-          <section className='mb-16 text-center'>
-            <div className='relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#3E2723] via-[#5D4037] to-[#3E2723] p-12 text-white'>
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fillRule=evenodd%3E%3Cg fill=%23ffffff fillOpacity=0.05%3E%3Ccircle cx=30 cy=30 r=2/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20" />
-              <div className='relative'>
-                <h1 className='text-5xl font-bold mb-6'>Descubre el Mundo del Café</h1>
-                <p className='text-xl max-w-3xl mx-auto leading-relaxed opacity-90'>
-                  Sumérgete en una experiencia interactiva que te llevará desde los métodos de preparación más
-                  tradicionales hasta los orígenes más exóticos del café. Aprende, explora y conviértete en un verdadero
-                  conocedor de esta fascinante bebida.
-                </p>
+        <main className='flex-1 w-full lg:w-auto'>
+          {/* Mobile Menu Bar - Sticky */}
+          <div className='lg:hidden sticky top-16 z-30 bg-gradient-to-r from-[#3E2723] to-[#5D4037] shadow-md'>
+            <div className='flex items-center justify-between px-4 py-3'>
+              <button onClick={() => setMobileMenuOpen(true)} className='flex items-center gap-3 text-white'>
+                <div className='flex flex-col gap-1'>
+                  <span className='w-6 h-0.5 bg-white' />
+                  <span className='w-6 h-0.5 bg-white' />
+                  <span className='w-6 h-0.5 bg-white' />
+                </div>
+                <span className='font-semibold'>Guía</span>
+              </button>
+              <div className='flex items-center gap-2'>
+                <span className='text-white text-sm font-medium'>
+                  {menuItems.find((item) => item.id === activeSection)?.label || 'Cultura Cafetera'}
+                </span>
               </div>
             </div>
-          </section>
+          </div>
 
-          {/* Métodos de Preparación */}
-          <section id='metodos' className='mb-20'>
-            <div className='text-center mb-12'>
-              <h2 className='text-4xl font-bold mb-4 text-[#3E2723]'>Métodos de Preparación</h2>
-              <p className='text-lg text-[#5D4037] max-w-2xl mx-auto'>
-                Cada método de preparación resalta diferentes características del café, desde su cuerpo hasta su acidez
-              </p>
-            </div>
+          <div className='p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto'>
+            {/* Hero Section */}
+            <section className='mb-12 sm:mb-16 text-center'>
+              <div className='relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#3E2723] via-[#5D4037] to-[#3E2723] p-6 sm:p-8 lg:p-12 text-white'>
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fillRule=evenodd%3E%3Cg fill=%23ffffff fillOpacity=0.05%3E%3Ccircle cx=30 cy=30 r=2/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20" />
+                <div className='relative'>
+                  <h1 className='text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6'>
+                    Descubre el Mundo del Café
+                  </h1>
+                  <p className='text-sm sm:text-base lg:text-lg max-w-3xl mx-auto leading-relaxed opacity-90 px-2'>
+                    Sumérgete en una experiencia interactiva que te llevará desde los métodos de preparación más
+                    tradicionales hasta los orígenes más exóticos del café. Aprende, explora y conviértete en un
+                    verdadero conocedor de esta fascinante bebida.
+                  </p>
+                </div>
+              </div>
+            </section>
 
-            <div className='grid md:grid-cols-2 gap-8'>
-              {metodos.map((metodo, index) => {
-                const Icon = metodo.icon
-                return (
-                  <Card
-                    key={index}
-                    className='group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
-                  >
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${metodo.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    <CardHeader className='relative z-10'>
-                      <CardTitle className='flex items-center text-xl'>
-                        <div
-                          className={`p-3 rounded-full bg-gradient-to-br ${metodo.color} mr-4 group-hover:scale-110 transition-transform duration-300`}
-                        >
-                          <Icon className='h-6 w-6 text-white' />
-                        </div>
-                        {metodo.name}
-                      </CardTitle>
-                      <div className='flex gap-4 text-sm text-[#5D4037]'>
-                        <div className='flex items-center'>
-                          <Clock className='h-4 w-4 mr-1' />
-                          {metodo.tiempo}
-                        </div>
-                        <div className='flex items-center'>
-                          <Thermometer className='h-4 w-4 mr-1' />
-                          {metodo.temperatura}
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className='relative z-10'>
-                      <CardDescription className='text-[#5D4037] leading-relaxed mb-4'>
-                        {metodo.descripcion}
-                      </CardDescription>
-                      <div className='space-y-2'>
-                        {metodo.caracteristicas.map((caracteristica, idx) => (
-                          <div key={idx} className='flex items-center text-sm'>
-                            <div className='w-2 h-2 bg-[#33691E] rounded-full mr-3 flex-shrink-0' />
-                            {caracteristica}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </section>
+            {/* Métodos de Preparación */}
+            <section id='metodos' className='mb-16 sm:mb-20 scroll-mt-32'>
+              <div className='text-center mb-8 sm:mb-12'>
+                <h2 className='text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-[#3E2723]'>Métodos de Preparación</h2>
+                <p className='text-base sm:text-lg text-[#5D4037] max-w-2xl mx-auto px-4'>
+                  Cada método de preparación resalta diferentes características del café, desde su cuerpo hasta su
+                  acidez
+                </p>
+              </div>
 
-          {/* Presentaciones */}
-          <section id='presentaciones' className='mb-20'>
-            <div className='text-center mb-12'>
-              <h2 className='text-4xl font-bold mb-4 text-[#3E2723]'>Presentaciones del Café</h2>
-              <p className='text-lg text-[#5D4037] max-w-2xl mx-auto'>
-                Cada presentación tiene sus ventajas y es ideal para diferentes situaciones y preferencias
-              </p>
-            </div>
-
-            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
-              {presentaciones.map((presentacion, index) => {
-                const Icon = presentacion.icon
-                return (
-                  <Card
-                    key={index}
-                    className='group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white/80 backdrop-blur-sm border-0'
-                  >
-                    <CardHeader className='text-center'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'>
+                {metodos.map((metodo, index) => {
+                  const Icon = metodo.icon
+                  return (
+                    <Card
+                      key={index}
+                      className='group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
+                    >
                       <div
-                        className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${presentacion.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-                      >
-                        <Icon className='h-8 w-8 text-white' />
-                      </div>
-                      <CardTitle className='text-lg'>{presentacion.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className='text-[#5D4037] leading-relaxed mb-4'>
-                        {presentacion.descripcion}
-                      </CardDescription>
-                      <div className='space-y-2'>
-                        {presentacion.ventajas.map((ventaja, idx) => (
-                          <Badge key={idx} variant='outline' className='mr-2 mb-2 text-xs'>
-                            {ventaja}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* Orígenes */}
-          <section id='origenes' className='mb-20'>
-            <div className='text-center mb-12'>
-              <h2 className='text-4xl font-bold mb-4 text-[#3E2723]'>Orígenes del Café</h2>
-              <p className='text-lg text-[#5D4037] max-w-2xl mx-auto'>
-                Cada región cafetera del mundo aporta características únicas que definen el perfil de sabor
-              </p>
-            </div>
-
-            <div className='space-y-8'>
-              {origenes.map((origen, index) => (
-                <Card
-                  key={index}
-                  className='group hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-r ${origen.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
-                  />
-                  <CardContent className='p-8 relative z-10'>
-                    <div className='grid md:grid-cols-3 gap-8 items-center'>
-                      <div className='text-center'>
-                        <div className='text-6xl mb-4'>{origen.bandera}</div>
-                        <h3 className='text-2xl font-bold text-[#3E2723] mb-2'>{origen.pais}</h3>
-                        <p className='text-[#5D4037] font-medium'>{origen.region}</p>
-                      </div>
-
-                      <div className='space-y-4'>
-                        <div>
-                          <h4 className='font-semibold text-[#3E2723] mb-2'>Perfil de Sabor</h4>
-                          <p className='text-[#5D4037]'>{origen.perfil}</p>
+                        className={`absolute inset-0 bg-gradient-to-br ${metodo.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                      />
+                      <CardHeader className='relative z-10'>
+                        <CardTitle className='flex items-center text-lg sm:text-xl'>
+                          <div
+                            className={`p-2 sm:p-3 rounded-full bg-gradient-to-br ${metodo.color} mr-3 sm:mr-4 group-hover:scale-110 transition-transform duration-300`}
+                          >
+                            <Icon className='h-5 w-5 sm:h-6 sm:w-6 text-white' />
+                          </div>
+                          {metodo.name}
+                        </CardTitle>
+                        <div className='flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm text-[#5D4037]'>
+                          <div className='flex items-center'>
+                            <Clock className='h-3 w-3 sm:h-4 sm:w-4 mr-1' />
+                            {metodo.tiempo}
+                          </div>
+                          <div className='flex items-center'>
+                            <Thermometer className='h-3 w-3 sm:h-4 sm:w-4 mr-1' />
+                            {metodo.temperatura}
+                          </div>
                         </div>
-                        <div className='flex items-center text-sm text-[#5D4037]'>
-                          <Mountain className='h-4 w-4 mr-2' />
-                          Altitud: {origen.altitud}
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className='font-semibold text-[#3E2723] mb-3'>Características</h4>
+                      </CardHeader>
+                      <CardContent className='relative z-10'>
+                        <CardDescription className='text-[#5D4037] leading-relaxed mb-4 text-sm sm:text-base'>
+                          {metodo.descripcion}
+                        </CardDescription>
                         <div className='space-y-2'>
-                          {origen.caracteristicas.map((caracteristica, idx) => (
-                            <div key={idx} className='flex items-center text-sm'>
-                              <Star className='h-3 w-3 text-[#33691E] mr-2 flex-shrink-0' />
-                              {caracteristica}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className='mt-6 pt-6 border-t border-[#D7CCC8]'>
-                      <p className='text-[#5D4037] leading-relaxed'>{origen.descripcion}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Categorías */}
-          <section id='categorias' className='mb-10'>
-            <div className='text-center mb-12'>
-              <h2 className='text-4xl font-bold mb-4 text-[#3E2723]'>Categorías del Café</h2>
-              <p className='text-lg text-[#5D4037] max-w-2xl mx-auto'>
-                Las diferentes especies de café que determinan las características fundamentales de la bebida
-              </p>
-            </div>
-
-            <div className='grid md:grid-cols-2 gap-8'>
-              {categorias.map((categoria, index) => (
-                <Card
-                  key={index}
-                  className='group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${categoria.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                  />
-                  <CardHeader className='relative z-10'>
-                    <div className='flex items-center justify-between mb-4'>
-                      <CardTitle className='text-2xl'>{categoria.nombre}</CardTitle>
-                      <Badge className={`bg-gradient-to-r ${categoria.color} text-white border-0 px-3 py-1`}>
-                        {categoria.porcentaje}
-                      </Badge>
-                    </div>
-                    <p className='text-sm text-[#5D4037] italic'>{categoria.cientifico}</p>
-                  </CardHeader>
-                  <CardContent className='relative z-10'>
-                    <CardDescription className='text-[#5D4037] leading-relaxed mb-6'>
-                      {categoria.descripcion}
-                    </CardDescription>
-
-                    <div className='space-y-4'>
-                      <div>
-                        <h4 className='font-semibold text-[#3E2723] mb-2'>Características</h4>
-                        <div className='space-y-2'>
-                          {categoria.caracteristicas.map((caracteristica, idx) => (
-                            <div key={idx} className='flex items-center text-sm'>
+                          {metodo.caracteristicas.map((caracteristica, idx) => (
+                            <div key={idx} className='flex items-center text-xs sm:text-sm'>
                               <div className='w-2 h-2 bg-[#33691E] rounded-full mr-3 flex-shrink-0' />
                               {caracteristica}
                             </div>
                           ))}
                         </div>
-                      </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </section>
 
-                      <div>
-                        <h4 className='font-semibold text-[#3E2723] mb-2'>Principales Regiones</h4>
+            {/* Presentaciones */}
+            <section id='presentaciones' className='mb-16 sm:mb-20 scroll-mt-32'>
+              <div className='text-center mb-8 sm:mb-12'>
+                <h2 className='text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-[#3E2723]'>Presentaciones del Café</h2>
+                <p className='text-base sm:text-lg text-[#5D4037] max-w-2xl mx-auto px-4'>
+                  Cada presentación tiene sus ventajas y es ideal para diferentes situaciones y preferencias
+                </p>
+              </div>
+
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+                {presentaciones.map((presentacion, index) => {
+                  const Icon = presentacion.icon
+                  return (
+                    <Card
+                      key={index}
+                      className='group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white/80 backdrop-blur-sm border-0'
+                    >
+                      <CardHeader className='text-center'>
+                        <div
+                          className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br ${presentacion.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                        >
+                          <Icon className='h-7 w-7 sm:h-8 sm:w-8 text-white' />
+                        </div>
+                        <CardTitle className='text-base sm:text-lg'>{presentacion.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className='text-[#5D4037] leading-relaxed mb-4 text-sm'>
+                          {presentacion.descripcion}
+                        </CardDescription>
                         <div className='flex flex-wrap gap-2'>
-                          {categoria.regiones.map((region, idx) => (
+                          {presentacion.ventajas.map((ventaja, idx) => (
                             <Badge key={idx} variant='outline' className='text-xs'>
-                              <MapPin className='h-3 w-3 mr-1' />
-                              {region}
+                              {ventaja}
                             </Badge>
                           ))}
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* Call to Action */}
-          <section className='text-center py-3'>
-            <div className='bg-gradient-to-r from-[#3E2723] via-[#5D4037] to-[#3E2723] rounded-3xl p-12 text-white relative overflow-hidden'>
-              <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fillRule=evenodd%3E%3Cg fill=%23ffffff fillOpacity=0.05%3E%3Ccircle cx=30 cy=30 r=2/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20" />
-              <div className='relative z-10'>
-                <h2 className='text-3xl font-bold mb-4'>¿Listo para explorar nuestros cafés?</h2>
-                <p className='text-lg mb-8 opacity-90 max-w-2xl mx-auto'>
-                  Ahora que conoces más sobre la cultura cafetera, descubre nuestra selección de cafés premium de
-                  diferentes orígenes y métodos de preparación.
-                </p>
-                <Button
-                  size='lg'
-                  className='bg-[#33691E] hover:bg-[#1B5E20] text-white px-8 py-3 text-lg'
-                  onClick={() => (window.location.href = '/Tienda')}
-                >
-                  Explorar Tienda
-                </Button>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
               </div>
-            </div>
-          </section>
+            </section>
+
+            {/* Orígenes */}
+            <section id='origenes' className='mb-16 sm:mb-20 scroll-mt-32'>
+              <div className='text-center mb-8 sm:mb-12'>
+                <h2 className='text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-[#3E2723]'>Orígenes del Café</h2>
+                <p className='text-base sm:text-lg text-[#5D4037] max-w-2xl mx-auto px-4'>
+                  Cada región cafetera del mundo aporta características únicas que definen el perfil de sabor
+                </p>
+              </div>
+
+              <div className='space-y-6 sm:space-y-8'>
+                {origenes.map((origen, index) => (
+                  <Card
+                    key={index}
+                    className='group hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
+                  >
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-r ${origen.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                    />
+                    <CardContent className='p-4 sm:p-6 lg:p-8 relative z-10'>
+                      <div className='grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-center'>
+                        <div className='text-center'>
+                          <div className='text-5xl sm:text-6xl mb-3 sm:mb-4'>{origen.bandera}</div>
+                          <h3 className='text-xl sm:text-2xl font-bold text-[#3E2723] mb-2'>{origen.pais}</h3>
+                          <p className='text-sm sm:text-base text-[#5D4037] font-medium'>{origen.region}</p>
+                        </div>
+
+                        <div className='space-y-3 sm:space-y-4'>
+                          <div>
+                            <h4 className='font-semibold text-[#3E2723] mb-2 text-sm sm:text-base'>Perfil de Sabor</h4>
+                            <p className='text-[#5D4037] text-sm sm:text-base'>{origen.perfil}</p>
+                          </div>
+                          <div className='flex items-center text-xs sm:text-sm text-[#5D4037]'>
+                            <Mountain className='h-3 w-3 sm:h-4 sm:w-4 mr-2' />
+                            Altitud: {origen.altitud}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className='font-semibold text-[#3E2723] mb-3 text-sm sm:text-base'>Características</h4>
+                          <div className='space-y-2'>
+                            {origen.caracteristicas.map((caracteristica, idx) => (
+                              <div key={idx} className='flex items-center text-xs sm:text-sm'>
+                                <Star className='h-3 w-3 text-[#33691E] mr-2 flex-shrink-0' />
+                                {caracteristica}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className='mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-[#D7CCC8]'>
+                        <p className='text-[#5D4037] leading-relaxed text-sm sm:text-base'>{origen.descripcion}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Categorías */}
+            <section id='categorias' className='mb-8 sm:mb-10 scroll-mt-32'>
+              <div className='text-center mb-8 sm:mb-12'>
+                <h2 className='text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 text-[#3E2723]'>Categorías del Café</h2>
+                <p className='text-base sm:text-lg text-[#5D4037] max-w-2xl mx-auto px-4'>
+                  Las diferentes especies de café que determinan las características fundamentales de la bebida
+                </p>
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'>
+                {categorias.map((categoria, index) => (
+                  <Card
+                    key={index}
+                    className='group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white/80 backdrop-blur-sm border-0 overflow-hidden'
+                  >
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${categoria.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                    />
+                    <CardHeader className='relative z-10'>
+                      <div className='flex items-center justify-between mb-4 flex-wrap gap-2'>
+                        <CardTitle className='text-xl sm:text-2xl'>{categoria.nombre}</CardTitle>
+                        <Badge className={`bg-gradient-to-r ${categoria.color} text-white border-0 px-2 sm:px-3 py-1`}>
+                          {categoria.porcentaje}
+                        </Badge>
+                      </div>
+                      <p className='text-xs sm:text-sm text-[#5D4037] italic'>{categoria.cientifico}</p>
+                    </CardHeader>
+                    <CardContent className='relative z-10'>
+                      <CardDescription className='text-[#5D4037] leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base'>
+                        {categoria.descripcion}
+                      </CardDescription>
+
+                      <div className='space-y-4'>
+                        <div>
+                          <h4 className='font-semibold text-[#3E2723] mb-2 text-sm sm:text-base'>Características</h4>
+                          <div className='space-y-2'>
+                            {categoria.caracteristicas.map((caracteristica, idx) => (
+                              <div key={idx} className='flex items-center text-xs sm:text-sm'>
+                                <div className='w-2 h-2 bg-[#33691E] rounded-full mr-3 flex-shrink-0' />
+                                {caracteristica}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className='font-semibold text-[#3E2723] mb-2 text-sm sm:text-base'>
+                            Principales Regiones
+                          </h4>
+                          <div className='flex flex-wrap gap-2'>
+                            {categoria.regiones.map((region, idx) => (
+                              <Badge key={idx} variant='outline' className='text-xs'>
+                                <MapPin className='h-3 w-3 mr-1' />
+                                {region}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Call to Action */}
+            <section className='text-center py-8 sm:py-12 mb-8'>
+              <div className='bg-gradient-to-r from-[#3E2723] via-[#5D4037] to-[#3E2723] rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 text-white relative overflow-hidden'>
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fillRule=evenodd%3E%3Cg fill=%23ffffff fillOpacity=0.05%3E%3Ccircle cx=30 cy=30 r=2/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20" />
+                <div className='relative z-10'>
+                  <h2 className='text-2xl sm:text-3xl font-bold mb-3 sm:mb-4'>¿Listo para explorar nuestros cafés?</h2>
+                  <p className='text-sm sm:text-base lg:text-lg mb-6 sm:mb-8 opacity-90 max-w-2xl mx-auto px-2'>
+                    Ahora que conoces más sobre la cultura cafetera, descubre nuestra selección de cafés premium de
+                    diferentes orígenes y métodos de preparación.
+                  </p>
+                  <Button
+                    size='lg'
+                    className='bg-[#33691E] hover:bg-[#1B5E20] text-white px-6 sm:px-8 py-3 text-base sm:text-lg'
+                    onClick={() => (window.location.href = '/Tienda')}
+                  >
+                    <Coffee className='mr-2 h-4 w-4 sm:h-5 sm:w-5' />
+                    Explorar Tienda
+                  </Button>
+                </div>
+              </div>
+            </section>
+          </div>
         </main>
       </div>
     </div>

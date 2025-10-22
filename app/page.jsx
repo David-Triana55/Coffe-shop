@@ -17,7 +17,7 @@ export default async function PagePrincipal () {
           Café de calidad, hecho con cuidado y dedicado para aquellos que buscan disfrutar cada sorbo.
         </h2>
         <div className='flex mt-5 flex-col items-center justify-center lg:items-start lg:mt-2 lg:left-10 lg:absolute lg:top-60 lg:text-white lg:w-[600px] lg:text-xl'>
-          <Link href='/Tipos-de-cafe/Cafe-molido'>
+          <Link href='/Tienda'>
             <button className='button-main bg-buttonColor text-white px-3 py-3 rounded-md w-34 lg:w-40'>
               Comprar ahora
             </button>
