@@ -1,4 +1,5 @@
 import { getProductsByFilter } from '@/lib/data/products'
+export const dynamic = 'force-dynamic'
 
 export async function GET (request) {
   try {

@@ -9,7 +9,7 @@ export async function GET () {
     UPDATE auctions
     SET status = 'ended'
     WHERE status = 'active' AND end_date <= ${now}
-    RETURNING id, title;
+    RETURNING *;
   `
 
   return Response.json({

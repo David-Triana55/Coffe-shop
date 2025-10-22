@@ -3,6 +3,7 @@ import { historyBill } from '@/lib/data/bills'
 import { verifyToken } from '@/utils/verifyToken'
 import { CONSTANTS } from '@/utils/constants'
 import { NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 
 export async function GET () {
   try {
