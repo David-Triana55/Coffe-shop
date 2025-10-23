@@ -22,6 +22,7 @@ import { formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
 import { ROLES } from '@/utils/roles'
 import Link from 'next/link'
+import { STATUSACTION } from '@/utils/statusAuction'
 
 const AUCTION_STATUS = {
   PENDING: 'pending',
@@ -44,15 +45,11 @@ export default function SubastasPage () {
     const loadData = async () => {
       try {
         setIsLoading(true)
-        const status = JSON.parse(window.localStorage.getItem('isLogged'))
-        const role = status?.login?.role
 
-        // Fetch auctions based on role
-        const auctionsEndpoint = role === ROLES.ADMIN ? '/api/auctions' : '/api/auctions/mybrand'
-        const response = await fetch(auctionsEndpoint, { credentials: 'include' })
+        const response = await fetch('api/auctions', { credentials: 'include' })
         const data = await response.json()
-        setAuctions(data)
-        setFilteredAuctions(data)
+        setAuctions(data.auctions)
+        setFilteredAuctions(data.auctions)
       } catch (e) {
         console.log(e)
         toastError('Error al cargar subastas', 3000, Bounce)
@@ -71,12 +68,12 @@ export default function SubastasPage () {
       filtered = filtered.filter(
         (a) =>
           a.product_name.toLowerCase().includes(search.toLowerCase()) ||
-          a.seller_name.toLowerCase().includes(search.toLowerCase())
+          a.brand_name.toLowerCase().includes(search.toLowerCase())
       )
     }
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter((a) => a.status === statusFilter)
+      filtered = filtered.filter((a) => a.auction_status === statusFilter)
     }
 
     setFilteredAuctions(filtered)
@@ -145,7 +142,7 @@ export default function SubastasPage () {
           <h1 className='text-4xl font-bold text-[#3E2723]'>
             {login?.role === ROLES.ADMIN ? 'Gestión de Subastas' : 'Mis Subastas'}
           </h1>
-          <p className='text-[#5D4037] mt-1'>{filteredAuctions.length} subastas encontradas</p>
+          <p className='text-[#5D4037] mt-1'>{filteredAuctions?.length} subastas encontradas</p>
         </div>
       </div>
 
@@ -156,7 +153,7 @@ export default function SubastasPage () {
             <div className='relative flex-1'>
               <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8D6E63]' />
               <Input
-                placeholder='Buscar por producto o vendedor...'
+                placeholder='Buscar por producto o marca...'
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className='pl-10 w-full'
@@ -189,8 +186,12 @@ export default function SubastasPage () {
         </CardContent>
       </Card>
 
+      {filteredAuctions.length === 0 && (
+        <p>no hay subastas</p>
+      )}
+
       {/* Auctions Table */}
-      <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
+      {filteredAuctions.length !== 0 && <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
         <CardContent className='pt-6'>
           <div className='overflow-x-auto'>
             <Table>
@@ -198,7 +199,7 @@ export default function SubastasPage () {
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Producto</TableHead>
-                  {login?.role === ROLES.ADMIN && <TableHead>Vendedor</TableHead>}
+                  {login?.role === ROLES.ADMIN && <TableHead>Marca</TableHead>}
                   <TableHead>Precio Inicial</TableHead>
                   <TableHead>Precio Actual</TableHead>
                   <TableHead>Pujas</TableHead>
@@ -210,31 +211,30 @@ export default function SubastasPage () {
               </TableHeader>
               <TableBody>
                 {filteredAuctions?.map((auction) => (
-                  <TableRow key={auction.id}>
-                    <TableCell className='font-mono text-sm'>#{auction.id}</TableCell>
+                  <TableRow key={auction.auction_id}>
+                    <TableCell className='font-mono text-sm'>#{auction.auction_id}</TableCell>
                     <TableCell>
                       <div className='flex items-center gap-3'>
                         <div className='w-10 h-10 rounded-lg overflow-hidden bg-gray-100'>
                           <img
-                            src={auction.product_image || '/placeholder.svg'}
-                            alt={auction.product_name}
+                            src={auction.images_url || '/placeholder.svg'}
+                            alt={auction.name}
                             className='w-full h-full object-cover'
                           />
                         </div>
-                        <span className='font-medium'>{auction.product_name}</span>
+                        <span className='font-medium'>{auction.name}</span>
                       </div>
                     </TableCell>
                     {login?.role === ROLES.ADMIN && (
                       <TableCell>
                         <div className='flex items-center gap-2'>
-                          <User className='h-4 w-4 text-[#8D6E63]' />
-                          {auction.seller_name}
+                          {auction.brand_name}
                         </div>
                       </TableCell>
                     )}
                     <TableCell>{formatPrice(auction.initial_price)}</TableCell>
                     <TableCell>
-                      <span className='font-semibold text-[#33691E]'>{formatPrice(auction.current_price)}</span>
+                      <span className='font-semibold text-[#33691E]'>{formatPrice(auction.auction_status === STATUSACTION.FINISHED ? auction.final_price : auction.current_price)}</span>
                     </TableCell>
                     <TableCell>
                       <Badge variant='outline' className='bg-gray-50'>
@@ -244,11 +244,11 @@ export default function SubastasPage () {
                     </TableCell>
                     <TableCell className='text-sm text-[#5D4037]'>{formatDate(auction.start_date)}</TableCell>
                     <TableCell className='text-sm text-[#5D4037]'>{formatDate(auction.end_date)}</TableCell>
-                    <TableCell>{getStatusBadge(auction.status)}</TableCell>
+                    <TableCell>{getStatusBadge(auction.auction_status)}</TableCell>
                     <TableCell className='text-right'>
                       <div className='flex justify-end gap-2'>
                         <Dialog
-                          open={detailDialogOpen && selectedAuction?.id === auction.id}
+                          open={detailDialogOpen && selectedAuction?.id === auction.auction_id}
                           onOpenChange={setDetailDialogOpen}
                         >
                           <DialogTrigger asChild>
@@ -383,7 +383,7 @@ export default function SubastasPage () {
             </Table>
           </div>
         </CardContent>
-      </Card>
+      </Card>}
 
       <ToastContainer
         position='bottom-right'

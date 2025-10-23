@@ -31,7 +31,7 @@ export async function POST (req) {
     }
 
     await createProduct(decodedToken.brandId || data.brand, data.presentation, data.category, data.origin, data.accessory, data.name, JSON.stringify(data.images), data.description, data.price, data.stock, data.originDetails)
-    return NextResponse.json({ message: 'creado exitosamente', status: 300 })
+    return NextResponse.json({ message: 'creado exitosamente', status: 201 })
   } catch (error) {
     console.error(error)
     return NextResponse.json({ message: 'Error interno del servidor' }, { status: 500 })

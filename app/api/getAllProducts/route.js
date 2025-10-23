@@ -15,8 +15,10 @@ export async function GET (req) {
 
     const decodedToken = await verifyToken(token)
     let products
-    if (decodedToken.role !== ROLES.VENDEDOR && decodedToken.brandId != null) {
+
+    if (decodedToken.role === ROLES.VENDEDOR && decodedToken.brandId != null) {
       products = await getProductsByBrandId(decodedToken.brandId)
+      return NextResponse.json(products, { status: 200 })
     }
 
     products = await getAllProducts()

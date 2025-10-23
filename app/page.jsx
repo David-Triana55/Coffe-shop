@@ -4,9 +4,9 @@ import { activeAuctions } from '@/lib/data/auctions'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
-  const brands = await featuredBrands()
-  const products = await featuredProducts()
-  const auctions = await activeAuctions()
+  const brands = await featuredBrands() ?? []
+  const products = await featuredProducts() ?? []
+  const auctions = await activeAuctions() ?? []
 
   return (
     <main className='mt-16 h-full bg-[#D7CCC8] text-[#3E2723] pb-10'>
@@ -77,11 +77,11 @@ export default async function PagePrincipal () {
         <div className='w-auto h-72 px-2 items-center mt-6 overflow-x-auto flex gap-x-5 overflow-y-hidden lg:justify-center scroll-smooth'>
 
           {auctions?.map((coffe) => (
-            <Link href={`/Subastas/${coffe?.name.split(' ').join('-')}`} aria-label={`visit page ${coffe?.name.split(' ').join('-')}`} key={coffe.id}>
+            <Link href={`/Subastas/${coffe?.id}`} key={coffe.id}>
               <div className='w-48 h-64 shadow-md rounded-lg flex-none transition-all hover:-translate-y-6 hover:shadow-xl'>
                 <div className='w-full flex flex-col justify-around items-center h-full relative rounded-lg bg-white shadow-md'>
                   <p className='text-terciary text-center font-bold text-xl absolute -top-6 dark:text-white'>{coffe.name}</p>
-                  <img className='w-full h-full object-cover rounded-lg' src={coffe.image_url} alt='' />
+                  <img className='w-full h-full object-cover rounded-lg' src={coffe.images_url[0]} alt='' />
                 </div>
               </div>
             </Link>

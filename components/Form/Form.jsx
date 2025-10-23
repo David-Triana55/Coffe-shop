@@ -34,7 +34,7 @@ export default function Form ({ type }) {
       }
 
       const data = await response.json()
-      console.log(data)
+
       setLogin(true, data.role)
 
       const res = await fetch('/api/userInfo', {
@@ -48,8 +48,14 @@ export default function Form ({ type }) {
       if (!res.ok) throw new Error('Error al obtener la informacion del usuario')
 
       const dataInfo = await res.json()
-      console.log(dataInfo)
       setClientInfo(dataInfo.data)
+
+      console.log(data.role !== ROLES.CLIENTE, 'BOOL')
+
+      if (data.role !== ROLES.CLIENTE) {
+        router.push('/dashboard')
+      }
+
       router.push('/')
     } catch (error) {
       setErrorLogin(error)
