@@ -27,36 +27,52 @@ export default function AuctionDetailPage () {
   const [bidError, setBidError] = useState('')
   const [bidSuccess, setBidSuccess] = useState(false)
 
-  useEffect(() => {
-    const fetchAuctionData = async () => {
-      try {
-        const [auctionRes, bidsRes] = await Promise.all([
-          fetch(`/api/auctions/${params.id}`, { cache: 'no-cache' }),
-          fetch(`/api/auctions/bids/${params.id}`, { cache: 'no-store' })
-        ])
+  // Función para cargar los datos de la subasta
+  const fetchAuctionData = async () => {
+    try {
+      const [auctionRes, bidsRes] = await Promise.all([
+        fetch(`/api/auctions/${params.id}`, { cache: 'no-cache' }),
+        fetch(`/api/auctions/bids/${params.id}`, { cache: 'no-store' })
+      ])
 
-        const auctionData = await auctionRes.json()
-        const bidsData = await bidsRes.json()
+      const auctionData = await auctionRes.json()
+      const bidsData = await bidsRes.json()
 
-        setAuction(auctionData?.auction)
-        setBids(bidsData?.bids || [])
+      setAuction(auctionData?.auction)
+      setBids(bidsData?.bids || [])
 
-        const currentBid = auctionData?.auction?.current_price
-        console.log(currentBid)
-        const minBid = currentBid + (auctionData?.auction?.minimum_increment || 0)
-        setBidAmount(minBid.toString())
-      } catch (error) {
-        console.error('Error fetching auction:', error)
-        toastError('Error al cargar la subasta', 3000, Bounce)
-      } finally {
-        setLoading(false)
+      // Asegurar que todos los valores sean números válidos
+      const currentPrice =
+        Number(auctionData?.auction?.current_price) || Number(auctionData?.auction?.initial_price) || 0
+      const minimumIncrement = Number(auctionData?.auction?.minimum_increment) || 0
+      const minBid = currentPrice + minimumIncrement
+
+      setBidAmount(minBid.toString())
+
+      // Asegurar que current_price refleje la puja más alta
+      if (bidsData?.bids && bidsData.bids.length > 0) {
+        const highestBid = Math.max(...bidsData.bids.map((bid) => Number(bid.amount) || 0))
+        if (auctionData?.auction) {
+          auctionData.auction.current_price = highestBid
+          setAuction({ ...auctionData.auction, current_price: highestBid })
+        }
       }
+    } catch (error) {
+      console.error('Error fetching auction:', error)
+      toastError('Error al cargar la subasta', 3000, Bounce)
+    }
+  }
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true)
+      await fetchAuctionData()
+      setLoading(false)
     }
 
-    fetchAuctionData()
+    loadData()
   }, [params.id])
 
-  // Timer effect
   useEffect(() => {
     if (!auction) return
 
@@ -91,10 +107,11 @@ export default function AuctionDetailPage () {
   }, [auction])
 
   const validateBid = (amount) => {
-    const currentBid = auction?.current_price || auction?.initial_price
-    const minBid = currentBid + auction?.minimum_increment
+    const currentPrice = Number(auction?.current_price) || Number(auction?.initial_price) || 0
+    const minimumIncrement = Number(auction?.minimum_increment) || 0
+    const minBid = currentPrice + minimumIncrement
 
-    if (amount < minBid) {
+    if (isNaN(amount) || amount < minBid) {
       setBidError(`La puja mínima debe ser ${formatPrice(minBid)}`)
       return false
     }
@@ -110,29 +127,34 @@ export default function AuctionDetailPage () {
     if (!validateBid(amount)) return
 
     setSubmitting(true)
+    setBidError('')
 
     try {
       const response = await fetch(`/api/auctions/bids/${params.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ auctionId: params.id, amount })
       })
 
       const data = await response.json()
 
       if (response.ok) {
+        // Mostrar mensaje de éxito
         toastSuccess('¡Puja realizada exitosamente!', 3000, Bounce)
-        setBids([data.bid, ...bids])
-        setAuction({ ...auction, current_price: data.bid.amount })
-        setBidAmount((data.bid.amount + auction.minimum_increment).toString())
         setBidSuccess(true)
+
+        // Recargar los datos completos desde la base de datos
+        await fetchAuctionData()
+
+        // Ocultar mensaje de éxito después de 2 segundos
         setTimeout(() => setBidSuccess(false), 2000)
       } else {
         toastError(data.message || 'Error al realizar la puja', 3000, Bounce)
         setBidError(data.message || 'Error al realizar la puja')
       }
     } catch (error) {
+      console.error('Error al realizar puja:', error)
       toastError('Error al realizar la puja', 3000, Bounce)
       setBidError('Error al realizar la puja')
     } finally {
@@ -162,7 +184,9 @@ export default function AuctionDetailPage () {
     )
   }
 
-  const currentBid = Number(auction?.current_price || auction?.initial_price)
+  // Asegurar que currentBid siempre sea un número válido
+  const currentBid = Number(auction?.current_price) || Number(auction?.initial_price) || 0
+  const minimumIncrement = Number(auction?.minimum_increment) || 0
   const images = auction?.product_images || []
 
   return (
@@ -279,7 +303,7 @@ export default function AuctionDetailPage () {
                   </div>
                   <div className='flex items-center text-[#5D4037]'>
                     <TrendingUp className='w-4 w-4 mr-2 text-[#33691E]' />
-                    <span className='text-sm'>Min: {formatPrice(auction.minimum_increment)}</span>
+                    <span className='text-sm'>Min: {formatPrice(minimumIncrement)}</span>
                   </div>
                 </div>
 
@@ -308,15 +332,18 @@ export default function AuctionDetailPage () {
                       value={bidAmount}
                       onChange={(e) => {
                         setBidAmount(e.target.value)
-                        validateBid(Number.parseFloat(e.target.value))
+                        const value = Number.parseFloat(e.target.value)
+                        if (!isNaN(value)) {
+                          validateBid(value)
+                        }
                       }}
-                      min={Number(currentBid) + Number(auction.minimum_increment)}
-                      step={auction.minimum_increment}
+                      min={currentBid + minimumIncrement}
+                      step={minimumIncrement}
                       className='text-lg h-14'
-                      placeholder={formatPrice(currentBid + Number(auction.minimum_increment))}
+                      placeholder={formatPrice(currentBid + minimumIncrement)}
                     />
                     <p className='text-xs text-[#5D4037] mt-1'>
-                      Puja mínima: {formatPrice(currentBid + Number(auction.minimum_increment))}
+                      Puja mínima: {formatPrice(currentBid + minimumIncrement)}
                     </p>
                   </div>
 
@@ -368,7 +395,7 @@ export default function AuctionDetailPage () {
               <div className='space-y-2'>
                 {bids.map((bid, index) => (
                   <div
-                    key={bid.id}
+                    key={bid?.id || index}
                     className={`flex justify-between items-center p-4 rounded-lg transition-all ${
                       index === 0 ? 'bg-[#33691E]/10 border-2 border-[#33691E]' : 'bg-[#EFEBE9]'
                     }`}
@@ -378,12 +405,14 @@ export default function AuctionDetailPage () {
                         <User className='h-4 w-4 text-[#5D4037]' />
                       </div>
                       <div>
-                        <span className='font-medium text-[#3E2723]'>{bid.user_name}</span>
+                        <span className='font-medium text-[#3E2723]'>{bid?.user_name || 'Usuario'}</span>
                         {index === 0 && <Badge className='ml-2 bg-[#33691E] text-white text-xs'>Puja más alta</Badge>}
-                        <p className='text-xs text-[#5D4037]'>{new Date(bid.date).toLocaleString()}</p>
+                        <p className='text-xs text-[#5D4037]'>
+                          {bid?.date ? new Date(bid.date).toLocaleString() : 'Fecha no disponible'}
+                        </p>
                       </div>
                     </div>
-                    <span className='font-bold text-[#33691E] text-xl'>{formatPrice(bid.amount)}</span>
+                    <span className='font-bold text-[#33691E] text-xl'>{formatPrice(Number(bid?.amount) || 0)}</span>
                   </div>
                 ))}
               </div>
