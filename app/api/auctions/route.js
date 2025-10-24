@@ -19,10 +19,8 @@ export async function GET (req) {
 
       return NextResponse.json({ auctions, status: 200 })
     }
-
     auctions = await getAuctions(decodedToken.brandId) ?? []
 
-    console.log(auctions)
     return NextResponse.json({ auctions, status: 200 })
   } catch (e) {
     console.log(e)
@@ -49,7 +47,7 @@ export async function POST (req) {
     }
     const product = await createProduct(decodedToken.brandId || data.brand, data.presentation, data.category, data.origin, data.accessory, data.name, JSON.stringify(data.images), data.description, data.price, data.stock, data.originDetails, true)
 
-    await createAuction(product[0].id, data.startDate, data.endDate, data.startingPrice, decodedToken.brandId || data.brand)
+    await createAuction(product[0].id, data.startDate, data.endDate, data.startingPrice, decodedToken.brandId || data.brand, data.minimumIncrement)
     return NextResponse.json({ message: 'creado exitosamente', status: 201 })
   } catch (error) {
     console.error(error)

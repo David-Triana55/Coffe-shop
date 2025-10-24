@@ -1,8 +1,5 @@
 export function formatPrice (price) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP'
-  }).format(Math.floor(price))
+  return new Intl.NumberFormat('es-CO').format(price)
 }
 
 const typesCoffeeName = {
