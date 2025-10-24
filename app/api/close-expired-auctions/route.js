@@ -1,20 +1,16 @@
-import { sql } from '@vercel/postgres'
+import { proofJob, validateAuctionState } from '@/lib/data/auctions'
 
 export async function POST () {
   console.log('aqui')
   const now = new Date()
 
   // Actualiza todas las subastas que ya expiraron
-  const { rows } = await sql`
-    UPDATE auctions
-    SET status = 'ended'
-    WHERE status = 'active' AND end_date <= ${now}
-    RETURNING *;
-  `
+  const auctions = await validateAuctionState()
+  await proofJob()
 
   return Response.json({
-    closedCount: rows.length,
-    closedAuctions: rows,
+    closedCount: auctions.length,
+    closedAuctions: auctions,
     runAt: now
   })
 }
