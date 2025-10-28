@@ -76,6 +76,29 @@ export default function AuctionDetailPage () {
   }, [params.id])
 
   useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const bidsRes = await fetch(`/api/auctions/bids/${params.id}`, { cache: 'no-store' })
+        const bidsData = await bidsRes.json()
+
+        if (bidsData?.bids) {
+          setBids(bidsData.bids)
+
+          // Actualiza el precio actual si hay pujas nuevas
+          const highestBid = Math.max(...bidsData.bids.map((bid) => Number(bid.amount) || 0))
+          setAuction((prev) =>
+            prev ? { ...prev, current_price: highestBid || prev.current_price } : prev
+          )
+        }
+      } catch (error) {
+        console.error('Error actualizando pujas:', error)
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [params.id])
+
+  useEffect(() => {
     if (!auction) return
 
     const calculateTimeLeft = () => {
