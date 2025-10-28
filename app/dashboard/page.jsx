@@ -3,19 +3,8 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { DollarSign, Package, Gavel, Users, AlertTriangle, ArrowUpRight } from 'lucide-react'
-import {
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts'
+import { DollarSign, Package, Gavel, Users, AlertTriangle, ArrowUpRight, TrendingUp, Calendar } from 'lucide-react'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 import useStore from '@/store'
 import { ROLES } from '@/utils/roles'
 import { formatPrice } from '@/utils/formatter'
@@ -30,57 +19,98 @@ export default function DashboardPage () {
     activeAuctions: 0,
     activeVendors: 0
   })
-  const [salesData, setSalesData] = useState([])
   const [lowStockProducts, setLowStockProducts] = useState([])
   const [categoryData, setCategoryData] = useState([])
+  const [brandSalesData, setBrandSalesData] = useState([])
   const [loading, setLoading] = useState(false)
 
   const COLORS = ['#33691E', '#8BC34A', '#CDDC39', '#FFC107', '#FF9800']
 
   useEffect(() => {
-    const metrics = async () => {
+    const fetchMetrics = async () => {
       setLoading(true)
-      const data = await fetch('/api/dashboard', { credentials: 'include' })
-      const res = await data.json()
-      console.log(res)
-      setSalesData(res?.monthly)
-      setLowStockProducts(res?.stock)
-      setMetrics((prev) => ({
-        totalSales: res?.sales[0]?.total_ventas ?? prev.totalSales,
-        activeProducts: res?.products[0]?.productos_activos ?? prev.activeProducts,
-        activeAuctions: res?.auctions[0]?.subastas_activas ?? prev.activeAuctions,
-        activeVendors: res?.sellers[0]?.vendedores_activos ?? prev.activeVendors
-      }))
-      console.log(res, 'respuesta')
-      setCategoryData(
-        res?.category.map(c => ({
-          name: c.name,
-          cantidad: c.cantidad,
-          value: parseFloat(c.value)
-        })))
+      try {
+        const data = await fetch('/api/dashboard', { credentials: 'include' })
+        const res = await data.json()
 
-      setLoading(false)
+        setLowStockProducts(res?.stock || [])
+        setMetrics((prev) => ({
+          totalSales: res?.sales[0]?.total_ventas ?? prev.totalSales,
+          activeProducts: res?.products[0]?.productos_activos ?? prev.activeProducts,
+          activeAuctions: res?.auctions[0]?.subastas_activas ?? prev.activeAuctions,
+          activeVendors: res?.sellers[0]?.vendedores_activos ?? prev.activeVendors
+        }))
+
+        setCategoryData(
+          res?.category?.map((c) => ({
+            name: c.name,
+            cantidad: c.cantidad,
+            value: Number.parseFloat(c.value)
+          })) || []
+        )
+
+        if (login?.role === ROLES.ADMIN) {
+          const brandSalesRes = await fetch('/api/brand-sales-report', { credentials: 'include' })
+          const brandSales = await brandSalesRes.json()
+
+          // Group by brand and get latest month data for preview
+          const brandMap = new Map()
+          brandSales.data.forEach((sale) => {
+            if (!brandMap.has(sale.brand_id)) {
+              brandMap.set(sale.brand_id, {
+                brand_id: sale.brand_id,
+                brand_name: sale.brand_name,
+                total_sales: 0,
+                months: []
+              })
+            }
+            const brand = brandMap.get(sale.brand_id)
+            brand.total_sales += Number(sale.total_sales)
+            brand.months.push({ month: sale.month, sales: Number(sale.total_sales) })
+          })
+
+          setBrandSalesData(Array.from(brandMap.values()).slice(0, 5))
+        } else if (login?.role === ROLES.VENDEDOR) {
+          const brandInfoRes = await fetch('/api/brandInfo', { credentials: 'include' })
+          const brandInfo = await brandInfoRes.json()
+
+          console.log(brandInfo.data.id)
+
+          if (brandInfo?.data?.id) {
+            const brandSalesRes = await fetch(`/api/sales-report?id=${brandInfo.data.id}`, {
+              credentials: 'include'
+            })
+            const brandSales = await brandSalesRes.json()
+            setBrandSalesData(brandSales.data)
+
+            console.log(brandSales)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    metrics()
-  }, [])
+    fetchMetrics()
+  }, [login?.role])
 
   if (loading) {
     return (
-      <div>
+      <div className='mt-16 p-6'>
         <Loading />
       </div>
     )
   }
 
-  console.log(categoryData)
   return (
     <div className='mt-16 p-6'>
       {/* Header */}
       <div>
         <h1 className='text-4xl font-bold text-[#3E2723] mb-2'>Dashboard</h1>
         <p className='text-[#5D4037]'>
-          Bienvenido, <span className='font-semibold'>{clientInfo?.name}</span>
+          Bienvenido, <span className='font-semibold'>{clientInfo?.data?.name || login?.name}</span>
         </p>
       </div>
 
@@ -93,7 +123,6 @@ export default function DashboardPage () {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{formatPrice(metrics.totalSales)}</div>
-
           </CardContent>
         </Card>
 
@@ -130,30 +159,88 @@ export default function DashboardPage () {
 
       {/* Charts */}
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-5'>
-        {/* Sales Chart */}
         <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
           <CardHeader>
-            <CardTitle className='text-[#3E2723]'>Ventas Mensuales</CardTitle>
-            <CardDescription>Últimos 5 meses</CardDescription>
+            <div className='flex items-center justify-between'>
+              <div>
+                <CardTitle className='text-[#3E2723]'>
+                  {login?.role === ROLES.ADMIN ? 'Ventas por Marca' : 'Reporte de Ventas'}
+                </CardTitle>
+                <CardDescription>
+                  {login?.role === ROLES.ADMIN ? 'Top 5 marcas' : 'Ventas diarias y mensuales'}
+                </CardDescription>
+              </div>
+              <Link href='/dashboard/sales-report'>
+                <Button variant='outline' size='sm'>
+                  Ver detalle
+                  <ArrowUpRight className='h-4 w-4 ml-2' />
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width='100%' height={300}>
-              <LineChart data={salesData}>
-                <CartesianGrid strokeDasharray='3 3' stroke='#D7CCC8' />
-                <XAxis dataKey='month' stroke='#5D4037' />
-                <YAxis stroke='#5D4037' tickFormatter={(value) => `$${value / 1000}k`} />
-                <Tooltip
-                  formatter={(value) => formatPrice(value)}
-                  contentStyle={{ backgroundColor: 'white', border: '1px solid #D7CCC8' }}
-                />
-                <Line type='monotone' dataKey='ventas' stroke='#33691E' strokeWidth={2} dot={{ fill: '#33691E' }} />
-              </LineChart>
-            </ResponsiveContainer>
+            {login?.role === ROLES.ADMIN
+              ? (
+              <ResponsiveContainer width='100%' height={300}>
+                <BarChart data={brandSalesData}>
+                  <CartesianGrid strokeDasharray='3 3' stroke='#D7CCC8' />
+                  <XAxis dataKey='brand_name' stroke='#5D4037' angle={-45} textAnchor='end' height={80} />
+                  <YAxis stroke='#5D4037' tickFormatter={(value) => `$${value / 1000}k`} />
+                  <Tooltip
+                    formatter={(value) => formatPrice(value)}
+                    contentStyle={{ backgroundColor: 'white', border: '1px solid #D7CCC8' }}
+                  />
+                  <Bar dataKey='total_sales' fill='#33691E' />
+                </BarChart>
+              </ResponsiveContainer>
+                )
+              : (
+              <div className='space-y-4'>
+                {brandSalesData.map((data, index) => (
+                  <div key={index} className='space-y-2'>
+                    <div className='flex items-center justify-between p-4 bg-gradient-to-r from-[#33691E]/10 to-transparent rounded-lg border border-[#D7CCC8]'>
+                      <div className='flex items-center gap-3'>
+                        <Calendar className='h-5 w-5 text-[#33691E]' />
+                        <div>
+                          <p className='text-sm font-medium text-[#3E2723]'>Ventas del Día</p>
+                          <p className='text-xs text-[#5D4037]'>{new Date().toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className='text-right'>
+                        <p className='text-2xl font-bold text-[#33691E]'>
+                          {formatPrice(Number(data.daily_sales) || 0)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className='flex items-center justify-between p-4 bg-gradient-to-r from-[#8BC34A]/10 to-transparent rounded-lg border border-[#D7CCC8]'>
+                      <div className='flex items-center gap-3'>
+                        <TrendingUp className='h-5 w-5 text-[#33691E]' />
+                        <div>
+                          <p className='text-sm font-medium text-[#3E2723]'>Ventas del Mes</p>
+                          <p className='text-xs text-[#5D4037]'>
+                            {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className='text-right'>
+                        <p className='text-2xl font-bold text-[#33691E]'>
+                          {formatPrice(Number(data.monthly_sales) || 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {brandSalesData.length === 0 && (
+                  <div className='text-center py-8 text-[#5D4037]'>No hay datos de ventas disponibles</div>
+                )}
+              </div>
+                )}
           </CardContent>
         </Card>
 
         {/* Category Distribution */}
-        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8] '>
+        <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
           <CardHeader>
             <CardTitle className='text-[#3E2723]'>Productos por Categoría</CardTitle>
             <CardDescription>Distribución actual</CardDescription>
@@ -184,7 +271,6 @@ export default function DashboardPage () {
 
       {/* Low Stock Products */}
       {login?.role === ROLES.VENDEDOR && lowStockProducts?.length > 0 && (
-
         <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8] mt-5'>
           <CardHeader>
             <div className='flex items-center justify-between'>
@@ -195,7 +281,7 @@ export default function DashboardPage () {
                 </CardTitle>
                 <CardDescription>Stock menor a 5 unidades</CardDescription>
               </div>
-              <Link href='/products'>
+              <Link href='/dashboard/productos'>
                 <Button variant='outline' size='sm'>
                   Ver todos
                   <ArrowUpRight className='h-4 w-4 ml-2' />
@@ -206,10 +292,10 @@ export default function DashboardPage () {
           <CardContent>
             <div className='space-y-4'>
               {lowStockProducts.map((product) => (
-                  <div
+                <div
                   key={product.id}
                   className='flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200'
-                  >
+                >
                   <div className='flex items-center gap-4'>
                     <Package className='h-8 w-8 text-orange-500' />
                     <div>
@@ -226,7 +312,6 @@ export default function DashboardPage () {
           </CardContent>
         </Card>
       )}
-
     </div>
   )
 }

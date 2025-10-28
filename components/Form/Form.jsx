@@ -54,9 +54,9 @@ export default function Form ({ type }) {
 
       if (data.role !== ROLES.CLIENTE) {
         router.push('/dashboard')
+      } else {
+        router.push('/')
       }
-
-      router.push('/')
     } catch (error) {
       setErrorLogin(error)
       console.error(error)

@@ -14,11 +14,7 @@ export async function GET () {
     console.log(token, 'token')
     const decodedToken = await verifyToken(token)
 
-    console.log(decodedToken, 'token descifrado')
-
     const brandInfo = await getBrandInfo(decodedToken.brandId)
-
-    console.log(brandInfo)
 
     return NextResponse.json({ data: brandInfo[0] }, { status: 200 })
   } catch (error) {

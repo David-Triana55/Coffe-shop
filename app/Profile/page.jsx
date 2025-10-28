@@ -211,8 +211,6 @@ export default function Profile () {
     setImageUrls(originalBrandData.image_url || '')
   }
 
-  console.log(history, 'history')
-
   useEffect(() => {
     const storedData = JSON.parse(window.localStorage.getItem('isLogged'))
 
