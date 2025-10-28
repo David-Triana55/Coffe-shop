@@ -13,8 +13,10 @@ import { formatPrice } from '@/utils/formatter'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Bounce, ToastContainer } from 'react-toastify'
 import { CONSTANTS } from '@/utils/constants'
+import useStore from '@/store'
 
 export default function AuctionDetailPage () {
+  const { login } = useStore((state) => state)
   const params = useParams()
   const router = useRouter()
   const [auction, setAuction] = useState(null)
@@ -122,6 +124,10 @@ export default function AuctionDetailPage () {
 
   const handlePlaceBid = async (e) => {
     e.preventDefault()
+    if (login.isLogged === false) {
+      router.push('/Sign-in')
+      return
+    }
     const amount = Number.parseFloat(bidAmount)
 
     if (!validateBid(amount)) return
