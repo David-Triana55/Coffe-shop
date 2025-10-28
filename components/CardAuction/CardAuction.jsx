@@ -7,16 +7,18 @@ import { Badge } from '@/components/ui/badge'
 import './CardAuction.css'
 
 export default function CardAuction ({ auction }) {
+  console.log(auction)
   const router = useRouter()
   const [timeRemaining, setTimeRemaining] = useState('')
+  const [updatedAuction, setUpdatedAuction] = useState(auction)
 
   useEffect(() => {
     const calculateTimeRemaining = () => {
-      const now = new Date()
-      const endDate = new Date(auction.end_date)
+      const now = Date.now()
+      const endDate = new Date(updatedAuction.end_date).getTime()
       const diff = endDate - now
 
-      if (diff <= 0) {
+      if (diff <= 1000) {
         setTimeRemaining('Finalizada')
         return
       }
@@ -38,12 +40,35 @@ export default function CardAuction ({ auction }) {
     const interval = setInterval(calculateTimeRemaining, 60000)
 
     return () => clearInterval(interval)
-  }, [auction.end_date])
+  }, [updatedAuction.end_date])
+
+  useEffect(() => {
+    const fetchAuction = async () => {
+      try {
+        const res = await fetch(`/api/auctions/${auction.auction_id}`)
+        if (res.ok) {
+          const data = await res.json()
+          console.log(data.auction, 'data')
+          setUpdatedAuction(data.auction)
+        }
+      } catch (error) {
+        console.error('Error actualizando subasta:', error)
+      }
+    }
+
+    // Hacer la primera carga inmediata
+    fetchAuction()
+
+    // Refrescar cada 10 segundos
+    const interval = setInterval(fetchAuction, 10000)
+
+    return () => clearInterval(interval)
+  }, [auction.auction_id])
 
   const getStatusBadge = () => {
     const now = new Date()
-    const startDate = new Date(auction.start_date)
-    const endDate = new Date(auction.end_date)
+    const startDate = new Date(updatedAuction.start_date)
+    const endDate = new Date(updatedAuction.end_date)
 
     if (now < startDate) {
       return 'upcoming'
@@ -57,11 +82,11 @@ export default function CardAuction ({ auction }) {
   }
 
   const handleAuctionClick = () => {
-    router.push(`/Subastas/${auction.auction_id}`)
+    router.push(`/Subastas/${updatedAuction.auction_id}`)
   }
 
-  const currentBid = auction.current_price || auction.initial_price
-  const totalBids = auction.bid_count || 0
+  const currentBid = updatedAuction.current_price || updatedAuction.initial_price
+  const totalBids = updatedAuction.bid_count || 0
   const status = getStatusBadge()
 
   return (
@@ -74,14 +99,17 @@ export default function CardAuction ({ auction }) {
       </span>
 
       <div className='card_auction__image' onClick={handleAuctionClick}>
-        <img alt={auction.product_name} src={auction.product_images?.[0] || '/placeholder.svg'} />
+        <img
+          alt={updatedAuction.product_name}
+          src={updatedAuction.product_images?.[0] || '/placeholder.svg'}
+        />
         <div className='card_auction__timer'>
           <Clock className='h-4 w-4' />
           <span>{timeRemaining}</span>
         </div>
       </div>
 
-      <h1 className='card_auction__title'>{auction.product_name}</h1>
+      <h1 className='card_auction__title'>{updatedAuction.product_name}</h1>
 
       <div className='card_auction__info'>
         <div className='card_auction__bid'>

@@ -24,6 +24,12 @@ export default function SubastasPage () {
     }
 
     fetchData()
+
+    // 🔁 Actualiza las subastas cada 10 segundos
+    const interval = setInterval(fetchData, 10000)
+
+    // Limpieza del intervalo al desmontar el componente
+    return () => clearInterval(interval)
   }, [])
 
   // Filtrado y ordenamiento en el front-end
@@ -66,49 +72,52 @@ export default function SubastasPage () {
           </div>
 
           {/* Barra de búsqueda y ordenamiento */}
-        <div className='mb-8'>
-          <div className='flex flex-col md:flex-row gap-4 items-center justify-center max-w-4xl mx-auto'>
+          <div className='mb-8'>
+            <div className='flex flex-col md:flex-row gap-4 items-center justify-center max-w-4xl mx-auto'>
+              {/* Búsqueda */}
+              <div className='flex items-center justify-center h-full'>
+                <div className='inline-flex items-center space-x-3 bg-white rounded-xl px-6 py-2 shadow-lg'>
+                  <Gavel className='h-5 w-5 text-[#33691E]' />
+                  <p className='text-[#3E2723] font-medium'>
+                    {searchTerm
+                      ? (
+                      <>
+                        <span className='font-bold text-[#33691E] text-xl'>
+                          {filteredAndSortedAuctions.length}
+                        </span>{' '}
+                        resultado
+                        {filteredAndSortedAuctions.length !== 1 && 's'} encontrado
+                        {filteredAndSortedAuctions.length !== 1 && 's'}
+                      </>
+                        )
+                      : (
+                      <>
+                        <span className='font-bold text-[#33691E] text-xl'>
+                          {filteredAndSortedAuctions.length}
+                        </span>{' '}
+                        subasta
+                        {filteredAndSortedAuctions.length !== 1 && 's'} disponible
+                        {filteredAndSortedAuctions.length !== 1 && 's'}
+                      </>
+                        )}
+                  </p>
+                </div>
+              </div>
 
-            {/* Búsqueda */}
-            <div className='flex items-center justify-center h-full'>
-              <div className='inline-flex items-center space-x-3 bg-white rounded-xl px-6 py-2 shadow-lg'>
-                <Gavel className='h-5 w-5 text-[#33691E]' />
-                <p className='text-[#3E2723] font-medium'>
-                  {searchTerm
-                    ? (
-                    <>
-                      <span className='font-bold text-[#33691E] text-xl'>{filteredAndSortedAuctions.length}</span>{' '}
-                      resultado
-                      {filteredAndSortedAuctions.length !== 1 && 's'} encontrado
-                      {filteredAndSortedAuctions.length !== 1 && 's'}
-                    </>
-                      )
-                    : (
-                    <>
-                      <span className='font-bold text-[#33691E] text-xl'>{filteredAndSortedAuctions.length}</span> subasta
-                      {filteredAndSortedAuctions.length !== 1 && 's'} disponible
-                      {filteredAndSortedAuctions.length !== 1 && 's'}
-                    </>
-                      )}
-                </p>
+              {/* Input de búsqueda */}
+              <div className='relative flex-1 w-full'>
+                <div className='relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300'>
+                  <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#33691E]' />
+                  <Input
+                    placeholder='Buscar por nombre, marca, categoría u origen...'
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className='pl-12 pr-4 py-3 border-0 bg-transparent text-lg placeholder:text-[#5D4037]/60 focus:ring-0 focus-visible:ring-2 focus-visible:ring-[#33691E]'
+                  />
+                </div>
               </div>
             </div>
-
-            {/* Input de búsqueda */}
-            <div className='relative flex-1 w-full'>
-              <div className='relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300'>
-                <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#33691E]' />
-                <Input
-                  placeholder='Buscar por nombre, marca, categoría u origen...'
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className='pl-12 pr-4 py-3 border-0 bg-transparent text-lg placeholder:text-[#5D4037]/60 focus:ring-0 focus-visible:ring-2 focus-visible:ring-[#33691E]'
-                />
-              </div>
-            </div>
-
           </div>
-        </div>
 
           {/* Grid de subastas centrado */}
           <div className='max-w-7xl mx-auto'>
@@ -127,7 +136,9 @@ export default function SubastasPage () {
                 <div className='bg-white rounded-2xl p-12 shadow-lg max-w-md mx-auto'>
                   <Gavel className='h-20 w-20 text-[#8D6E63] mx-auto mb-6' />
                   <h3 className='text-2xl font-semibold text-[#3E2723] mb-3'>
-                    {searchTerm ? 'No se encontraron resultados' : 'No hay subastas disponibles'}
+                    {searchTerm
+                      ? 'No se encontraron resultados'
+                      : 'No hay subastas disponibles'}
                   </h3>
                   <p className='text-[#5D4037] text-lg'>
                     {searchTerm
