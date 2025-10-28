@@ -52,6 +52,7 @@ export default function DashboardPage () {
         if (login?.role === ROLES.ADMIN) {
           const brandSalesRes = await fetch('/api/brand-sales-report', { credentials: 'include' })
           const brandSales = await brandSalesRes.json()
+          console.log(brandSales)
 
           // Group by brand and get latest month data for preview
           const brandMap = new Map()

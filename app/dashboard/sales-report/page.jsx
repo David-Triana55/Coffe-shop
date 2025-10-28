@@ -28,7 +28,7 @@ export default function SalesReportPage () {
 
           // Group by brand
           const brandMap = new Map()
-          data.forEach((sale) => {
+          data.data.forEach((sale) => {
             if (!brandMap.has(sale.brand_id)) {
               brandMap.set(sale.brand_id, {
                 brand_id: sale.brand_id,
