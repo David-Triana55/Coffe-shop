@@ -132,7 +132,7 @@ export default function AuctionDetailPage () {
 
   const handlePlaceBid = async (e) => {
     e.preventDefault()
-    if (login.isLogged === false) {
+    if (login.isLogged === false || login.isLogged === null) {
       router.push('/Sign-in')
       return
     }
@@ -154,6 +154,7 @@ export default function AuctionDetailPage () {
       const data = await response.json()
 
       if (response.ok) {
+        // Mostrar mensaje de éxito
         toastSuccess('¡Puja realizada exitosamente!', 3000, Bounce)
         setBidSuccess(true)
 
