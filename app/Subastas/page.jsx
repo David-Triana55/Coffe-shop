@@ -13,7 +13,7 @@ export default function SubastasPage () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/auctions', { cache: 'no-store' })
+        const response = await fetch('/api/auctions', { cache: 'no-cache' })
         const data = await response.json()
         setAuctions(data)
       } catch (error) {

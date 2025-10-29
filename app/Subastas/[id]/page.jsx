@@ -41,19 +41,17 @@ export default function AuctionDetailPage () {
       const bidsData = await bidsRes.json()
 
       setAuction(auctionData?.auction)
-      console.log('auctionData:', auctionData)
+      setBids(bidsData?.bids)
 
-      setBids(bidsData?.bids || [])
+      console.log(auctionData.auction.current_price, 'auctions')
+      console.log(bidsData.bids, 'bids')
 
-      // Asegurar que todos los valores sean números válidos
-      const currentPrice =
-        Number(auctionData?.auction?.current_price) || Number(auctionData?.auction?.initial_price) || 0
-      const minimumIncrement = Number(auctionData?.auction?.minimum_increment) || 0
+      const currentPrice = Number(auctionData?.auction?.current_price) || Number(auction?.auction?.initial_price)
+      const minimumIncrement = Number(auctionData?.auction?.minimum_increment)
       const minBid = currentPrice + minimumIncrement
 
-      setBidAmount(minBid.toString())
+      setBidAmount(minBid)
 
-      // Asegurar que current_price refleje la puja más alta
       if (bidsData?.bids && bidsData.bids.length > 0) {
         const highestBid = Math.max(...bidsData.bids.map((bid) => Number(bid.amount) || 0))
         if (auctionData?.auction) {
@@ -66,11 +64,8 @@ export default function AuctionDetailPage () {
       toastError('Error al cargar la subasta', 3000, Bounce)
     }
   }
-  console.log('params.id:', params.id)
 
   useEffect(() => {
-    if (!params?.id) return
-
     const loadData = async () => {
       setLoading(true)
       await fetchAuctionData()
@@ -78,27 +73,10 @@ export default function AuctionDetailPage () {
     }
 
     loadData()
-  }, [params.id])
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const bidsRes = await fetch(`/api/auctions/bids/${params.id}`, { cache: 'no-store' })
-        const bidsData = await bidsRes.json()
-
-        if (bidsData?.bids) {
-          setBids(bidsData.bids)
-
-          // Actualiza el precio actual si hay pujas nuevas
-          const highestBid = Math.max(...bidsData.bids.map((bid) => Number(bid.amount) || 0))
-          setAuction((prev) =>
-            prev ? { ...prev, current_price: highestBid || prev.current_price } : prev
-          )
-        }
-      } catch (error) {
-        console.error('Error actualizando pujas:', error)
-      }
-    }, 3000)
+    const interval = setInterval(() => {
+      fetchAuctionData()
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [params.id])
@@ -374,7 +352,7 @@ export default function AuctionDetailPage () {
                       min={currentBid + minimumIncrement}
                       step={minimumIncrement}
                       className='text-lg h-14'
-                      placeholder={formatPrice(currentBid + minimumIncrement)}
+                      placeholder={formatPrice(auction + minimumIncrement)}
                     />
                     <p className='text-xs text-[#5D4037] mt-1'>
                       Puja mínima: {formatPrice(currentBid + minimumIncrement)}
