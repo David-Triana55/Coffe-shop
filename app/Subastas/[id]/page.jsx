@@ -29,7 +29,6 @@ export default function AuctionDetailPage () {
   const [bidError, setBidError] = useState('')
   const [bidSuccess, setBidSuccess] = useState(false)
 
-  // Función para cargar los datos de la subasta
   const fetchAuctionData = async () => {
     try {
       const [auctionRes, bidsRes] = await Promise.all([
@@ -85,12 +84,10 @@ export default function AuctionDetailPage () {
     if (!auction) return
 
     const calculateTimeLeft = () => {
-    // Convertimos ambas fechas a timestamps (ms)
       const now = new Date().getTime()
 
-      // Ajuste para compensar zona horaria (UTC → local)
       const endDate = new Date(auction.end_date)
-      const offset = endDate.getTimezoneOffset() * 60000 // minutos → ms
+      const offset = endDate.getTimezoneOffset() * 60000
       const adjustedEnd = new Date(endDate.getTime() + offset).getTime()
 
       const diff = adjustedEnd - now
@@ -157,14 +154,11 @@ export default function AuctionDetailPage () {
       const data = await response.json()
 
       if (response.ok) {
-        // Mostrar mensaje de éxito
         toastSuccess('¡Puja realizada exitosamente!', 3000, Bounce)
         setBidSuccess(true)
 
-        // Recargar los datos completos desde la base de datos
         await fetchAuctionData()
 
-        // Ocultar mensaje de éxito después de 2 segundos
         setTimeout(() => setBidSuccess(false), 2000)
       } else {
         toastError(data.message || 'Error al realizar la puja', 3000, Bounce)
@@ -201,7 +195,6 @@ export default function AuctionDetailPage () {
     )
   }
 
-  // Asegurar que currentBid siempre sea un número válido
   const currentBid = Number(auction?.current_price) || Number(auction?.initial_price) || 0
   const minimumIncrement = Number(auction?.minimum_increment) || 0
   const images = auction?.product_images || []
