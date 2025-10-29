@@ -68,7 +68,9 @@ export async function POST (req) {
           for (const item of items) {
             const auctionId = item.auctionId
 
-            await updatePayment(auctionId)
+            const update = await updatePayment(auctionId)
+            console.log(auctionId, 'auction')
+            console.log(update)
           }
           console.log('Pago de subasta actualizado')
         }
