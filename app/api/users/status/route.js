@@ -1,3 +1,4 @@
+import { changeStatusAuction } from '@/lib/data/auctions'
 import { changeStatusBrand } from '@/lib/data/brands'
 import { changeStatusProduct } from '@/lib/data/products'
 import { changeStatusClient } from '@/lib/data/user'
@@ -27,6 +28,7 @@ export async function PUT (req) {
       await changeStatusBrand(brandId, status)
       await changeStatusClient(id, status)
       await changeStatusProduct(brandId, status)
+      await changeStatusAuction(brandId, status)
     }
 
     return NextResponse.json('Actualización exitosa', { status: 200 })

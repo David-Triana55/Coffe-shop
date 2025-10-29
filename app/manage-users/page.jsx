@@ -195,7 +195,6 @@ export default function UsuariosPage () {
           image_url: res.user.image_url || null
         }
 
-        // 🔹 Esto evita el error al renderizar el nuevo usuario
         setUsers(prev =>
           prev.some(u => u.id === newUser.id)
             ? prev.map(u => (u.id === newUser.id ? newUser : u))
