@@ -284,7 +284,7 @@ export default function DashboardPage () {
                 </CardTitle>
                 <CardDescription>Stock menor a 5 unidades</CardDescription>
               </div>
-              <Link href='/dashboard/productos'>
+              <Link href='/products'>
                 <Button variant='outline' size='sm'>
                   Ver todos
                   <ArrowUpRight className='h-4 w-4 ml-2' />
