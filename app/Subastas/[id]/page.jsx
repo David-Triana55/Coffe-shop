@@ -87,7 +87,9 @@ export default function AuctionDetailPage () {
     const calculateTimeLeft = () => {
       const now = new Date()
       const end = new Date(auction.end_date)
-      const diff = end - now
+
+      // 🔹 Ajustar diferencia a UTC (independiente de la zona del servidor o cliente)
+      const diff = end.getTime() - now.getTime()
 
       if (diff <= 0) {
         setTimeLeft('Subasta finalizada')

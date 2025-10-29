@@ -5,6 +5,7 @@ import { Clock, Gavel } from 'lucide-react'
 import { formatPrice } from '@/utils/formatter'
 import { Badge } from '@/components/ui/badge'
 import './CardAuction.css'
+import { CONSTANTS } from '@/utils/constants'
 
 export default function CardAuction ({ auction }) {
   console.log(auction, 'auction subastas')
@@ -77,7 +78,7 @@ export default function CardAuction ({ auction }) {
       <div className='card_auction__image' onClick={handleAuctionClick}>
         <img
           alt={auction.product_name}
-          src={auction.product_images?.[0] || '/placeholder.svg'}
+          src={auction.product_images?.[0] || CONSTANTS.IMAGE_PLACEHOLDER}
         />
         <div className='card_auction__timer'>
           <Clock className='h-4 w-4' />
