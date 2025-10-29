@@ -38,6 +38,8 @@ export async function POST (req) {
           payment.additional_info?.items ||
           []
 
+        console.log(items)
+
         const userId =
           payment.metadata?.user_id ||
           payment.external_reference
