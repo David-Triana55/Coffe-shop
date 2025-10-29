@@ -41,6 +41,8 @@ export default function AuctionDetailPage () {
       const bidsData = await bidsRes.json()
 
       setAuction(auctionData?.auction)
+      console.log('auctionData:', auctionData)
+
       setBids(bidsData?.bids || [])
 
       // Asegurar que todos los valores sean números válidos
@@ -64,8 +66,11 @@ export default function AuctionDetailPage () {
       toastError('Error al cargar la subasta', 3000, Bounce)
     }
   }
+  console.log('params.id:', params.id)
 
   useEffect(() => {
+    if (!params?.id) return
+
     const loadData = async () => {
       setLoading(true)
       await fetchAuctionData()
