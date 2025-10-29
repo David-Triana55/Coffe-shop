@@ -5,7 +5,6 @@
 Este proyecto es un ecommerce diseñado para ofrecer una experiencia optimizada en la compra de cafés especiales y sostenibles. Permite a los usuarios explorar productos, gestionar su carrito, y realizar simulaciones de compra mientras mantiene control sobre inventarios y datos de facturación.
 
 ## Integrantes del Equipo
-- Juan Velez  
 - David Triana
 
 ## Tecnologías Utilizadas
@@ -70,7 +69,7 @@ Aquí tienes un ejemplo de markdown que incluye las instrucciones para levantar 
 4. **Perfil del Usuario:** Modificación de datos y consulta de historial.
 
 ## Enlace del Proyecto
-[Demo en Producción](https://davecode.com.co/)
+[Demo en Producción](https://www.coffeshop.online/)
 
 ## Buenas Prácticas
 - **Optimización SQL:** Uso de índices en columnas clave.
