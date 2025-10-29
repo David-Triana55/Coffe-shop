@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { findBillByMPPaymentId, insertBill, insertDetailBill } from '@/lib/data/bills'
+import { updatePayment } from '@/lib/data/auctions'
 
 // Inicializar cliente de Mercado Pago
 const mpClient = new MercadoPagoConfig({
@@ -8,7 +9,6 @@ const mpClient = new MercadoPagoConfig({
   options: { timeout: 10000 }
 })
 
-// Crear instancia de Payment
 const paymentClient = new Payment(mpClient)
 
 export const dynamic = 'force-dynamic'
@@ -31,40 +31,47 @@ export async function POST (req) {
       const payment = await paymentClient.get({ id: paymentId })
 
       if (payment.status === 'approved') {
-        // 🔹 Extraer items
         const items =
           payment.order?.items ||
           payment.additional_info?.items ||
           []
 
-        // 🔹 Extraer userId (de metadata.user_id o de external_reference)
         const userId =
           payment.metadata?.user_id ||
           payment.external_reference
 
-        // 🔹 Crear factura
-        const newBill = await insertBill({
-          userId,
-          mpPaymentId: payment.id
-        })
+        const kind = payment?.metadata?.kind
 
-        console.log(newBill, 'bill')
-
-        // 🔹 Crear detalles
-        for (const item of items) {
-          const productId = item.id
-          const quantity = Number(item.quantity ?? 1)
-          const unitPrice = Number(item.unit_price)
-
-          await insertDetailBill({
-            billId: newBill[0].id,
-            productId,
-            quantity,
-            unitPrice: Math.round(unitPrice)
+        if (kind === 'checkout') {
+          const newBill = await insertBill({
+            userId,
+            mpPaymentId: payment.id
           })
-        }
 
-        console.log('Factura guardada:', newBill[0].id)
+          console.log(newBill, 'bill')
+
+          for (const item of items) {
+            const productId = item.id
+            const quantity = Number(item.quantity ?? 1)
+            const unitPrice = Number(item.unit_price)
+
+            await insertDetailBill({
+              billId: newBill[0].id,
+              productId,
+              quantity,
+              unitPrice: Math.round(unitPrice)
+            })
+          }
+
+          console.log('Factura guardada:', newBill[0].id)
+        } else {
+          for (const item of items) {
+            const auctionId = item.auctionId
+
+            await updatePayment(auctionId)
+          }
+          console.log('Pago de subasta actualizado')
+        }
       } else {
         console.log('Pago no aprobado:', payment.status)
       }

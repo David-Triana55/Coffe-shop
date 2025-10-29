@@ -4,6 +4,8 @@ import OrderCard from '../OrderCard/OrderCard'
 import './Checkout.css'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toastError } from '@/utils/toast'
+import { Bounce } from 'react-toastify'
 
 export default function Checkout () {
   const { toogleCheckoutWindow, cleanCart, checkoutWindow, checkoutData, totalBill, login } = useStore((state) => state)
@@ -38,7 +40,7 @@ export default function Checkout () {
       if (data.init_point) {
         window.location.href = data.init_point
       } else {
-        alert('Error creando preferencia')
+        toastError('Error creando preferencia', 3000, Bounce)
         console.error(data)
       }
       cleanCart()

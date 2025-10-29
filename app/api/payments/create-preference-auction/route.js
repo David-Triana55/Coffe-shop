@@ -21,18 +21,16 @@ export async function POST (req) {
       return NextResponse.json({ message: 'No ha proporcionado credenciales de autenticación validas' }, { status: 401 })
     }
     const body = await req.json()
-    const { items } = body
+    console.log(body)
+    console.log(Array(body))
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: 'No items provided' }, { status: 400 })
-    }
-
-    const mpItems = items.map((it) => ({
+    const mpItems = Array(body).map((it) => ({
       id: String(it.id),
+      auctionId: String(it.auctionId),
       title: it.title,
-      quantity: Number(it.quantity || 1),
+      quantity: 1,
       currency_id: 'COP',
-      unit_price: Number(it.unit_price)
+      unit_price: Number(it.unitPrice)
     }))
 
     const preference = await new Preference(client).create({
@@ -44,11 +42,11 @@ export async function POST (req) {
           pending: `${process.env.APP_URL}/pending`
         },
         metadata: {
-          kind: 'checkout',
+          kind: 'auction',
           userId: decodedToken.id
         },
         notification_url: `${process.env.APP_URL}/api/payments/webhook`,
-        external_reference: `checkout:user:${decodedToken.id}`
+        external_reference: `auction:user:${decodedToken.id}`
       }
     })
 

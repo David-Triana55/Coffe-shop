@@ -14,7 +14,8 @@ import {
   Mail,
   Phone,
   Building,
-  AlertCircle
+  AlertCircle,
+  Gavel
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
@@ -31,24 +32,22 @@ import Loading from '@/components/Loading/Loading'
 import { ROLES } from '@/utils/roles'
 import { Bounce, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { getRoleName } from '@/utils/roleName'
 import { toastError, toastSuccess } from '@/utils/toast'
-import { CONSTANTS } from '@/utils/constants'
-import Link from 'next/link'
+import AuctionHistoryItem from '@/components/AuctionHistoryItem/AuctionHistoryItem'
+import { getRoleName } from '@/utils/roleName'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
   const [activeTab, setActiveTab] = useState(login?.role === ROLES.CLIENTE ? 'invoices' : 'information')
   const [noEditUser, setNoEditUser] = useState(true)
   const [noEditBrand, setNoEditBrand] = useState(true)
-  const [selectedImages, setSelectedImages] = useState([])
-  const [imageUrls, setImageUrls] = useState('')
-  const [uploading, setUploading] = useState(false)
   const [loadingInfo, setLoadingInfo] = useState(false)
   const [loadingBills, setLoadingBills] = useState(false)
   const [savingUser, setSavingUser] = useState(false)
   const [savingBrand, setSavingBrand] = useState(false)
   const [history, setHistory] = useState([])
+  const [auctionHistory, setAuctionHistory] = useState([])
+  const [loadingAuctions, setLoadingAuctions] = useState(false)
   const [validationErrors, setValidationErrors] = useState({})
   const router = useRouter()
 
@@ -72,6 +71,10 @@ export default function Profile () {
       image_url: ''
     }
   })
+
+  const [selectedImages, setSelectedImages] = useState([])
+  const [imageUrls, setImageUrls] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   const validateField = (name, value) => {
     const errors = { ...validationErrors }
@@ -132,20 +135,17 @@ export default function Profile () {
     })
   }
 
-  // Subir imagen a Cloudinary
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
-    // Validar tipo de archivo
     if (!file.type.startsWith('image/')) {
       toastError('Por favor selecciona un archivo de imagen válido', 3000, Bounce)
       return
     }
 
-    // Validar tamaño (máximo 5MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toastError('La imagen no puede exceder 2MB', 3000, Bounce)
+    if (file.size > 5 * 1024 * 1024) {
+      toastError('La imagen no puede exceder 5MB', 3000, Bounce)
       return
     }
 
@@ -192,7 +192,6 @@ export default function Profile () {
     setImageUrls('')
   }
 
-  // Función para resetear datos de usuario
   const resetUserData = () => {
     setDataClient({
       ...dataClient,
@@ -201,7 +200,6 @@ export default function Profile () {
     setValidationErrors({})
   }
 
-  // Función para resetear datos de marca
   const resetBrandData = () => {
     setDataBrand({
       ...dataBrand,
@@ -229,12 +227,11 @@ export default function Profile () {
             headers: {
               'Content-Type': 'application/json'
             },
-            credentials: 'include',
-            cache: 'no-cache'
+            credentials: 'include'
           })
 
           if (res.ok) {
-            const { data } = await res.json()
+            const data = await res.json()
             setHistory(data)
           }
         } catch (error) {
@@ -246,6 +243,37 @@ export default function Profile () {
       getHistory()
     }
   }, [login?.role])
+
+  useEffect(() => {
+    if (login?.role === ROLES.CLIENTE) {
+      setLoadingAuctions(true)
+      const getAuctionHistory = async () => {
+        try {
+          const res = await fetch('/api/auction-history', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            cache: 'no-cache'
+          })
+
+          if (res.ok) {
+            const data = await res.json()
+            console.log(data, 'history auction')
+            setAuctionHistory(data)
+          }
+        } catch (error) {
+          console.error('Error fetching auction history:', error)
+        } finally {
+          setLoadingAuctions(false)
+        }
+      }
+      getAuctionHistory()
+    }
+  }, [login?.role])
+
+  console.log(auctionHistory)
 
   useEffect(() => {
     setLoadingInfo(true)
@@ -281,7 +309,6 @@ export default function Profile () {
         const res = await fetch('/api/brandInfo', { credentials: 'include' })
         if (res.ok) {
           const data = await res.json()
-          console.log(data, 'data brand')
           const brandData = data.data || {}
 
           setDataBrand({
@@ -310,7 +337,6 @@ export default function Profile () {
   const handleSubmitInfo = async (e) => {
     e.preventDefault()
 
-    // Validar todos los campos
     const fields = ['name', 'last_name', 'email', 'phone_number']
     fields.forEach((field) => {
       validateField(field, dataClient.edit[field])
@@ -413,12 +439,13 @@ export default function Profile () {
 
   const handleLogout = async () => {
     try {
-      setLogin(false, ROLES.DESCONOCIDO)
+      setLogin(null, false)
       router.push('/')
       await fetch('/api/logout', {
         method: 'POST',
         credentials: 'include'
       })
+      toastSuccess('Sesión cerrada correctamente', 2000, Bounce)
     } catch (error) {
       console.error(error)
     }
@@ -445,21 +472,12 @@ export default function Profile () {
           <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
             <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
               <div className='flex items-center space-x-4'>
-                  {login?.role === ROLES.VENDEDOR
-                    ? (
-                      <Avatar className='h-16 w-16 border-2 border-white'>
-                        <Link className='mx-auto' href={`Marcas-de-cafe/${dataBrand?.data?.name}`}>
-                          <AvatarImage src={imageUrls || dataBrand?.data?.image_url || CONSTANTS.IMAGE_PLACEHOLDER} />
-                        </Link>
-                      </Avatar>
-                      )
-                    : (
-                      <Avatar className='h-16 w-16 border-2 border-white'>
-                        <AvatarFallback className='bg-[#D2B48C] text-[#4A3728] text-lg font-bold'>
-                          {dataClient?.data?.name?.charAt(0) || clientInfo?.data?.name?.charAt(0) || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                      )}
+                <Avatar className='h-16 w-16 border-2 border-white'>
+                  <AvatarImage src={imageUrls || dataBrand?.data?.image_url || '/placeholder.svg'} />
+                  <AvatarFallback className='bg-[#D2B48C] text-[#4A3728] text-lg font-bold'>
+                    {dataClient?.data?.name?.charAt(0) || clientInfo?.data?.name?.charAt(0) || 'U'}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <CardTitle className='text-lg'>
                     {dataClient?.data?.name || clientInfo?.data?.name}{' '}
@@ -485,18 +503,33 @@ export default function Profile () {
                 </Button>
 
                 {login?.role === ROLES.CLIENTE && (
-                  <Button
-                    variant={activeTab === 'invoices' ? 'default' : 'ghost'}
-                    className={`justify-start transition-all duration-200 ${
-                      activeTab === 'invoices'
-                        ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
-                        : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
-                    }`}
-                    onClick={() => setActiveTab('invoices')}
-                  >
-                    <FileText className='mr-3 h-4 w-4' />
-                    Mis Facturas
-                  </Button>
+                  <>
+                    <Button
+                      variant={activeTab === 'invoices' ? 'default' : 'ghost'}
+                      className={`justify-start transition-all duration-200 ${
+                        activeTab === 'invoices'
+                          ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                          : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                      }`}
+                      onClick={() => setActiveTab('invoices')}
+                    >
+                      <FileText className='mr-3 h-4 w-4' />
+                      Mis Facturas
+                    </Button>
+
+                    <Button
+                      variant={activeTab === 'auctions' ? 'default' : 'ghost'}
+                      className={`justify-start transition-all duration-200 ${
+                        activeTab === 'auctions'
+                          ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                          : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                      }`}
+                      onClick={() => setActiveTab('auctions')}
+                    >
+                      <Gavel className='mr-3 h-4 w-4' />
+                      Mis Subastas
+                    </Button>
+                  </>
                 )}
 
                 {login?.role === ROLES.VENDEDOR && (
@@ -761,6 +794,64 @@ export default function Profile () {
                           <FileText className='mx-auto h-12 w-12 text-gray-400 mb-4' />
                           <h3 className='text-lg font-medium text-gray-900 mb-2'>No hay facturas</h3>
                           <p className='text-gray-500'>Cuando realices compras, aparecerán aquí.</p>
+                        </div>
+                            )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+
+            {/* Auction History Tab */}
+            {login?.role === ROLES.CLIENTE && (
+              <TabsContent value='auctions'>
+                <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+                  <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+                    <CardTitle className='flex items-center gap-2'>
+                      <Gavel className='h-5 w-5' />
+                      Historial de Subastas
+                    </CardTitle>
+                    <CardDescription className='text-gray-200'>
+                      Revisa tus pujas y el estado de pago de las subastas ganadas
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='p-6'>
+                    <div className='mb-4 flex justify-between items-center'>
+                      <Badge variant='outline' className='border-[#D2B48C] text-[#4A3728]'>
+                        {auctionHistory?.length > 0 ? `${auctionHistory.length} subastas` : 'Sin subastas'}
+                      </Badge>
+                    </div>
+
+                    <div className='space-y-4'>
+                      {loadingAuctions
+                        ? (
+                        <div className='flex justify-center items-center py-12'>
+                          <Loading position='start' />
+                        </div>
+                          )
+                        : auctionHistory?.length > 0
+                          ? (
+                              auctionHistory
+                                .sort((a, b) => b.id - a.id)
+                                .map((item) => (
+                            <AuctionHistoryItem
+                              key={item.id}
+                              id={item.id}
+                              auctionId={item.auction_id}
+                              productId={item.product_id}
+                              productName={item.product_name}
+                              productImage={item.product_image}
+                              finalPrice={item.final_price}
+                              bidDate={item.date}
+                              paymentStatus={item.status}
+                            />
+                                ))
+                            )
+                          : (
+                        <div className='text-center py-12'>
+                          <Gavel className='mx-auto h-12 w-12 text-gray-400 mb-4' />
+                          <h3 className='text-lg font-medium text-gray-900 mb-2'>No has participado en subastas</h3>
+                          <p className='text-gray-500'>Cuando participes en subastas, aparecerán aquí.</p>
                         </div>
                             )}
                     </div>
