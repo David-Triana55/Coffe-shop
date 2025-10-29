@@ -70,13 +70,11 @@ export async function POST (req) {
           console.log('Factura guardada:', newBill[0].id)
         } else {
           console.log(items)
-          for (const item of items) {
-            const auctionId = item.auctionId
+          const auctionId = payment?.metadata?.auctionId
+          console.log(auctionId, 'auctionid')
+          const update = await updatePayment(auctionId)
+          console.log(update)
 
-            const update = await updatePayment(auctionId)
-            console.log(auctionId, 'auction')
-            console.log(update)
-          }
           console.log('Pago de subasta actualizado')
         }
       } else {

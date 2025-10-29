@@ -43,7 +43,8 @@ export async function POST (req) {
         },
         metadata: {
           kind: 'auction',
-          userId: decodedToken.id
+          userId: decodedToken.id,
+          auctionId: body.auctionId
         },
         notification_url: `${process.env.APP_URL}/api/payments/webhook`,
         external_reference: `auction:user:${decodedToken.id}`
