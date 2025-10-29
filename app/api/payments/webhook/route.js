@@ -30,6 +30,8 @@ export async function POST (req) {
 
       const payment = await paymentClient.get({ id: paymentId })
 
+      console.log(payment, 'payment')
+
       if (payment.status === 'approved') {
         const items =
           payment.order?.items ||
@@ -65,6 +67,7 @@ export async function POST (req) {
 
           console.log('Factura guardada:', newBill[0].id)
         } else {
+          console.log(items)
           for (const item of items) {
             const auctionId = item.auctionId
 
