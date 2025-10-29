@@ -25,8 +25,8 @@ export default function SalesReportPage () {
         if (login?.role === ROLES.ADMIN) {
           const res = await fetch('/api/brand-sales-report', { credentials: 'include' })
           const data = await res.json()
+          console.log(data, 'data')
 
-          // Group by brand
           const brandMap = new Map()
           data.data.forEach((sale) => {
             if (!brandMap.has(sale.brand_id)) {
@@ -37,12 +37,12 @@ export default function SalesReportPage () {
                 months: []
               })
             }
+
             const brand = brandMap.get(sale.brand_id)
             brand.total_sales += Number(sale.total_sales)
             brand.months.push({
               month: sale.month,
-              sales: Number(sale.total_sales),
-              monthName: new Date(sale.month + '-01').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
+              sales: Number(sale.total_sales)
             })
           })
 

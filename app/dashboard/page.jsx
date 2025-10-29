@@ -33,6 +33,8 @@ export default function DashboardPage () {
         const data = await fetch('/api/dashboard', { credentials: 'include' })
         const res = await data.json()
 
+        console.log(res)
+
         setLowStockProducts(res?.stock || [])
         setMetrics((prev) => ({
           totalSales: res?.sales[0]?.total_ventas ?? prev.totalSales,

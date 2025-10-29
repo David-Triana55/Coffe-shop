@@ -2,12 +2,11 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, DollarSign, Eye, CreditCard, Gavel } from 'lucide-react'
+import { Calendar, DollarSign, CreditCard, Gavel } from 'lucide-react'
 import { formatPrice } from '@/utils/formatter'
 import { useState } from 'react'
 import { toastError, toastSuccess } from '@/utils/toast'
 import { Bounce } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 
 export default function AuctionHistoryItem ({
   auctionId,
@@ -19,7 +18,6 @@ export default function AuctionHistoryItem ({
   paymentStatus
 }) {
   const [processing, setProcessing] = useState(false)
-  const router = useRouter()
 
   const handlePayment = async () => {
     setProcessing(true)
@@ -50,10 +48,6 @@ export default function AuctionHistoryItem ({
     } finally {
       setProcessing(false)
     }
-  }
-
-  const handleViewDetails = () => {
-    router.push(`/subastas/${auctionId}`)
   }
 
   return (
@@ -101,8 +95,8 @@ export default function AuctionHistoryItem ({
 
             {/* Action Buttons */}
             <div className='flex gap-2 pt-2'>
-              {paymentStatus === 'pending'
-                ? (
+              {paymentStatus === 'pending' &&
+                (
                 <Button
                   onClick={handlePayment}
                   disabled={processing}
@@ -112,24 +106,7 @@ export default function AuctionHistoryItem ({
                   <CreditCard className='h-4 w-4 mr-2' />
                   {processing ? 'Procesando...' : 'Pagar Ahora'}
                 </Button>
-                  )
-                : paymentStatus === 'paid'
-                  ? (
-                <Button
-                  onClick={handleViewDetails}
-                  size='sm'
-                  variant='outline'
-                  className='border-[#D2B48C] text-[#4A3728] hover:bg-[#D2B48C]/10 bg-transparent'
-                >
-                  <Eye className='h-4 w-4 mr-2' />
-                  Ver Detalles
-                </Button>
-                    )
-                  : (
-                <Badge variant='outline' className='border-[#8D6E63] text-[#5D4037]'>
-                  Esperando fin de subasta
-                </Badge>
-                    )}
+                )}
             </div>
           </div>
         </div>

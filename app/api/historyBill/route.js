@@ -18,6 +18,7 @@ export async function GET () {
     }
 
     const data = await historyBill(decodedToken.id)
+    console.log(data, 'history bill')
 
     return NextResponse.json({ message: 'Datos actualizados', data }, { status: 200 })
   } catch (e) {
