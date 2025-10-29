@@ -70,7 +70,7 @@ export async function POST (req) {
           console.log('Factura guardada:', newBill[0].id)
         } else {
           console.log(items)
-          const auctionId = payment?.metadata
+          const auctionId = payment?.metadata?.auction_id
           console.log(auctionId, 'auctionid')
           const update = await updatePayment(auctionId)
           console.log(update)
