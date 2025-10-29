@@ -357,7 +357,7 @@ export default function AuctionDetailPage () {
                       min={currentBid + minimumIncrement}
                       step={minimumIncrement}
                       className='text-lg h-14'
-                      placeholder={formatPrice(auction + minimumIncrement)}
+                      placeholder={formatPrice(currentBid + minimumIncrement)}
                     />
                     <p className='text-xs text-[#5D4037] mt-1'>
                       Puja mínima: {formatPrice(currentBid + minimumIncrement)}
