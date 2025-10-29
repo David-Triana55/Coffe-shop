@@ -14,11 +14,12 @@ export default function CardAuction ({ auction }) {
 
   useEffect(() => {
     const calculateTimeRemaining = () => {
-      const now = Date.now()
+      const now = new Date().getTime()
       const endDate = new Date(auction.end_date).getTime()
+
       const diff = endDate - now
 
-      if (diff <= 1000) {
+      if (diff <= 0) {
         setTimeRemaining('Finalizada')
         return
       }
@@ -43,19 +44,14 @@ export default function CardAuction ({ auction }) {
   }, [auction.end_date])
 
   const getStatusBadge = () => {
-    const now = new Date()
-    const startDate = new Date(auction.start_date)
-    const endDate = new Date(auction.end_date)
+    const now = new Date().getTime()
+    const startDate = new Date(auction.start_date).getTime()
+    const endDate = new Date(auction.end_date).getTime()
 
-    if (now < startDate) {
-      return 'upcoming'
-    } else if (now > endDate) {
-      return 'finished'
-    } else if (endDate - now < 24 * 60 * 60 * 1000) {
-      return 'ending-soon'
-    } else {
-      return 'active'
-    }
+    if (now < startDate) return 'upcoming'
+    if (now > endDate) return 'finished'
+    if (endDate - now < 24 * 60 * 60 * 1000) return 'ending-soon'
+    return 'active'
   }
 
   const handleAuctionClick = () => {

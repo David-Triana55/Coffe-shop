@@ -85,11 +85,15 @@ export default function AuctionDetailPage () {
     if (!auction) return
 
     const calculateTimeLeft = () => {
-      const now = new Date()
-      const end = new Date(auction.end_date)
+    // Convertimos ambas fechas a timestamps (ms)
+      const now = new Date().getTime()
 
-      // 🔹 Ajustar diferencia a UTC (independiente de la zona del servidor o cliente)
-      const diff = end.getTime() - now.getTime()
+      // Ajuste para compensar zona horaria (UTC → local)
+      const endDate = new Date(auction.end_date)
+      const offset = endDate.getTimezoneOffset() * 60000 // minutos → ms
+      const adjustedEnd = new Date(endDate.getTime() + offset).getTime()
+
+      const diff = adjustedEnd - now
 
       if (diff <= 0) {
         setTimeLeft('Subasta finalizada')
@@ -112,7 +116,6 @@ export default function AuctionDetailPage () {
 
     calculateTimeLeft()
     const interval = setInterval(calculateTimeLeft, 1000)
-
     return () => clearInterval(interval)
   }, [auction])
 
@@ -363,7 +366,11 @@ export default function AuctionDetailPage () {
 
                   <Button
                     type='submit'
-                    disabled={submitting || !!bidError || timeLeft === 'Subasta finalizada'}
+                    disabled={
+                      submitting ||
+                      !!bidError ||
+                      timeLeft.toLowerCase().includes('finalizada')
+                    }
                     className='w-full h-14 text-lg font-semibold bg-[#33691E] hover:bg-[#1B5E20] text-white transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
                   >
                     <Gavel className='w-5 h-5 mr-2' />
