@@ -258,7 +258,7 @@ export default function NavBar () {
                     </button>
                     </div>}
 
-                <Cart />
+                {(role === ROLES.CLIENTE || role === ROLES.DESCONOCIDO) && <Cart />}
               </div>
             </div>
           </div>

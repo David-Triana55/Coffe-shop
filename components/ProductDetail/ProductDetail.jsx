@@ -23,6 +23,7 @@ import {
 import Loading from '../Loading/Loading'
 import { useRouter } from 'next/navigation'
 import { CONSTANTS } from '@/utils/constants'
+import { ROLES } from '@/utils/roles'
 
 export default function ProductDetail ({ id }) {
   const router = useRouter()
@@ -31,7 +32,7 @@ export default function ProductDetail ({ id }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [stockError, setStockError] = useState('')
   const [addedToCart, setAddedToCart] = useState(false)
-  const { addToCart, checkoutData } = useStore((state) => state)
+  const { addToCart, checkoutData, login } = useStore((state) => state)
   const [productInCart, setProductInCart] = useState(null)
   const [loading, setLoading] = useState(false)
   const price = formatPrice(product?.price)
@@ -224,40 +225,45 @@ export default function ProductDetail ({ id }) {
                 )}
 
                 {/* Quantity Selector */}
-                <div className='flex items-center gap-4 mb-8'>
-                  <span className='text-lg font-medium text-[#3E2723]'>Cantidad:</span>
-                  <div className='flex items-center border border-[#D7CCC8] rounded-lg'>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => handleCountChange(count - 1)}
-                      disabled={count <= 1}
-                      className='h-12 w-12 hover:bg-[#D7CCC8]/30'
-                    >
-                      <Minus className='h-4 w-4' />
-                    </Button>
-                    <span className='px-6 py-3 text-xl font-semibold min-w-[60px] text-center'>{count}</span>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => handleCountChange(count + 1)}
-                      disabled={product?.stock && count >= product.stock}
-                      className='h-12 w-12 hover:bg-[#D7CCC8]/30'
-                    >
-                      <Plus className='h-4 w-4' />
-                    </Button>
+                {(login.role === ROLES.CLIENTE || login.role === ROLES.DESCONOCIDO) && (
+                  <div className='flex items-center gap-4 mb-8'>
+                    <span className='text-lg font-medium text-[#3E2723]'>Cantidad:</span>
+                    <div className='flex items-center border border-[#D7CCC8] rounded-lg'>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        onClick={() => handleCountChange(count - 1)}
+                        disabled={count <= 1}
+                        className='h-12 w-12 hover:bg-[#D7CCC8]/30'
+                      >
+                        <Minus className='h-4 w-4' />
+                      </Button>
+                      <span className='px-6 py-3 text-xl font-semibold min-w-[60px] text-center'>{count}</span>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        onClick={() => handleCountChange(count + 1)}
+                        disabled={product?.stock && count >= product.stock}
+                        className='h-12 w-12 hover:bg-[#D7CCC8]/30'
+                      >
+                        <Plus className='h-4 w-4' />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Add to Cart Button */}
-                <Button
-                  onClick={() => handleAddToCart(product)}
-                  disabled={stockError || (product?.stock && count > product.stock) || (!product?.is_active)}
-                  className='w-full h-14 text-lg font-semibold bg-[#33691E] hover:bg-[#1B5E20] text-white transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
-                >
-                  <ShoppingCart className='w-5 h-5 mr-2' />
-                  Agregar al Carrito
-                </Button>
+                  {(login.role === ROLES.CLIENTE || login.role === ROLES.DESCONOCIDO) &&
+                  (
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={stockError || (product?.stock && count > product.stock) || (!product?.is_active)}
+                      className='w-full h-14 text-lg font-semibold bg-[#33691E] hover:bg-[#1B5E20] text-white transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
+                    >
+                    <ShoppingCart className='w-5 h-5 mr-2' />
+                      Agregar al Carrito
+                  </Button>
+                  )}
 
                 {/* Product Features */}
                 <div className='grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-[#D7CCC8]'>

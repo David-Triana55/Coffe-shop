@@ -174,7 +174,7 @@ export default function CreateProduct () {
         setImageUrls([])
 
         setTimeout(() => {
-          router.push(productType === 'auction' ? 'manage-auctions' : '/dashboard/productos')
+          router.push(productType === 'auction' ? 'manage-auctions' : 'productos')
         }, 3000)
       } else {
         toastError('Error al crear', 5000, Bounce)
@@ -257,12 +257,13 @@ export default function CreateProduct () {
                 />
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6'>
+              <div className={`grid grid-cols-1  gap-4 sm:gap-6  ${productType === 'normal' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
                 <div className='space-y-2'>
                   <Label htmlFor='description' className='text-sm font-medium'>
-                    Descripción
+                    Descripción *
                   </Label>
                   <Textarea
+                    required
                     id='description'
                     placeholder='Describe las características de tu producto...'
                     value={formData.description}
@@ -271,7 +272,7 @@ export default function CreateProduct () {
                     className='border-[#D7CCC8] resize-none'
                   />
                 </div>
-                <div className='space-y-2'>
+                {productType === 'normal' && <div className='space-y-2'>
                   <Label htmlFor='originDetails' className='text-sm font-medium'>
                     Detalles de Origen
                   </Label>
@@ -283,7 +284,7 @@ export default function CreateProduct () {
                     rows={4}
                     className='border-[#D7CCC8] resize-none'
                   />
-                </div>
+                </div>}
               </div>
 
               {/* CAMPOS CONDICIONALES */}
