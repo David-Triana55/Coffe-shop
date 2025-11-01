@@ -14,6 +14,7 @@ import { toastError, toastSuccess } from '@/utils/toast'
 import { Bounce, ToastContainer } from 'react-toastify'
 import { CONSTANTS } from '@/utils/constants'
 import useStore from '@/store'
+import { ROLES } from '@/utils/roles'
 
 export default function AuctionDetailPage () {
   const { login } = useStore((state) => state)
@@ -358,18 +359,19 @@ export default function AuctionDetailPage () {
                     </p>
                   </div>
 
-                  <Button
-                    type='submit'
-                    disabled={
-                      submitting ||
-                      !!bidError ||
-                      timeLeft.toLowerCase().includes('finalizada')
-                    }
-                    className='w-full h-14 text-lg font-semibold bg-[#33691E] hover:bg-[#1B5E20] text-white transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
-                  >
-                    <Gavel className='w-5 h-5 mr-2' />
-                    {submitting ? 'Pujando...' : 'Realizar Puja'}
-                  </Button>
+                  {(login.role === ROLES.CLIENTE || login.role === ROLES.DESCONOCIDO) && (
+                    <Button
+                      type='submit'
+                      disabled={
+                        submitting ||
+                        !!bidError ||
+                        timeLeft.toLowerCase().includes('finalizada')
+                      }
+                      className='w-full h-14 text-lg font-semibold bg-[#33691E] hover:bg-[#1B5E20] text-white transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
+                    >
+                      <Gavel className='w-5 h-5 mr-2' />
+                      {submitting ? 'Pujando...' : 'Realizar Puja'}
+                  </Button>)}
                 </form>
               </CardContent>
             </Card>

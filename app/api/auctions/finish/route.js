@@ -1,4 +1,4 @@
-import { finsihAuction } from '@/lib/data/auctions'
+import { finsihAuction, registerWinnersJob, validateAuctionState } from '@/lib/data/auctions'
 import { CONSTANTS } from '@/utils/constants'
 import { verifyToken } from '@/utils/verifyToken'
 import { cookies } from 'next/headers'
@@ -15,8 +15,9 @@ export async function PUT (req) {
     if (!decodedToken) {
       return NextResponse.json({ message: 'Token inválido' }, { status: 401 })
     }
-
     await finsihAuction(data.id)
+    await validateAuctionState()
+    await registerWinnersJob()
     return NextResponse.json({ message: 'Finalizada exitosamente', status: 201 })
   } catch (e) {
     console.log(e)

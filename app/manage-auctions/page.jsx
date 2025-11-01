@@ -21,10 +21,8 @@ import {
   CheckCircle,
   AlertCircle,
   User,
-
   Plus,
-  Edit,
-  Flag
+  Edit
 } from 'lucide-react'
 import Loading from '@/components/Loading/Loading'
 import { toastError, toastSuccess } from '@/utils/toast'
@@ -51,7 +49,6 @@ export default function SubastasPage () {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedAuction, setSelectedAuction] = useState(null)
-  const [detailDialogOpen, setDetailDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [finishConfirmOpen, setFinishConfirmOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -117,11 +114,6 @@ export default function SubastasPage () {
 
     setFilteredAuctions(filtered)
   }, [search, statusFilter, auctions])
-
-  const handleOpenDetail = (auction) => {
-    setSelectedAuction(auction)
-    setDetailDialogOpen(true)
-  }
 
   const handleOpenEdit = (auction) => {
     console.log(auction, 'auction edit')
@@ -340,7 +332,6 @@ export default function SubastasPage () {
                   <TableHead>Fecha Inicio</TableHead>
                   <TableHead>Fecha Fin</TableHead>
                   <TableHead>Estado</TableHead>
-                  <TableHead className='text-right'>Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -348,13 +339,15 @@ export default function SubastasPage () {
                   <TableRow key={auction.auction_id}>
                     <TableCell>
                       <div className='flex items-center gap-3'>
-                        <div className='w-10 h-10 rounded-lg overflow-hidden bg-gray-100'>
-                          <img
-                            src={auction.product_images || CONSTANTS.IMAGE_PLACEHOLDER}
-                            alt={auction.product_name}
-                            className='w-full h-full object-cover'
-                          />
-                        </div>
+                        <Link href={`Subastas/${auction.auction_id}`}>
+                          <div className='w-10 h-10 rounded-lg overflow-hidden bg-gray-100'>
+                            <img
+                              src={auction.product_images || CONSTANTS.IMAGE_PLACEHOLDER}
+                              alt={auction.product_name}
+                              className='w-full h-full object-cover'
+                            />
+                          </div>
+                        </Link>
                         <span className='font-medium'>{auction.product_name}</span>
                       </div>
                     </TableCell>
@@ -362,7 +355,7 @@ export default function SubastasPage () {
                       <TableCell>
                         <div className='flex items-center gap-2'>
                           <User className='h-4 w-4 text-[#8D6E63]' />
-                          {auction.seller_name}
+                          {auction.brand_name}
                         </div>
                       </TableCell>
                     )}
