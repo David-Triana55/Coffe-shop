@@ -46,18 +46,16 @@ export async function POST (req) {
       role: user[0].role_id,
       brandId: brandId ? brandId[0].id : null
     }
-    console.log(userForToker)
 
     const token = jwt.sign(userForToker, process.env.JWT_SECRET)
     const res = NextResponse.json({ message: 'Login success', role: user[0].role_id })
-    console.log(res, token)
 
     res.headers.append('Set-Cookie', serialize(CONSTANTS.COOKIE_NAME, token, {
-      httpOnly: true, // No accesible desde JS
-      secure: process.env.NODE_ENV === 'production', // Solo HTTPS en prod
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7, // 7 días
-      path: '/' // Disponible en toda la app
+      maxAge: 60 * 60 * 24 * 7,
+      path: '/'
     }))
 
     return res

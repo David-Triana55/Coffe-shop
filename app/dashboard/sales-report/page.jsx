@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { ArrowLeft, TrendingUp, Calendar, DollarSign, BarChart3, Package } from 'lucide-react'
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Package } from 'lucide-react'
 import { formatPrice } from '@/utils/formatter'
 import useStore from '@/store'
 import { ROLES } from '@/utils/roles'
@@ -23,30 +23,24 @@ export default function SalesReportPage () {
       setLoading(true)
       try {
         if (login?.role === ROLES.ADMIN) {
-          const res = await fetch('/api/brand-sales-report', { credentials: 'include' })
+          const res = await fetch('/api/brand-sales-report', { credentials: 'include', cache: 'no-cache' })
           const data = await res.json()
           console.log(data, 'data')
+          const processedData = data.data.map(brand => {
+            const totalSales = brand.months.reduce((acc, m) => acc + m.sales, 0)
 
-          const brandMap = new Map()
-          data.data.forEach((sale) => {
-            if (!brandMap.has(sale.brand_id)) {
-              brandMap.set(sale.brand_id, {
-                brand_id: sale.brand_id,
-                brand_name: sale.brand_name,
-                total_sales: 0,
-                months: []
-              })
+            return {
+              brand_id: brand.brand_id,
+              brand_name: brand.brand_name,
+              months: brand.months.map(m => ({
+                month: m.month,
+                sales: m.sales
+              })),
+              total_sales: totalSales
             }
-
-            const brand = brandMap.get(sale.brand_id)
-            brand.total_sales += Number(sale.total_sales)
-            brand.months.push({
-              month: sale.month,
-              sales: Number(sale.total_sales)
-            })
           })
 
-          setBrandSalesData(Array.from(brandMap.values()))
+          setBrandSalesData(processedData)
         } else if (login?.role === ROLES.VENDEDOR) {
           const brandInfoRes = await fetch('/api/brandInfo', { credentials: 'include' })
           const brandInfo = await brandInfoRes.json()
@@ -257,52 +251,56 @@ export default function SalesReportPage () {
               </div>
 
               {/* Detailed Analysis Cards */}
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 gap-6'>
                 <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
                   <CardHeader>
-                    <CardTitle className='text-[#3E2723] flex items-center gap-2'>
-                      <BarChart3 className='h-5 w-5 text-[#33691E]' />
-                      Análisis Diario
-                    </CardTitle>
-                    <CardDescription>Rendimiento de ventas del día actual</CardDescription>
+                    <CardTitle className='text-[#3E2723]'>Historial de Ventas Mensuales</CardTitle>
+                    <CardDescription>
+                      Resumen de tus ventas acumuladas por mes
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex justify-between items-center p-4 bg-[#F5F5F5] rounded-lg'>
-                      <div>
-                        <p className='text-sm text-[#5D4037] font-medium'>Total Vendido Hoy</p>
-                        <p className='text-2xl font-bold text-[#33691E] mt-1'>
-                          {formatPrice(Number(brandSalesData[0]?.daily_sales) || 0)}
-                        </p>
-                      </div>
-                      <div className='h-12 w-12 rounded-full bg-[#33691E]/10 flex items-center justify-center'>
-                        <DollarSign className='h-6 w-6 text-[#33691E]' />
-                      </div>
+                  <CardContent>
+                    <div className='overflow-x-auto'>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Mes</TableHead>
+                            <TableHead>Ventas del Mes</TableHead>
+                            <TableHead>Promedio Diario</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {brandSalesData[0]?.months?.length > 0
+                            ? (
+                                brandSalesData[0].months.map((m, index) => (
+                              <TableRow key={index}>
+                                <TableCell className='capitalize'>
+                                  {new Date(m.month + '-1').toLocaleDateString('es-ES', {
+                                    month: 'long',
+                                    year: 'numeric'
+                                  })}
+                                </TableCell>
+                                <TableCell>
+                                  <span className='font-semibold text-[#33691E]'>
+                                    {formatPrice(m.sales)}
+                                  </span>
+                                </TableCell>
+                                <TableCell>
+                                  {formatPrice(m.sales / 30)}
+                                </TableCell>
+                              </TableRow>
+                                ))
+                              )
+                            : (
+                            <TableRow>
+                              <TableCell colSpan={3} className='text-center text-gray-500'>
+                                No hay datos históricos disponibles.
+                              </TableCell>
+                            </TableRow>
+                              )}
+                        </TableBody>
+                      </Table>
                     </div>
-
-                  </CardContent>
-                </Card>
-
-                <Card className='bg-white/90 backdrop-blur-sm border-[#D7CCC8]'>
-                  <CardHeader>
-                    <CardTitle className='text-[#3E2723] flex items-center gap-2'>
-                      <TrendingUp className='h-5 w-5 text-[#33691E]' />
-                      Análisis Mensual
-                    </CardTitle>
-                    <CardDescription>Rendimiento acumulado del mes</CardDescription>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex justify-between items-center p-4 bg-[#F5F5F5] rounded-lg'>
-                      <div>
-                        <p className='text-sm text-[#5D4037] font-medium'>Total del Mes</p>
-                        <p className='text-2xl font-bold text-[#33691E] mt-1'>
-                          {formatPrice(Number(brandSalesData[0]?.monthly_sales) || 0)}
-                        </p>
-                      </div>
-                      <div className='h-12 w-12 rounded-full bg-[#8BC34A]/10 flex items-center justify-center'>
-                        <Calendar className='h-6 w-6 text-[#33691E]' />
-                      </div>
-                    </div>
-
                   </CardContent>
                 </Card>
               </div>

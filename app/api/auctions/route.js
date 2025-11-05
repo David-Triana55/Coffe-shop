@@ -22,7 +22,6 @@ export async function GET (req) {
     }
     console.log(decodedToken.brandId)
     auctions = await getAuctions(decodedToken.brandId)
-    console.log(auctions)
 
     return NextResponse.json({ auctions, status: 200 })
   } catch (e) {

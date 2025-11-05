@@ -123,13 +123,15 @@ export default function SubastasPage () {
           <div className='max-w-7xl mx-auto'>
             {filteredAndSortedAuctions.length > 0
               ? (
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-                {filteredAndSortedAuctions.map((auction) => (
-                  <div key={auction.auction_id} className='group'>
-                    <CardAuction auction={auction} />
-                  </div>
-                ))}
-              </div>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+                  {filteredAndSortedAuctions
+                    .filter(auction => auction.auction_status === 'active')
+                    .map(auction => (
+                      <div key={auction.auction_id} className='group'>
+                        <CardAuction auction={auction} />
+                      </div>
+                    ))}
+                </div>
                 )
               : (
               <div className='text-center py-16'>

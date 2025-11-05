@@ -135,11 +135,25 @@ const DownloadBrandSalesPDF = ({
     doc.text(formatPrice(brand.total_sales / brand.months.length), 195, yPos, { align: 'right' })
 
     yPos += 15
-    const sortedMonths = [...brand.months].sort((a, b) => b.month.localeCompare(a.month))
+    const sortedMonths = [...brand.months].sort((a, b) => a.month.localeCompare(b.month))
+
+    const formattedMonths = sortedMonths.map((m) => {
+      const [yearStr, monthStr] = String(m.month).split('-')
+      const year = Number(yearStr) || 0
+      const monthIndex = Math.max(0, (Number(monthStr) || 1) - 1)
+
+      const date = new Date(year, monthIndex, 1)
+      const formatted = date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+
+      return {
+        ...m,
+        monthName: formatted.charAt(0).toUpperCase() + formatted.slice(1)
+      }
+    })
 
     autoTable(doc, {
       head: [['Mes', 'Ventas']],
-      body: sortedMonths.map((m) => [m.monthName, formatPrice(m.sales)]),
+      body: formattedMonths.map((m) => [m.monthName, formatPrice(m.sales)]),
       startY: yPos,
       theme: 'striped',
       styles: {
@@ -166,7 +180,9 @@ const DownloadBrandSalesPDF = ({
 
     addFooter(doc)
 
-    const fileName = `Reporte_Ventas_${brand.brand_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
+    const fileName = `Reporte_Ventas_${brand.brand_name.replace(/\s+/g, '_')}_${new Date()
+      .toISOString()
+      .split('T')[0]}.pdf`
     doc.save(fileName)
   }
 
@@ -323,7 +339,9 @@ const DownloadBrandSalesPDF = ({
 
     addFooter(doc)
 
-    const fileName = `Reporte_Ventas_${seller.brand_name.replace(/\s+/g, '_')}_${currentDate.toISOString().split('T')[0]}.pdf`
+    const fileName = `Reporte_Ventas_${seller.brand_name.replace(/\s+/g, '_')}_${currentDate
+      .toISOString()
+      .split('T')[0]}.pdf`
     doc.save(fileName)
   }
 
@@ -355,7 +373,11 @@ const DownloadBrandSalesPDF = ({
         : (
         <Download className='mr-2 h-4 w-4' />
           )}
-      {isGeneralReport ? 'Descargar Reporte Completo' : isSellerReport ? 'Descargar Mi Reporte' : 'Descargar PDF'}
+      {isGeneralReport
+        ? 'Descargar Reporte Completo'
+        : isSellerReport
+          ? 'Descargar Mi Reporte'
+          : 'Descargar PDF'}
     </Button>
   )
 }
