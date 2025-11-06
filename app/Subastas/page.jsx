@@ -15,7 +15,8 @@ export default function SubastasPage () {
       try {
         const response = await fetch('/api/auctions', { cache: 'no-cache' })
         const data = await response.json()
-        setAuctions(data)
+        console.log('Fetched auctions data:', data)
+        setAuctions(data.auctions)
       } catch (error) {
         console.error('Error fetching auctions:', error)
       } finally {
@@ -25,31 +26,21 @@ export default function SubastasPage () {
 
     fetchData()
 
-    // 🔁 Actualiza las subastas cada 10 segundos
     const interval = setInterval(fetchData, 10000)
 
-    // Limpieza del intervalo al desmontar el componente
     return () => clearInterval(interval)
   }, [])
 
-  // Filtrado y ordenamiento en el front-end
   const filteredAndSortedAuctions = useMemo(() => {
-    let auctionsList = auctions?.auctions || []
+    let auctionsList = auctions.filter(auction => auction.auction_status === 'active') || []
 
-    // Filtrar por término de búsqueda
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase()
       auctionsList = auctionsList.filter((auction) => {
-        const productName = auction.product?.name?.toLowerCase() || ''
-        const brandName = auction.product?.brand?.name?.toLowerCase() || ''
-        const categoryName = auction.product?.category?.name?.toLowerCase() || ''
-        const originName = auction.product?.origin?.name?.toLowerCase() || ''
+        const productName = auction.product_name?.toLowerCase() || ''
 
         return (
-          productName.includes(searchLower) ||
-          brandName.includes(searchLower) ||
-          categoryName.includes(searchLower) ||
-          originName.includes(searchLower)
+          productName.includes(searchLower)
         )
       })
     }
@@ -125,7 +116,6 @@ export default function SubastasPage () {
               ? (
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
                   {filteredAndSortedAuctions
-                    .filter(auction => auction.auction_status === 'active')
                     .map(auction => (
                       <div key={auction.auction_id} className='group'>
                         <CardAuction auction={auction} />
