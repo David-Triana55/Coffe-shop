@@ -5,12 +5,14 @@ import { Suspense } from 'react'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Coffee, Star, Award } from 'lucide-react'
+import { CONSTANTS } from '@/utils/constants'
 
 export default async function PageCategories ({ params }) {
   const category = await params.category.split('-').join(' ')
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${category}`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${category}`, { cache: 'no-store' })
   const data = await res.json()
   const { products, infoCategory } = data
+  console.log(data)
   const typesCoffee = formatCategory(category)
   return (
 
@@ -30,7 +32,7 @@ export default async function PageCategories ({ params }) {
                   ? (
                   <div className='relative w-full h-full'>
                     <Image
-                      src={infoCategory?.image_url || '/placeholder.svg'}
+                      src={infoCategory?.image_url || CONSTANTS.IMAGE_PLACEHOLDER}
                       alt={`Logo de ${typesCoffee || category}`}
                       fill
                       priority

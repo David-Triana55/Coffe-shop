@@ -4,10 +4,12 @@ import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Coffee, Star, Award } from 'lucide-react'
+import { CONSTANTS } from '@/utils/constants'
+import Image from 'next/image'
 
 export default async function PageOrigins ({ params }) {
   const origin = await params.origin.split('-').join(' ')
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/origins/${origin}`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/origins/${origin}`, { cache: 'no-store' })
   const data = await res.json()
   const { products, info } = data
   const typesCoffee = formatCategory(origin)
@@ -29,7 +31,7 @@ export default async function PageOrigins ({ params }) {
                     ? (
                     <div className='relative w-full h-full'>
                       <Image
-                        src={info?.image_url || '/placeholder.svg'}
+                        src={info?.image_url || CONSTANTS.IMAGE_PLACEHOLDER}
                         alt={`Logo de ${typesCoffee || origin}`}
                         fill
                         priority

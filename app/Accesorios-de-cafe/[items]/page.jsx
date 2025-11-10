@@ -4,10 +4,12 @@ import { formatCategory } from '@/utils/formatter'
 import { Suspense } from 'react'
 import { Coffee, Star, Award } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import Image from 'next/image'
+import { CONSTANTS } from '@/utils/constants'
 
 export default async function PageAccesories ({ params }) {
   const accessory = await params.items.split('-').join(' ')
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accessories/${accessory}`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accessories/${accessory}`, { cache: 'no-store' })
   const data = await res.json()
   const { products, info } = data
   const typesCoffee = formatCategory(accessory)
@@ -29,7 +31,7 @@ export default async function PageAccesories ({ params }) {
                   ? (
                   <div className='relative w-full h-full'>
                     <Image
-                      src={info?.image_url || '/placeholder.svg'}
+                      src={info?.image_url || CONSTANTS.IMAGE_PLACEHOLDER}
                       alt={`Logo de ${typesCoffee || accessory}`}
                       fill
                       priority

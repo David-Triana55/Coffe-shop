@@ -12,6 +12,7 @@ export async function GET (req) {
     const products = searchParams.get('products') ?? false
 
     const presentations = await getPresentations(products)
+    console.log(presentations)
 
     return NextResponse.json(presentations, { status: 200 })
   } catch (error) {
