@@ -16,6 +16,7 @@ import {
   Building,
   AlertCircle,
   Gavel
+  , DollarSign, Package, ShoppingCart, Award, BarChart3
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
@@ -53,6 +54,37 @@ export default function Profile () {
 
   const [originalUserData, setOriginalUserData] = useState({})
   const [originalBrandData, setOriginalBrandData] = useState({})
+
+  const [reportStats, setReportStats] = useState({
+    totalSpent: 0,
+    totalOrders: 0,
+    wonAuctions: 0
+  })
+
+  const [brandPurchases, setBrandPurchases] = useState([])
+
+  useEffect(() => {
+    if (login?.role === ROLES.CLIENTE) {
+      const fetchClientReports = async () => {
+        try {
+          const res = await fetch('/api/reportsClient', { cache: 'no-cache', credentials: 'include' })
+          if (res.ok) {
+            const { wonAuctions, brandPurchases, totalBoughts } = await res.json()
+            console.log('Fetched client reports:', { wonAuctions, brandPurchases, totalBoughts })
+            setReportStats({
+              totalSpent: totalBoughts.totalspent,
+              totalOrders: totalBoughts.totalorders,
+              wonAuctions
+            })
+            setBrandPurchases(brandPurchases)
+          }
+        } catch (error) {
+          console.error('Error fetching client reports:', error)
+        }
+      }
+      fetchClientReports()
+    }
+  }, [login?.role])
 
   const [dataClient, setDataClient] = useState({
     data: {},
@@ -528,6 +560,19 @@ export default function Profile () {
                       <Gavel className='mr-3 h-4 w-4' />
                       Mis Subastas
                     </Button>
+
+                    <Button
+                      variant={activeTab === 'reports' ? 'default' : 'ghost'}
+                      className={`justify-start transition-all duration-200 ${
+                        activeTab === 'reports'
+                          ? 'bg-[#4A3728] text-white hover:bg-[#5D4037]'
+                          : 'hover:bg-[#D2B48C]/20 text-[#4A3728]'
+                      }`}
+                      onClick={() => setActiveTab('reports')}
+                    >
+                      <BarChart3 className='mr-3 h-4 w-4' />
+                      Reportes
+                    </Button>
                   </>
                 )}
 
@@ -856,6 +901,81 @@ export default function Profile () {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+            )}
+            {/* Reports Tab */}
+            {login?.role === ROLES.CLIENTE && (
+              <TabsContent value='reports'>
+                <div className='space-y-6'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                    <Card className='bg-gradient-to-br from-[#33691E] to-[#1B5E20] text-white border-0'>
+                      <CardHeader className='flex flex-row items-center justify-between pb-2'>
+                        <CardTitle className='text-sm font-medium'>Total Gastado</CardTitle>
+                        <DollarSign className='h-4 w-4 opacity-70' />
+                      </CardHeader>
+                      <CardContent>
+                        <div className='text-2xl font-bold'>{formatPrice(reportStats.totalSpent)}</div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20'>
+                      <CardHeader className='flex flex-row items-center justify-between pb-2'>
+                        <CardTitle className='text-sm font-medium text-[#4A3728]'>Órdenes Totales</CardTitle>
+                        <ShoppingCart className='h-4 w-4 text-[#33691E]' />
+                      </CardHeader>
+                      <CardContent>
+                        <div className='text-2xl font-bold text-[#4A3728]'>{reportStats.totalOrders}</div>
+                        <p className='text-xs text-[#8D6E63] mt-1'>Compras realizadas</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20'>
+                      <CardHeader className='flex flex-row items-center justify-between pb-2'>
+                        <CardTitle className='text-sm font-medium text-[#4A3728]'>Subastas Ganadas</CardTitle>
+                        <Award className='h-4 w-4 text-[#33691E]' />
+                      </CardHeader>
+                      <CardContent>
+                        <div className='text-2xl font-bold text-[#4A3728]'>{reportStats.wonAuctions}</div>
+                        <p className='text-xs text-[#8D6E63] mt-1'>Participaciones exitosas</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Compras por marca */}
+                  <Card className='bg-white/95 backdrop-blur-sm border border-[#D2B48C]/20 shadow-xl'>
+                    <CardHeader className='bg-gradient-to-r from-[#4A3728] to-[#5D4037] text-white rounded-t-lg'>
+                      <CardTitle className='flex items-center gap-2'>
+                        <Package className='h-5 w-5' />
+                        Compras por Marca
+                      </CardTitle>
+
+                    </CardHeader>
+                    <CardContent className='p-6'>
+                      <div className='space-y-4'>
+                        {brandPurchases.map((brand, index) => (
+                          <div key={index} className='flex items-center justify-between p-4 bg-gradient-to-r from-[#D2B48C]/10 to-transparent rounded-lg border border-[#D2B48C]/30'>
+                            <div className='flex items-center gap-4'>
+                              <div className='w-12 h-12 rounded-full bg-gradient-to-br from-[#4A3728] to-[#5D4037] flex items-center justify-center text-white font-bold'>
+                                {brand.brand.charAt(0)}
+                              </div>
+                              <div>
+                                <p className='font-semibold text-[#4A3728]'>{brand.brand}</p>
+                                <p className='text-sm text-[#8D6E63]'>{brand.purchases} compras</p>
+                              </div>
+                            </div>
+                            <div className='text-right'>
+                              <p className='text-xl font-bold text-[#33691E]'>{formatPrice(brand.total)}</p>
+                              <Badge className='mt-1 bg-[#33691E]/10 text-[#33691E] hover:bg-[#33691E]/20'>
+                                {((brand.purchases / reportStats.totalOrders) * 100).toFixed(1)}%
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                </div>
               </TabsContent>
             )}
 
