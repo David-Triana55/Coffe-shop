@@ -1,12 +1,9 @@
-import { featuredBrands } from '@/lib/data/brands'
-import { featuredProducts } from '@/lib/data/products'
-import { activeAuctions } from '@/lib/data/auctions'
 import Image from 'next/image'
 import Link from 'next/link'
 export default async function PagePrincipal () {
-  const brands = await featuredBrands() ?? []
-  const products = await featuredProducts() ?? []
-  const auctions = await activeAuctions() ?? []
+  const brands = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/featuredBrands`, { cache: 'no-store' }).then(res => res.json()).then(data => data.brands)
+  const products = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/featuredProducts`, { cache: 'no-store' }).then(res => res.json()).then(data => data.products)
+  const auctions = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activeAuctions`, { cache: 'no-store' }).then(res => res.json()).then(data => data.auctions)
 
   return (
     <main className='mt-16 h-full bg-[#D7CCC8] text-[#3E2723] pb-10'>
