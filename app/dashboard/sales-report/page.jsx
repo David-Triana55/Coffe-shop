@@ -11,13 +11,15 @@ import Link from 'next/link'
 import Loading from '@/components/Loading/Loading'
 import { Button } from '@/components/ui/button'
 import DownloadBrandSalesPDF from '@/app/DownloadBrandSalesPDF/page'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function SalesReportPage () {
+  
   const { login } = useStore((state) => state)
   const [brandSalesData, setBrandSalesData] = useState([])
   const [sellerBrandInfo, setSellerBrandInfo] = useState(null)
   const [loading, setLoading] = useState(false)
-
+  useProtectedRedirect('/')
   useEffect(() => {
     const fetchBrandSales = async () => {
       setLoading(true)

@@ -10,8 +10,10 @@ import { ROLES } from '@/utils/roles'
 import { formatPrice } from '@/utils/formatter'
 import Link from 'next/link'
 import Loading from '@/components/Loading/Loading'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function DashboardPage () {
+  useProtectedRedirect('/')
   const { login, clientInfo } = useStore((state) => state)
   const [metrics, setMetrics] = useState({
     totalSales: 0,

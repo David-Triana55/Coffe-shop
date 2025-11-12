@@ -36,6 +36,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { toastError, toastSuccess } from '@/utils/toast'
 import AuctionHistoryItem from '@/components/AuctionHistoryItem/AuctionHistoryItem'
 import { getRoleName } from '@/utils/roleName'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function Profile () {
   const { clientInfo, login, setClientInfo, setLogin } = useStore((state) => state)
@@ -62,7 +63,7 @@ export default function Profile () {
   })
 
   const [brandPurchases, setBrandPurchases] = useState([])
-
+  useProtectedRedirect('/')
   useEffect(() => {
     if (login?.role === ROLES.CLIENTE) {
       const fetchClientReports = async () => {
@@ -70,7 +71,6 @@ export default function Profile () {
           const res = await fetch('/api/reportsClient', { cache: 'no-cache', credentials: 'include' })
           if (res.ok) {
             const { wonAuctions, brandPurchases, totalBoughts } = await res.json()
-            console.log('Fetched client reports:', { wonAuctions, brandPurchases, totalBoughts })
             setReportStats({
               totalSpent: totalBoughts.totalspent,
               totalOrders: totalBoughts.totalorders,

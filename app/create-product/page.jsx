@@ -13,6 +13,7 @@ import { ROLES } from '@/utils/roles'
 import { ToastContainer, Bounce } from 'react-toastify'
 import Loading from '@/components/Loading/Loading'
 import { toastError, toastSuccess } from '@/utils/toast'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function CreateProduct () {
   const router = useRouter()
@@ -28,7 +29,7 @@ export default function CreateProduct () {
   const [submitting, setSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [productType, setProductType] = useState('normal')
-
+  useProtectedRedirect('/')
   const [formData, setFormData] = useState({
     name: '',
     description: '',

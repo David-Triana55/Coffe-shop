@@ -11,7 +11,6 @@ export async function GET () {
   try {
     const cookieStore = cookies()
     const token = cookieStore.get(CONSTANTS.COOKIE_NAME)?.value
-    console.log(token, 'token')
     const decodedToken = await verifyToken(token)
 
     const brandInfo = await getBrandInfo(decodedToken.brandId)

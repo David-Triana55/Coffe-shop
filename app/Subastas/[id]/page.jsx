@@ -15,6 +15,7 @@ import { Bounce, ToastContainer } from 'react-toastify'
 import { CONSTANTS } from '@/utils/constants'
 import useStore from '@/store'
 import { ROLES } from '@/utils/roles'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function AuctionDetailPage () {
   const { login } = useStore((state) => state)
@@ -29,7 +30,7 @@ export default function AuctionDetailPage () {
   const [timeLeft, setTimeLeft] = useState('')
   const [bidError, setBidError] = useState('')
   const [bidSuccess, setBidSuccess] = useState(false)
-
+  useProtectedRedirect('/')
   const fetchAuctionData = async () => {
     try {
       const [auctionRes, bidsRes] = await Promise.all([
@@ -42,9 +43,6 @@ export default function AuctionDetailPage () {
 
       setAuction(auctionData?.auction)
       setBids(bidsData?.bids)
-
-      console.log(auctionData.auction.current_price, 'auctions')
-      console.log(bidsData.bids, 'bids')
 
       const currentPrice = Number(auctionData?.auction?.current_price) || Number(auction?.auction?.initial_price)
       const minimumIncrement = Number(auctionData?.auction?.minimum_increment)
@@ -155,7 +153,6 @@ export default function AuctionDetailPage () {
       const data = await response.json()
 
       if (response.ok) {
-        // Mostrar mensaje de éxito
         toastSuccess('¡Puja realizada exitosamente!', 3000, Bounce)
         setBidSuccess(true)
 

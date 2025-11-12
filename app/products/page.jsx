@@ -27,6 +27,7 @@ import { toastError, toastSuccess } from '@/utils/toast'
 import { Bounce, ToastContainer, toast } from 'react-toastify'
 import { Textarea } from '@/components/ui/textarea'
 import { CONSTANTS } from '@/utils/constants'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function ProductosPage () {
   const { login } = useStore((state) => state)
@@ -46,7 +47,8 @@ export default function ProductosPage () {
   const [imageUrls, setImageUrls] = useState([])
   const [selectedImages, setSelectedImages] = useState([])
   const [uploading, setUploading] = useState(false)
-
+  
+  useProtectedRedirect('/')
   const [editForm, setEditForm] = useState({
     id: '',
     name: '',

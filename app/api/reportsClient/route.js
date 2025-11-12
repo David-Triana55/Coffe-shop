@@ -19,11 +19,8 @@ export async function GET () {
     }
 
     const wonAuctions = await getAuctionsWonByUserId(decodedToken.id)
-    console.log(wonAuctions, 'wonAuctions')
     const brandPurchases = await getCountAndTotalSpentByUserId(decodedToken.id)
-    console.log(brandPurchases, 'brandPurchases')
     const totalBoughts = await getTotalBoughts(decodedToken.id)
-    console.log(totalBoughts)
 
     return NextResponse.json({ wonAuctions, brandPurchases, totalBoughts }, { status: 200 })
   } catch (error) {

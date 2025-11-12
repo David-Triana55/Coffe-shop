@@ -22,7 +22,8 @@ import {
   AlertCircle,
   User,
   Plus,
-  Edit
+  Edit,
+  Eye
 } from 'lucide-react'
 import Loading from '@/components/Loading/Loading'
 import { toastError, toastSuccess } from '@/utils/toast'
@@ -32,8 +33,10 @@ import useStore from '@/store'
 import { ROLES } from '@/utils/roles'
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+
 import { CONSTANTS } from '@/utils/constants'
+import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
+import { Textarea } from '@/components/ui/textarea'
 
 const AUCTION_STATUS = {
   PENDING: 'pending',
@@ -54,6 +57,8 @@ export default function SubastasPage () {
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [refetch, setRefetch] = useState(false)
+
+  useProtectedRedirect()
 
   const [editForm, setEditForm] = useState({
     id: '',
@@ -509,6 +514,18 @@ export default function SubastasPage () {
                           </>
                         )}
 
+                        {(auction.auction_status === AUCTION_STATUS.FINISHED && auction.status_payment) && (
+                          <Link href={`manage-auctions/${auction.auction_id}`}>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              className='border-[#33691E] text-[#33691E] hover:bg-[#33691E] hover:text-white'
+                            >
+                              <Eye className='h-4 w-4 mr-1' />
+                              Ver Detalle
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
