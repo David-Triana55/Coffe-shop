@@ -47,7 +47,7 @@ export default function ProductosPage () {
   const [imageUrls, setImageUrls] = useState([])
   const [selectedImages, setSelectedImages] = useState([])
   const [uploading, setUploading] = useState(false)
-  
+
   useProtectedRedirect('/')
   const [editForm, setEditForm] = useState({
     id: '',

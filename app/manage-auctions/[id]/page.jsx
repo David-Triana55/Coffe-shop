@@ -4,7 +4,7 @@ import { formatPrice } from '@/utils/formatter'
 import DownloadAuctionPDF from '@/components/DownloadAuctionPDF/DownloadAuctionPDF'
 import Link from 'next/link'
 
-export default async function AuctionDetailsPage({ params }) {
+export default async function AuctionDetailsPage ({ params }) {
   const { id } = params
   const auctionDetails = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/auction-details/?id=${id}`,
@@ -32,7 +32,7 @@ export default async function AuctionDetailsPage({ params }) {
     new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit',
+      day: '2-digit'
     })
 
   return (

@@ -14,7 +14,6 @@ import DownloadBrandSalesPDF from '@/app/DownloadBrandSalesPDF/page'
 import { useProtectedRedirect } from '@/hooks/useProtectedRedirect'
 
 export default function SalesReportPage () {
-  
   const { login } = useStore((state) => state)
   const [brandSalesData, setBrandSalesData] = useState([])
   const [sellerBrandInfo, setSellerBrandInfo] = useState(null)

@@ -46,7 +46,6 @@ const DownloadAuctionPDF = ({ auctionData }) => {
 
     // 🎨 Colores corporativos
     const brandColor = [62, 39, 35] // #3E2723
-    const accentColor = [51, 105, 30] // #33691E
     const lightBrown = [215, 204, 200] // #D7CCC8
     const textDark = [93, 64, 55] // #5D4037
 
@@ -129,8 +128,6 @@ const DownloadAuctionPDF = ({ auctionData }) => {
     doc.setFont('helvetica', 'normal')
     doc.text(auctionData.product_name || 'N/A', 45, pInfoY)
 
-
-
     doc.setFont('helvetica', 'bold')
     doc.text('Vendedor:', 20, pInfoY + 12)
     doc.setFont('helvetica', 'normal')
@@ -193,7 +190,7 @@ const DownloadAuctionPDF = ({ auctionData }) => {
 
     // ==================== ESTADO DE PAGO ====================
     const paymentY = chronoInfoY + 18
-    const paymentColor = [76, 175, 80] 
+    const paymentColor = [76, 175, 80]
     const paymentText = 'PAGO COMPLETADO'
 
     doc.setFillColor(...paymentColor)
