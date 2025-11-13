@@ -28,7 +28,7 @@ export default async function pageBill ({ params }) {
       <Card className='w-full max-w-4xl mx-auto'>
         <CardHeader className='flex flex-col md:flex-row justify-between items-start md:items-center'>
           <div>
-            <CardTitle className='text-2xl'>Factura #{detailBill[0].id}</CardTitle>
+            <CardTitle className='text-2xl'>Factura #{detailBill[0].id.substring(0, 8)}</CardTitle>
             <CardDescription>Fecha de emisión: {detailBill[0].date.toString().slice(0, 10)}</CardDescription>
           </div>
           <div className='mt-4 md:mt-0 flex space-x-2'>

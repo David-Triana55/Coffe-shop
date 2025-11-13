@@ -74,7 +74,7 @@ const DownloadPDFButton = ({ detailBill, billProduct, subTotal }) => {
 
     doc.setFontSize(10)
     doc.setFont('helvetica', 'normal')
-    doc.text(`No. ${String(detailBill.id).padStart(6, '0')}`, 195, 19, { align: 'right' })
+    doc.text(`No. ${String(detailBill.id).substring(0, 8).padStart(6, '0')}`, 195, 19, { align: 'right' })
 
     const formattedDate = new Date(detailBill.date).toLocaleDateString('es-CO', {
       year: 'numeric',
