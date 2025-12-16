@@ -16,7 +16,6 @@ export async function GET (req) {
     if (!decodedToken) {
       return NextResponse.json({ message: 'Error' }, { status: 401 })
     }
-
     const auctionDetails = await getAuctionDetails(id)
 
     console.log(auctionDetails, 'auction details in route')
